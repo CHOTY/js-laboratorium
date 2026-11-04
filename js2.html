@@ -1,0 +1,1582 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript – manipulácia s DOM</title>
+  <!-- JS 2 laboratórium; JS 1 je v js1.html, rozcestník v index.html -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f8fc; }
+    code { color: #9a2878; }
+    .section-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; scroll-margin-top: 1rem; }
+    .section-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: #fff3cd; color: #8a5a00; font-weight: 700; margin-right: .5rem; }
+    .demo-area { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; overflow: hidden; }
+    .tiny-label { font-size: .8rem; color: #657086; }
+    .demo-box { min-height: 72px; padding: 1rem; border: 2px solid #8aa8ff; border-radius: .6rem; background: #eaf0ff; color: #20366f; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600; }
+    .demo-box.alt { background: #e2f7ef; border-color: #76c9a7; color: #155b43; }
+    .demo-box.warm { background: #fff0dc; border-color: #f1bb74; color: #784b13; }
+
+    /* tmavé bloky s kódom (rovnaké ako v Bootstrap laboratóriu) */
+    .code-inspector { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 0; font: .85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .code-inspector .kw { color: #c4b5fd; }
+    .code-inspector .str { color: #86efac; }
+    .code-inspector .com { color: #9ca3af; font-style: italic; }
+    .code-inspector .obj { color: #93c5fd; }
+    .code-inspector .tag { color: #93c5fd; }
+    .code-inspector .attr { color: #fcd34d; }
+    .code-inspector .value { color: #86efac; }
+    .code-inspector .txt { color: #e5e7eb; }
+
+    /* "konzola" */
+    .console-out { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3.2rem; max-height: 240px; overflow: auto; font: .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .console-out .line { padding: .15rem 0; border-bottom: 1px solid #ffffff10; }
+    .console-out .line::before { content: "› "; color: #60a5fa; }
+    .console-out .line.err { color: #fca5a5; }
+    .console-out .line.err::before { content: "✖ "; color: #f87171; }
+    .console-out .line.muted { color: #6b7280; }
+    .console-out .line.muted::before { content: ""; }
+
+    .inspect-target { outline: 3px solid #f59e0b !important; outline-offset: 2px; }
+    .code-btn { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .8rem; text-align: left; }
+
+    /* mini stránky v ukážkach */
+    .mini-page { background: #fff; border: 1px solid #dee2e6; border-radius: .5rem; padding: 1rem; }
+    .acc { font-weight: 600; padding: .35rem .6rem; background: #eef2ff; border-radius: .35rem; margin-top: .4rem; }
+    .panel p { margin: .25rem .6rem; }
+
+    /* strom DOM */
+    .dom-tree ul { list-style: none; margin: 0; padding-left: 1.1rem; border-left: 1px dashed #374151; }
+    .dom-tree > ul { border-left: 0; padding-left: 0; }
+    .tree-node { cursor: pointer; border-radius: .25rem; padding: 0 .25rem; }
+    .tree-node:hover, .tree-node.active { background: #f59e0b33; }
+    .tree-text { color: #9ca3af; font-style: italic; }
+
+    .memory-box { border: 2px dashed #c4b5fd; background: #f5f3ff; border-radius: .75rem; padding: 1rem; min-height: 100px; }
+    .page-box { border: 2px solid #76c9a7; background: #f3fbf7; border-radius: .75rem; padding: 1rem; min-height: 100px; }
+    .output-box { min-height: 52px; border: 1px solid #dee2e6; border-radius: .5rem; padding: .6rem .8rem; background: #fff; }
+    .mouse-area { height: 170px; border-radius: .75rem; background: repeating-linear-gradient(45deg, #eef2ff, #eef2ff 12px, #e5ebff 12px, #e5ebff 24px); border: 2px solid #8aa8ff; position: relative; cursor: crosshair; user-select: none; }
+    .mouse-dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #f59e0b; transform: translate(-50%, -50%); pointer-events: none; display: none; }
+    .kbd-big { font-size: 2rem; font-weight: 700; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    #zarovka { width: 110px; height: 150px; }
+    #triedyBox, #stylBox { transition: all .2s ease; }
+
+    /* kalkulačka */
+    .calc { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .calc-row { width: 300px; max-width: 100%; display: flex; justify-content: space-between; }
+    .calc-row .btn { width: 60px; height: 44px; }
+    .calc-row .btn[data-calc="C"] { width: 84px; padding: 0; }
+    .calc-result { width: 210px; height: 44px; font-family: ui-monospace, Menlo, Consolas, monospace; text-align: right; }
+
+    /* kvíz */
+    .quiz-question { margin-bottom: 1.25rem; }
+    .quiz-question .list-group-item { cursor: pointer; }
+    .quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
+    .quiz-feedback { display: none; }
+    .quiz-done .quiz-feedback { display: block; }
+
+    #playFrame { width: 100%; height: 360px; border: 0; background: #fff; border-radius: .5rem; }
+    #playCode { min-height: 300px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85rem; tab-size: 2; }
+    .toc a { text-decoration: none; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">JavaScript laboratórium</a>
+    <div class="d-flex gap-1">
+      <a class="btn btn-sm btn-outline-light" href="js1.html">JS 1 · Základy</a>
+      <a class="btn btn-sm btn-light" href="js2.html" aria-current="page">JS 2 · DOM</a>
+    </div>
+  </div>
+</nav>
+
+<header class="container py-5" id="top">
+  <span class="badge text-bg-warning mb-3">JavaScript 2</span>
+  <h1 class="display-5 fw-bold">Manipulácia s DOM</h1>
+  <p class="lead col-lg-8">JavaScript vie nájsť ktorýkoľvek prvok stránky, zmeniť jeho text, triedy, štýly a atribúty, pridať nové prvky alebo ich zmazať. Všetko, čo na tejto stránke klikáš, robí JavaScript priamo v prehliadači.</p>
+  <div class="toc d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#rozcvicka">0 · Rozcvička</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#dom">1 · DOM</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#selektovanie">2 · Selektovanie</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#pridavanie">3 · Pridávanie</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#obsah">4 · Obsah</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#mazanie">5 · Mazanie</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#atributy">6 · Atribúty</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#triedy">7 · Triedy</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#styly">8 · Štýly</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#udalosti">9 · Udalosti</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#inputy">10 · Inputy</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kalkulacka">11 · Kalkulačka</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#playground">12 · Playground</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">13 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#ulohy">14 · Úlohy</a>
+  </div>
+  <p class="tiny-label mt-3 mb-0">Tip: otvor si vývojárske nástroje klávesom <kbd>F12</kbd> – záložky <strong>Prieskumník</strong> (Elements) a <strong>Konzola</strong> (Console).</p>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 0 ROZCVIČKA -->
+  <section class="card section-card mb-4" id="rozcvicka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">0</span>Rozcvička z JS 1</h2>
+      <p>Skôr než začneme meniť stránku, overme si základy, ktoré budeme dnes potrebovať.</p>
+      <div data-quiz="rozcvicka"></div>
+    </div>
+  </section>
+
+  <!-- 1 DOM -->
+  <section class="card section-card mb-4" id="dom">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Čo je DOM?</h2>
+      <p><strong>DOM</strong> (Document Object Model) je strom objektov, ktorý si prehliadač vytvorí z HTML kódu. JavaScript nepracuje s textom HTML súboru, ale s týmto stromom – každá značka je <em>objekt</em>, ktorý vieme nájsť a zmeniť. Najvyššie je objekt <code>document</code>.</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="tiny-label mb-1">Stránka</div>
+          <div class="demo-area" id="domPage">
+            <article class="mini-page">
+              <h3 class="h5">Moja stránka</h3>
+              <p>Text s <b>boldom</b></p>
+              <ul>
+                <li>auto</li>
+                <li>motorka</li>
+                <li>bicykel</li>
+              </ul>
+              <button type="button" class="btn btn-sm btn-primary">Tlačidlo</button>
+            </article>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="tiny-label mb-1">Strom DOM – klikni na uzol alebo na prvok na stránke</div>
+          <div class="code-inspector dom-tree" id="domTree"></div>
+        </div>
+      </div>
+      <p class="tiny-label mt-2 mb-0">Rovnaký strom uvidíš v prehliadači: <kbd>F12</kbd> → Prieskumník. Tam môžeš prvky dokonca meniť – ale len dočasne, po obnovení stránky zmeny zmiznú.</p>
+    </div>
+  </section>
+
+  <!-- 2 SELEKTOVANIE -->
+  <section class="card section-card mb-4" id="selektovanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Selektovanie elementov</h2>
+      <p>Skôr než prvok zmeníme, musíme ho <strong>nájsť</strong>. Klikni na príkaz – nájdené prvky sa v ukážke zvýraznia a výsledok sa vypíše ako v konzole.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area" id="selRoot">
+            <section id="otazky" class="container mini-page">
+              <h3 class="h5">Najčastejšie otázky</h3>
+              <div class="acc">Otázka 1</div>
+              <div class="panel"><p>Odpoveď 1</p></div>
+              <div class="acc">Otázka 2</div>
+              <div class="panel"><p>Odpoveď 2</p></div>
+              <div class="acc">Otázka 3</div>
+              <div class="panel"><p>Odpoveď 3</p></div>
+            </section>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="d-grid gap-2 mb-3">
+            <button type="button" class="btn btn-outline-primary code-btn" data-sel="byId">document.getElementById("otazky")</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-sel="byClass">document.getElementsByClassName("acc")</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-sel="byTag">document.getElementsByTagName("p")</button>
+            <button type="button" class="btn btn-outline-success code-btn" data-sel="qs">document.querySelector(".panel")</button>
+            <button type="button" class="btn btn-outline-success code-btn" data-sel="qsP">document.querySelector(".panel p")</button>
+            <button type="button" class="btn btn-outline-success code-btn" data-sel="qsa">document.querySelectorAll(".acc")</button>
+            <button type="button" class="btn btn-outline-danger code-btn" data-sel="none">document.querySelector(".neexistuje")</button>
+          </div>
+          <div class="console-out" id="selConsole"><div class="line muted">Konzola – klikni na niektorý príkaz</div></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1 align-items-end">
+        <div class="col-md-7">
+          <label for="selInput" class="form-label fw-semibold mb-1">Vyskúšaj vlastný CSS selektor v <code>querySelectorAll</code></label>
+          <div class="input-group">
+            <span class="input-group-text font-monospace small">querySelectorAll("</span>
+            <input id="selInput" class="form-control font-monospace" value=".acc">
+            <span class="input-group-text font-monospace small">")</span>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="tiny-label">Skús napr.: <code>#otazky h3</code>, <code>.panel p</code>, <code>div</code>, <code>.acc:first-of-type</code></div>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>Príkaz</th><th>Čo vráti</th></tr></thead>
+          <tbody>
+            <tr><td><code>getElementById("id")</code></td><td>jeden prvok (alebo <code>null</code>, ak neexistuje)</td></tr>
+            <tr><td><code>getElementsByClassName("trieda")</code></td><td>všetky prvky s triedou – <code>HTMLCollection</code></td></tr>
+            <tr><td><code>getElementsByTagName("div")</code></td><td>všetky prvky danej značky – <code>HTMLCollection</code></td></tr>
+            <tr><td><code>querySelector("css selektor")</code></td><td><strong>prvý</strong> nájdený prvok (alebo <code>null</code>)</td></tr>
+            <tr><td><code>querySelectorAll("css selektor")</code></td><td><strong>všetky</strong> nájdené prvky – <code>NodeList</code> (má <code>forEach</code>)</td></tr>
+            <tr><td><code>document.body</code></td><td>prvok <code>&lt;body&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny-label mt-2 mb-0">V ukážke hľadáme iba vo vnútri rámčeka s otázkami, aby sme nenašli prvky zo zvyšku tejto stránky. Na vlastnej stránke používaš <code>document</code>.</p>
+    </div>
+  </section>
+
+  <!-- 3 PRIDÁVANIE -->
+  <section class="card section-card mb-4" id="pridavanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Pridávanie elementov: createElement a append</h2>
+      <p>Pridanie prvku má <strong>dva kroky</strong>: najprv ho vytvoríme (existuje len v pamäti JavaScriptu), potom ho vložíme do stránky. Klikaj na kroky postupne.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-primary code-btn" id="krok1">1. const div1 = document.createElement("div");</button>
+            <button type="button" class="btn btn-outline-primary code-btn" id="krok2" disabled>2. div1.textContent = "Som nový div";</button>
+            <button type="button" class="btn btn-outline-primary code-btn" id="krok3" disabled>3. stranka.append(div1);</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="krokReset">Začať znova</button>
+          </div>
+          <div class="alert alert-info small mt-3 mb-0" id="krokInfo">Klikni na krok 1.</div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="tiny-label mb-1">Pamäť JavaScriptu (premenná <code>div1</code>)</div>
+          <div class="memory-box" id="pamat"><span class="text-secondary small">zatiaľ prázdna</span></div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="tiny-label mb-1">Stránka (<code>stranka</code>)</div>
+          <div class="page-box" id="addPage"><h3 class="h5">Domov</h3></div>
+        </div>
+      </div>
+      <div class="tiny-label mt-3 mb-1">HTML stránky – tak, ako ho vidíš v Prieskumníkovi</div>
+      <pre class="code-inspector" id="addHtml"></pre>
+
+      <hr class="my-4">
+      <h3 class="h5">Prakticky: nákupný zoznam</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="demo-area">
+            <div class="input-group mb-2">
+              <input id="novaPolozka" class="form-control" placeholder="napr. rožky">
+              <button type="button" class="btn btn-primary" id="pridajKoniec">append</button>
+              <button type="button" class="btn btn-outline-primary" id="pridajZaciatok">prepend</button>
+            </div>
+            <ul id="zoznam" class="list-group">
+              <li class="list-group-item">mlieko</li>
+              <li class="list-group-item">chlieb</li>
+            </ul>
+          </div>
+          <p class="tiny-label mt-2 mb-0"><code>append</code> pridá prvok na koniec, <code>prepend</code> na začiatok.</p>
+        </div>
+        <div class="col-lg-6">
+<pre class="code-inspector js">const pole = document.querySelector("#novaPolozka");
+const zoznam = document.querySelector("#zoznam");
+
+function pridajPolozku() {
+  if (pole.value.trim() === "") {
+    return; // prázdny text nepridáme
+  }
+  const li = document.createElement("li");
+  li.textContent = pole.value;
+  li.classList.add("list-group-item");
+  zoznam.append(li);
+  pole.value = ""; // vyčistíme input
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 OBSAH -->
+  <section class="card section-card mb-4" id="obsah">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Pridávanie a získavanie obsahu: innerText, textContent, innerHTML</h2>
+      <h3 class="h6 text-uppercase text-secondary mt-3">a) Zápis obsahu</h3>
+      <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+          <label for="obsahText" class="form-label mb-1">Text, ktorý vložíme (premenná <code>text</code>)</label>
+          <input id="obsahText" class="form-control font-monospace" value="Môj &lt;b&gt;hrubý&lt;/b&gt; text">
+        </div>
+        <div class="col-md-4 d-grid">
+          <button type="button" class="btn btn-primary" id="zapisVsetky">Zapíš do všetkých troch</button>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-md-4">
+          <code>div1.innerText = text;</code>
+          <div class="output-box mt-1" id="outInnerText"></div>
+        </div>
+        <div class="col-md-4">
+          <code>div2.textContent = text;</code>
+          <div class="output-box mt-1" id="outTextContent"></div>
+        </div>
+        <div class="col-md-4">
+          <code>div3.innerHTML = text;</code>
+          <div class="output-box mt-1" id="outInnerHTML"></div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">b) Čítanie obsahu</h3>
+      <div class="row g-3">
+        <div class="col-md-5">
+          <div class="tiny-label mb-1">Stránka – druhý odsek je skrytý cez <code>display:none</code></div>
+          <div class="demo-area">
+            <article id="clanok">
+              <p class="mb-1">Text s <b>boldom</b></p>
+              <p style="display:none;">Text 2</p>
+            </article>
+          </div>
+<pre class="code-inspector mt-2" id="clanokHtml"></pre>
+        </div>
+        <div class="col-md-7">
+          <div class="d-grid gap-2 mb-2">
+            <button type="button" class="btn btn-outline-primary code-btn" data-read="textContent">console.log(clanok.textContent);</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-read="innerText">console.log(clanok.innerText);</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-read="innerHTML">console.log(clanok.innerHTML);</button>
+          </div>
+          <div class="console-out" id="readConsole"><div class="line muted">Konzola</div></div>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead><tr><th></th><th>Zápis</th><th>Čítanie</th></tr></thead>
+          <tbody>
+            <tr><td><code>innerText</code></td><td>čistý text – značky sa vypíšu ako text</td><td>iba <strong>viditeľný</strong> text</td></tr>
+            <tr><td><code>textContent</code></td><td>rovnako ako <code>innerText</code></td><td><strong>všetok</strong> text, aj skrytý</td></tr>
+            <tr><td><code>innerHTML</code></td><td>značky sa vykreslia ako HTML</td><td>HTML kód, aj skrytých prvkov</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-warning small mb-0"><strong>Pozor na innerHTML:</strong> ak doň vložíš text, ktorý napísal používateľ, môže do stránky podstrčiť vlastné HTML aj JavaScript. Text od používateľa vkladaj cez <code>textContent</code>.</div>
+    </div>
+  </section>
+
+  <!-- 5 MAZANIE -->
+  <section class="card section-card mb-4" id="mazanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Mazanie elementov: remove() vs. display:none</h2>
+      <p>Oboje prvok „zmizne“ z obrazovky, ale je medzi nimi veľký rozdiel. Sleduj HTML pod ukážkou a počet prvkov.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area">
+            <div id="karty" class="d-flex gap-2">
+              <div class="demo-box flex-fill" id="kartaA">A</div>
+              <div class="demo-box alt flex-fill" id="kartaB">B</div>
+              <div class="demo-box warm flex-fill" id="kartaC">C</div>
+            </div>
+          </div>
+          <div class="d-grid gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary code-btn" data-zmaz="skry">kartaB.style.display = "none";</button>
+            <button type="button" class="btn btn-outline-secondary code-btn" data-zmaz="ukaz">kartaB.style.display = "";</button>
+            <button type="button" class="btn btn-outline-danger code-btn" data-zmaz="remove">kartaB.remove();</button>
+            <button type="button" class="btn btn-sm btn-outline-dark" data-zmaz="reset">Obnoviť ukážku</button>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="tiny-label mb-1">HTML v Prieskumníkovi</div>
+          <pre class="code-inspector" id="kartyHtml"></pre>
+          <div class="console-out mt-2" id="kartyConsole"></div>
+        </div>
+      </div>
+      <ul class="small mt-3 mb-0">
+        <li><code>style.display = "none"</code> – prvok sa <strong>skryje</strong>, ale v DOM zostáva. Dá sa znova zobraziť.</li>
+        <li><code>remove()</code> – prvok sa z DOM <strong>úplne vymaže</strong>. Ak ho chceme späť, musíme ho vytvoriť znova.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6 ATRIBÚTY -->
+  <section class="card section-card mb-4" id="atributy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Práca s atribútmi</h2>
+      <p>Atribúty sú tie <code>meno="hodnota"</code> v HTML značke – <code>src</code>, <code>href</code>, <code>type</code>, <code>disabled</code>, <code>lang</code>… Na ich zmenu slúžia <code>setAttribute</code>, <code>getAttribute</code> a <code>removeAttribute</code>.</p>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="demo-area h-100 text-center">
+            <h3 class="h6">Žiarovka (zmena <code>src</code>)</h3>
+            <img id="zarovka" alt="žiarovka" data-file="img/zarovka-off.svg">
+            <div class="d-flex gap-2 justify-content-center mt-2">
+              <button type="button" class="btn btn-sm btn-warning" id="zapni">Zapni svetlo</button>
+              <button type="button" class="btn btn-sm btn-secondary" id="vypni">Vypni svetlo</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="demo-area h-100">
+            <h3 class="h6">Heslo (zmena <code>type</code>)</h3>
+            <input type="password" class="form-control mb-2" id="hesloAtr" value="Tajne123">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="ukazHeslo">Ukáž heslo</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="demo-area h-100">
+            <h3 class="h6">Súhlas (atribút <code>disabled</code>)</h3>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="suhlasAtr">
+              <label class="form-check-label" for="suhlasAtr">Súhlasím s podmienkami</label>
+            </div>
+            <button type="button" class="btn btn-sm btn-success" id="odoslatAtr" disabled>Odoslať</button>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Posledný vykonaný kód</div>
+          <pre class="code-inspector js" id="atrKod">// klikni na niektoré tlačidlo</pre>
+        </div>
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">HTML zmeneného prvku</div>
+          <pre class="code-inspector" id="atrHtml"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 TRIEDY -->
+  <section class="card section-card mb-4" id="triedy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Práca s triedami: classList</h2>
+      <p>Najčastejší spôsob, ako JavaScriptom zmeniť vzhľad: vzhľad pripravíme v CSS (alebo použijeme triedy Bootstrapu) a JavaScriptom len pridávame a odoberáme triedy.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="demo-area d-flex align-items-center justify-content-center" style="min-height: 190px;">
+            <div id="triedyBox" class="p-4 border rounded text-center">Text s <b>boldom</b></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Klikni na triedu – zavolá sa <code>classList.toggle(...)</code></div>
+          <div class="d-flex flex-wrap gap-2 mb-3" id="triedyTlacidla"></div>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" class="btn btn-sm btn-outline-success code-btn" id="triedaAdd">classList.add("shadow-lg")</button>
+            <button type="button" class="btn btn-sm btn-outline-danger code-btn" id="triedaRemove">classList.remove("shadow-lg")</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary code-btn" id="triedaContains">classList.contains("shadow-lg")</button>
+          </div>
+          <pre class="code-inspector js" id="triedyKod">// klikni na triedu</pre>
+          <div class="console-out mt-2" id="triedyConsole"></div>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm mb-2">
+          <tbody>
+            <tr><td><code>classList.add("a")</code></td><td>pridá triedu</td></tr>
+            <tr><td><code>classList.remove("a")</code></td><td>odoberie triedu</td></tr>
+            <tr><td><code>classList.toggle("a")</code></td><td>ak triedu má, odoberie ju – ak nemá, pridá ju</td></tr>
+            <tr><td><code>classList.contains("a")</code></td><td>vráti <code>true</code> / <code>false</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-warning small mb-0"><strong>Pozor:</strong> zápis <code>element.classList = "container"</code> alebo <code>element.className = "container"</code> prepíše <em>všetky</em> triedy naraz. Ak chceš pridať jednu triedu, použi <code>classList.add("container")</code>.</div>
+    </div>
+  </section>
+
+  <!-- 8 ŠTÝLY -->
+  <section class="card section-card mb-4" id="styly">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Práca so štýlmi: element.style</h2>
+      <p>CSS vlastnosti meníme cez <code>element.style.vlastnost = "hodnota";</code>. Vlastnosti s pomlčkou sa v JavaScripte píšu <strong>camelCase</strong>: <code>background-color</code> → <code>backgroundColor</code>.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area d-flex align-items-center justify-content-center" style="min-height: 220px;">
+            <div id="stylBox" class="border">Text s <b>boldom</b></div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stBg">backgroundColor</label>
+              <input type="color" class="form-control form-control-color w-100" id="stBg" value="#ffffff">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stColor">color</label>
+              <input type="color" class="form-control form-control-color w-100" id="stColor" value="#212529">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stPadding">padding: <span id="stPaddingVal">10px</span></label>
+              <input type="range" class="form-range" id="stPadding" min="0" max="60" value="10">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stFont">fontSize: <span id="stFontVal">16px</span></label>
+              <input type="range" class="form-range" id="stFont" min="10" max="40" value="16">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stRadius">borderRadius: <span id="stRadiusVal">0px</span></label>
+              <input type="range" class="form-range" id="stRadius" min="0" max="50" value="0">
+            </div>
+            <div class="col-6">
+              <label class="form-label small mb-0" for="stRotate">transform: rotate(<span id="stRotateVal">0</span>deg)</label>
+              <input type="range" class="form-range" id="stRotate" min="-45" max="45" value="0">
+            </div>
+          </div>
+          <pre class="code-inspector js mt-2" id="stylKod"></pre>
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="stReset">Obnoviť</button>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm mb-2">
+          <thead><tr><th>CSS</th><th>JavaScript</th></tr></thead>
+          <tbody>
+            <tr><td><code>background-color: red;</code></td><td><code>el.style.backgroundColor = "red";</code></td></tr>
+            <tr><td><code>font-size: 20px;</code></td><td><code>el.style.fontSize = "20px";</code></td></tr>
+            <tr><td><code>border-radius: 10px;</code></td><td><code>el.style.borderRadius = "10px";</code></td></tr>
+            <tr><td><code>display: none;</code></td><td><code>el.style.display = "none";</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny-label mb-0">Hodnota je vždy text v úvodzovkách a <strong>s jednotkou</strong> (<code>"20px"</code>, nie <code>20</code>). Ak meníš veľa vecí naraz, je lepšie pripraviť CSS triedu a prepínať ju cez <code>classList</code>.</p>
+    </div>
+  </section>
+
+  <!-- 9 UDALOSTI -->
+  <section class="card section-card mb-4" id="udalosti">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Udalosti: addEventListener</h2>
+      <p>Doteraz sa kód vykonal hneď po načítaní stránky. Aby stránka reagovala na používateľa, „počúva“ <strong>udalosti</strong> – klik, písanie, pohyb myši, stlačenie klávesu…</p>
+<pre class="code-inspector js mb-3">const tlacidlo = document.querySelector("#tlacidlo");
+
+tlacidlo.addEventListener("click", function () {
+  // tento kód sa vykoná až po kliknutí
+  console.log("Klikol si!");
+});</pre>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="demo-area h-100">
+            <h3 class="h6"><code>"click"</code> – počítadlo</h3>
+            <button type="button" class="btn btn-primary" id="klikTlacidlo">Klikni na mňa</button>
+            <span class="ms-2">Počet klikov: <strong id="klikPocet">0</strong></span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="demo-area h-100">
+            <h3 class="h6"><code>"input"</code> – každá zmena textu</h3>
+            <input class="form-control mb-1" id="inputUdalost" placeholder="Napíš svoje meno…">
+            <div class="small">Ahoj, <strong id="inputMeno">…</strong> (počet znakov: <span id="inputDlzka">0</span>)</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="demo-area h-100">
+            <h3 class="h6"><code>"mousemove"</code> a <code>"mousedown"</code> – myš</h3>
+            <div class="mouse-area" id="mysPlocha"><div class="mouse-dot" id="mysBod"></div></div>
+            <div class="small font-monospace mt-1" id="mysInfo">Pohni myšou nad plochou…</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="demo-area h-100">
+            <h3 class="h6"><code>"keydown"</code> – klávesnica</h3>
+            <input class="form-control mb-2" id="klavesInput" placeholder="Klikni sem a stláčaj klávesy (skús aj Shift, Ctrl…)">
+            <div class="d-flex align-items-center gap-3">
+              <div class="kbd-big" id="klavesKey">–</div>
+              <div class="small font-monospace" id="klavesInfo">event.key / event.code</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tiny-label mt-3 mb-1">Záznam udalostí</div>
+      <div class="console-out" id="udalostiConsole"><div class="line muted">Zatiaľ žiadne udalosti</div></div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+          <h3 class="h6">Atribút <code>onclick</code> v HTML</h3>
+<pre class="code-inspector">&lt;button onclick="pozdrav()"&gt;Klik&lt;/button&gt;</pre>
+          <p class="small mt-1 mb-0">Jednoduché, používa ho aj naša kalkulačka. HTML a JavaScript sú však pomiešané.</p>
+        </div>
+        <div class="col-md-6">
+          <h3 class="h6"><code>addEventListener</code> v JS súbore</h3>
+<pre class="code-inspector js">tlacidlo.addEventListener("click", pozdrav);</pre>
+          <p class="small mt-1 mb-0">Odporúčaný spôsob: HTML je čisté, na jednu udalosť môžeme navesiť viac funkcií.</p>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">Pozor: pri <code>addEventListener("click", pozdrav)</code> píšeme <code>pozdrav</code> <strong>bez zátvoriek</strong> – funkciu len odovzdáme, zavolá ju prehliadač až pri kliknutí. Namiesto zastaraného <code>event.keyCode</code> používame <code>event.key</code>.</p>
+    </div>
+  </section>
+
+  <!-- 10 INPUTY -->
+  <section class="card section-card mb-4" id="inputy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Práca s inputmi: získavanie a vkladanie hodnôt</h2>
+      <h3 class="h6 text-uppercase text-secondary mt-3">a) Hodnota z inputu je vždy text!</h3>
+      <div class="row g-3 align-items-end">
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-0" for="cisloA">a</label>
+          <input type="number" class="form-control" id="cisloA" value="5">
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-0" for="cisloB">b</label>
+          <input type="number" class="form-control" id="cisloB" value="3">
+        </div>
+        <div class="col-md-8 d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-outline-danger code-btn" id="scitajZle">a.value + b.value</button>
+          <button type="button" class="btn btn-outline-success code-btn" id="scitajDobre">Number(a.value) + Number(b.value)</button>
+        </div>
+      </div>
+      <div class="console-out mt-2" id="scitajConsole"><div class="line muted">Konzola</div></div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">b) Formulár: čítanie a vkladanie hodnôt</h3>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area">
+            <div class="mb-2">
+              <label class="form-label small mb-0" for="fMeno">Meno</label>
+              <input class="form-control form-control-sm" id="fMeno">
+            </div>
+            <div class="mb-2">
+              <label class="form-label small mb-0" for="fVek">Vek</label>
+              <input type="number" class="form-control form-control-sm" id="fVek">
+            </div>
+            <div class="mb-2">
+              <span class="form-label small d-block mb-0">Pohlavie</span>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="fPohlavie" id="fMuz" value="muž"><label class="form-check-label small" for="fMuz">muž</label></div>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="fPohlavie" id="fZena" value="žena"><label class="form-check-label small" for="fZena">žena</label></div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small mb-0" for="fKrajina">Krajina</label>
+              <select class="form-select form-select-sm" id="fKrajina">
+                <option value="">– vyber –</option>
+                <option value="SK">Slovensko</option>
+                <option value="CZ">Česko</option>
+                <option value="AT">Rakúsko</option>
+              </select>
+            </div>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="fGdpr">
+              <label class="form-check-label small" for="fGdpr">Súhlasím so spracovaním údajov</label>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-sm btn-primary" id="fCitaj">Prečítaj hodnoty</button>
+              <button type="button" class="btn btn-sm btn-outline-primary" id="fVypln">Vyplň za mňa</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <pre class="code-inspector js" id="fKod">// klikni na „Prečítaj hodnoty“ alebo „Vyplň za mňa“</pre>
+          <div class="console-out mt-2" id="fConsole"><div class="line muted">Konzola</div></div>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Prvok</th><th>Hodnota</th></tr></thead>
+          <tbody>
+            <tr><td>text, number, email, password, select</td><td><code>.value</code> – vždy <strong>text</strong> (string); číslo získaš cez <code>Number(...)</code></td></tr>
+            <tr><td>checkbox</td><td><code>.checked</code> – <code>true</code> / <code>false</code></td></tr>
+            <tr><td>radio</td><td><code>document.querySelector('input[name="pohlavie"]:checked')</code> – vybraný prvok alebo <code>null</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 KALKULAČKA -->
+  <section class="card section-card mb-4" id="kalkulacka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">11</span>Úloha: kalkulačka</h2>
+      <p>Takto má fungovať hotová kalkulačka. HTML a CSS máte pripravené v súbore <code>kalkulacka.html</code>, vašou úlohou je doprogramovať tri funkcie v <code>js/kalkulacka.js</code>.</p>
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-5">
+          <div class="demo-area py-4">
+            <div class="calc" id="calcDemo">
+              <div class="calc-row">
+                <input type="text" class="form-control calc-result" id="calcResult" readonly>
+                <button type="button" class="btn btn-danger btn-sm" data-calc="C">vymazať</button>
+              </div>
+              <div class="calc-row"><button type="button" class="btn btn-light border" data-calc="7">7</button><button type="button" class="btn btn-light border" data-calc="8">8</button><button type="button" class="btn btn-light border" data-calc="9">9</button><button type="button" class="btn btn-warning" data-calc="/">/</button></div>
+              <div class="calc-row"><button type="button" class="btn btn-light border" data-calc="4">4</button><button type="button" class="btn btn-light border" data-calc="5">5</button><button type="button" class="btn btn-light border" data-calc="6">6</button><button type="button" class="btn btn-warning" data-calc="*">*</button></div>
+              <div class="calc-row"><button type="button" class="btn btn-light border" data-calc="1">1</button><button type="button" class="btn btn-light border" data-calc="2">2</button><button type="button" class="btn btn-light border" data-calc="3">3</button><button type="button" class="btn btn-warning" data-calc="-">-</button></div>
+              <div class="calc-row"><button type="button" class="btn btn-light border" data-calc="0">0</button><button type="button" class="btn btn-light border" data-calc=".">.</button><button type="button" class="btn btn-primary" data-calc="=">=</button><button type="button" class="btn btn-warning" data-calc="+">+</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <table class="table table-sm">
+            <tbody>
+              <tr><td><code>display(x)</code></td><td>pridá stlačený znak na koniec displeja</td></tr>
+              <tr><td><code>clearAll()</code></td><td>vymaže displej</td></tr>
+              <tr><td><code>solve()</code></td><td>vypočíta príklad na displeji a zobrazí výsledok</td></tr>
+            </tbody>
+          </table>
+          <details class="mb-2">
+            <summary class="fw-semibold">Nápoveda 1 – kde je displej?</summary>
+            <p class="small mt-2 mb-0">Displej je <code>&lt;input&gt;</code> s <code>id="result"</code>. Nájdeš ho cez <code>document.getElementById("result")</code> a jeho obsah je vo vlastnosti <code>.value</code> – dá sa čítať aj prepisovať.</p>
+          </details>
+          <details class="mb-2">
+            <summary class="fw-semibold">Nápoveda 2 – funkcia display</summary>
+<pre class="code-inspector js mt-2">function display(x) {
+  const vysledok = document.getElementById("result");
+  vysledok.value = vysledok.value + x;   // alebo skrátene +=
+}</pre>
+          </details>
+          <details class="mb-2">
+            <summary class="fw-semibold">Nápoveda 3 – ako vypočítať text „7*8+1“?</summary>
+            <p class="small mt-2 mb-0">Najjednoduchšie je funkcia <code>eval(text)</code>, ktorá text vyhodnotí ako JavaScript. Je však nebezpečná – vykoná <em>akýkoľvek</em> kód. Preto najprv skontroluj, že text obsahuje len čísla, bodku a znaky <code>+ - * /</code>. Chyby (napr. „5++“) zachytíš cez <code>try { … } catch { … }</code>.</p>
+          </details>
+          <details>
+            <summary class="fw-semibold">Bonus</summary>
+            <ul class="small mt-2 mb-0">
+              <li>Po delení nulou zobraz „Chyba“.</li>
+              <li>Ovládanie klávesnicou: udalosť <code>keydown</code> na <code>document</code> a <code>event.key</code>.</li>
+              <li>Prepíš <code>onclick</code> atribúty na <code>addEventListener</code>.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 PLAYGROUND -->
+  <section class="card section-card mb-4" id="playground">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">12</span>JavaScript playground</h2>
+      <p>Napíš JavaScript a spusti ho na ukážkovej stránke vpravo. <code>console.log</code> sa vypíše pod ňou. Vyber si pripravený príklad alebo píš vlastný kód.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="playPreset" aria-label="Pripravené príklady"></select>
+            <button type="button" class="btn btn-sm btn-primary" id="playRun">▶ Spustiť</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="playReset">Obnoviť príklad</button>
+          </div>
+          <textarea class="form-control" id="playCode" spellcheck="false"></textarea>
+          <p class="tiny-label mt-1 mb-0">Skratka: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> spustí kód.</p>
+        </div>
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Ukážková stránka</div>
+          <div class="demo-area p-1"><iframe id="playFrame" title="Ukážková stránka playgroundu" sandbox="allow-scripts"></iframe></div>
+          <div class="tiny-label mt-2 mb-1">Konzola</div>
+          <div class="console-out" id="playConsole"></div>
+        </div>
+      </div>
+      <details class="mt-3">
+        <summary class="small fw-semibold">HTML ukážkovej stránky (aby si vedel/a, aké id a triedy tam sú)</summary>
+        <pre class="code-inspector mt-2" id="playHtml"></pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- 13 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">13</span>Rýchly kvíz</h2>
+      <p>Skús odpovedať bez pomoci. Po vyhodnotení uvidíš aj vysvetlenie.</p>
+      <div data-quiz="kviz"></div>
+    </div>
+  </section>
+
+  <!-- 14 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">14</span>Mini úlohy</h2>
+      <ol class="mb-3">
+        <li class="mb-2">Na stránke <code>qna.html</code> nájdi pomocou <code>querySelectorAll</code> všetky otázky (<code>.acc</code>) a vypíš ich počet do konzoly.</li>
+        <li class="mb-2">Cez <code>createElement</code> a <code>append</code> pridaj na koniec stránky <code>index.html</code> pätičku s textom „© 2026 Moja stránka“.</li>
+        <li class="mb-2">Z poľa <code>["auto", "motorka", "bicykel"]</code> vytvor cyklom <code>&lt;ul&gt;</code> zoznam na stránke.</li>
+        <li class="mb-2">Žiarovka: dve tlačidlá, ktoré cez <code>setAttribute</code> menia <code>src</code> obrázka medzi <code>img/zarovka-off.svg</code> a <code>img/zarovka-on.svg</code>.</li>
+        <li class="mb-2">Tlačidlo „Tmavý režim“, ktoré cez <code>classList.toggle</code> prepína na <code>&lt;body&gt;</code> triedy <code>bg-dark</code> a <code>text-white</code>.</li>
+        <li class="mb-2"><strong>Akordeón</strong> na <code>qna.html</code>: po kliknutí na otázku sa zobrazí / skryje odpoveď.</li>
+        <li class="mb-2"><strong>Kalkulačka</strong>: doprogramuj <code>display</code>, <code>clearAll</code> a <code>solve</code>.</li>
+        <li>Bonus: kalkulačka sa dá ovládať aj klávesnicou.</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  JavaScript 2 · Manipulácia s DOM · Dokumentácia: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model">MDN – Document Object Model</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ============================================================
+     Pomocné funkcie
+     ============================================================ */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  function esc(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // jednoduché zvýraznenie JavaScriptu
+  function highlightJS(src) {
+    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|typeof)\b|\b(document|console|window)\b/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      const cls = m[1] ? 'com' : m[2] ? 'str' : m[3] ? 'kw' : 'obj';
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+
+  function setCode(el, text) { el.innerHTML = highlightJS(text); }
+
+  // "Prieskumník": pekne odsadené HTML so zafarbením
+  const INLINE = ['b', 'i', 'strong', 'em', 'span', 'code', 'a'];
+  const VOID = ['img', 'input', 'br', 'hr'];
+  function openTag(el) {
+    const tag = el.tagName.toLowerCase();
+    const attrs = [...el.attributes]
+      .filter(a => !a.name.startsWith('data-'))
+      .map(a => {
+        let v = a.value;
+        if (a.name === 'src' && el.dataset.file) v = el.dataset.file;
+        if (a.name === 'class') v = v.replace(/\s*inspect-target\s*/g, ' ').trim();
+        if (a.name === 'class' && v === '') return null;
+        return v === '' && a.name !== 'class'
+          ? ` <span class="attr">${esc(a.name)}</span>`
+          : ` <span class="attr">${esc(a.name)}</span>=<span class="value">"${esc(v)}"</span>`;
+      })
+      .filter(Boolean).join('');
+    return `<span class="tag">&lt;${tag}</span>${attrs}<span class="tag">&gt;</span>`;
+  }
+  const closeTag = el => `<span class="tag">&lt;/${el.tagName.toLowerCase()}&gt;</span>`;
+  function inlineHTML(el) {
+    let out = '';
+    el.childNodes.forEach(n => {
+      if (n.nodeType === 3) out += `<span class="txt">${esc(n.textContent.replace(/\s+/g, ' '))}</span>`;
+      else if (n.nodeType === 1) out += openTag(n) + inlineHTML(n) + closeTag(n);
+    });
+    return out;
+  }
+  function prettyHTML(node, depth = 0) {
+    const pad = '  '.repeat(depth);
+    let out = '';
+    node.childNodes.forEach(ch => {
+      if (ch.nodeType === 3) {
+        const t = ch.textContent.trim().replace(/\s+/g, ' ');
+        if (t) out += pad + `<span class="txt">${esc(t)}</span>\n`;
+      } else if (ch.nodeType === 1) {
+        const tag = ch.tagName.toLowerCase();
+        if (VOID.includes(tag)) { out += pad + openTag(ch) + '\n'; return; }
+        const onlyInline = [...ch.children].every(c => INLINE.includes(c.tagName.toLowerCase()));
+        if (onlyInline && ch.textContent.trim().length < 70) {
+          out += pad + openTag(ch) + inlineHTML(ch).trim() + closeTag(ch) + '\n';
+        } else {
+          out += pad + openTag(ch) + '\n' + prettyHTML(ch, depth + 1) + pad + closeTag(ch) + '\n';
+        }
+      }
+    });
+    return out;
+  }
+  function showHTML(target, node, wrapSelf = false) {
+    if (wrapSelf) {
+      const tmp = document.createElement('div');
+      tmp.append(node.cloneNode(true));
+      target.innerHTML = prettyHTML(tmp).trimEnd();
+    } else {
+      target.innerHTML = prettyHTML(node).trimEnd() || '<span class="com">(prázdne)</span>';
+    }
+  }
+
+  // popis hodnoty ako v konzole prehliadača
+  function describe(v) {
+    if (v === null) return 'null';
+    if (v === undefined) return 'undefined';
+    if (v instanceof Element) {
+      const tag = v.tagName.toLowerCase();
+      const id = v.id ? ` id="${v.id}"` : '';
+      const triedy = [...v.classList].filter(c => c !== 'inspect-target').join(' ');
+      const cls = triedy ? ` class="${triedy}"` : '';
+      return `<${tag}${id}${cls}>`;
+    }
+    if (v instanceof HTMLCollection || v instanceof NodeList) {
+      const name = v instanceof HTMLCollection ? 'HTMLCollection' : 'NodeList';
+      const items = [...v].map(e => {
+        const triedy = [...e.classList].filter(c => c !== 'inspect-target');
+        return e.tagName.toLowerCase() + (triedy.length ? '.' + triedy.join('.') : '');
+      });
+      return `${name}(${v.length}) [ ${items.join(', ')} ]`;
+    }
+    if (typeof v === 'string') return v;
+    if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+    return String(v);
+  }
+
+  function logTo(box, text, cls = '') {
+    $$('.line.muted', box).forEach(l => l.remove());
+    const line = document.createElement('div');
+    line.className = 'line ' + cls;
+    line.textContent = text;
+    box.append(line);
+    box.scrollTop = box.scrollHeight;
+  }
+  function clearConsole(box) { box.innerHTML = ''; }
+
+  function highlight(elements, scope) {
+    $$('.inspect-target', scope).forEach(e => e.classList.remove('inspect-target'));
+    elements.forEach(e => e && e.classList && e.classList.add('inspect-target'));
+  }
+
+  // statické bloky kódu zafarbíme
+  $$('pre.code-inspector.js').forEach(pre => setCode(pre, pre.textContent));
+
+  /* ============================================================
+     Kvízy
+     ============================================================ */
+  const QUIZZES = {
+    rozcvicka: [
+      { q: 'Ktorým kľúčovým slovom vytvoríš premennú, ktorej hodnotu už nebudeš meniť?', o: ['var', 'let', 'const'], a: 2, e: 'const = konštanta. Ak sa hodnota mení, použijeme let. Starý var dnes už nepotrebujeme.' },
+      { q: 'Čo vráti porovnanie 5 === "5"?', o: ['true', 'false', 'chybu'], a: 1, e: '=== porovnáva hodnotu aj typ. Číslo 5 a text "5" majú rôzny typ. (5 == "5" by vrátilo true.)' },
+      { q: 'Koľkokrát sa vykoná cyklus for (let i = 0; i < 3; i++)?', o: ['2-krát', '3-krát', '4-krát'], a: 1, e: 'Pre i = 0, 1, 2. Pri i = 3 už podmienka i < 3 neplatí.' },
+      { q: 'Čo vráti funkcia function vynasob(p1, p2) { return p1 * p2; } pri volaní vynasob(4, 5)?', o: ['9', '20', '"45"'], a: 1, e: 'Funkcia vráti súčin parametrov: 4 * 5 = 20.' },
+      { q: 'Kam vypíše text príkaz console.log("Ahoj")?', o: ['do vyskakovacieho okna', 'do konzoly vo vývojárskych nástrojoch (F12)', 'priamo na stránku'], a: 1, e: 'Okno je alert(), na stránku zapisuje document.write() – dnes to už nerobíme, používame DOM.' }
+    ],
+    kviz: [
+      { q: 'Čo vráti document.querySelector(".panel")?', o: ['všetky prvky s triedou panel', 'prvý prvok s triedou panel', 'vždy null'], a: 1, e: 'querySelector vráti prvý nájdený prvok. Všetky nájdeme cez querySelectorAll.' },
+      { q: 'Vytvoril som prvok cez createElement, ale na stránke ho nevidím. Prečo?', o: ['treba ho ešte vložiť do stránky, napr. cez append', 'chýba mu CSS', 'createElement funguje len v <head>'], a: 0, e: 'createElement vytvorí prvok iba v pamäti. Do stránky ho vložíme cez append / prepend.' },
+      { q: 'Ktorou vlastnosťou bezpečne vložíš text od používateľa?', o: ['innerHTML', 'textContent', 'style'], a: 1, e: 'textContent vloží text tak, ako je – HTML značky sa nespracujú.' },
+      { q: 'Ako v JavaScripte nastavíš CSS vlastnosť background-color?', o: ['el.style.background-color = "red"', 'el.style.backgroundColor = "red"', 'el.css("background-color", "red")'], a: 1, e: 'Vlastnosti s pomlčkou píšeme camelCase: backgroundColor, fontSize, borderRadius…' },
+      { q: 'V inputoch je 5 a 3. Čo vypíše a.value + b.value?', o: ['8', '"53"', 'chybu'], a: 1, e: 'value je vždy text, + texty spája. Číslo dostaneme cez Number(a.value).' },
+      { q: 'Aký je rozdiel medzi el.remove() a el.style.display = "none"?', o: ['žiadny', 'remove() prvok úplne vymaže z DOM, display:none ho len skryje', 'display:none prvok vymaže, remove() ho skryje'], a: 1, e: 'Skrytý prvok v DOM zostáva a vieme ho znova zobraziť.' },
+      { q: 'Čo urobí el.classList.toggle("aktivny")?', o: ['vždy triedu pridá', 'vždy triedu odoberie', 'ak triedu má, odoberie ju, inak ju pridá'], a: 2, e: 'toggle = prepínač. Ideálne na akordeón, menu alebo tmavý režim.' }
+    ]
+  };
+
+  $$('[data-quiz]').forEach(holder => {
+    const questions = QUIZZES[holder.dataset.quiz];
+    const answers = new Array(questions.length).fill(null);
+    const wrap = document.createElement('div');
+    questions.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-question';
+      const title = document.createElement('p');
+      title.className = 'fw-semibold mb-2';
+      title.textContent = `${qi + 1}. ${item.q}`;
+      const list = document.createElement('div');
+      list.className = 'list-group';
+      item.o.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-group-item list-group-item-action font-monospace small';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+          if (holder.classList.contains('quiz-done')) return;
+          answers[qi] = oi;
+          $$('.list-group-item', list).forEach(b => b.classList.remove('vybrana'));
+          btn.classList.add('vybrana');
+        });
+        list.append(btn);
+      });
+      const fb = document.createElement('div');
+      fb.className = 'quiz-feedback small mt-2';
+      box.append(title, list, fb);
+      wrap.append(box);
+    });
+    const controls = document.createElement('div');
+    controls.className = 'd-flex flex-wrap align-items-center gap-2';
+    controls.innerHTML = '<button type="button" class="btn btn-primary">Vyhodnotiť</button><button type="button" class="btn btn-outline-secondary">Vymazať odpovede</button><span class="fw-semibold ms-2"></span>';
+    const [evalBtn, resetBtn, score] = controls.children;
+    evalBtn.addEventListener('click', () => {
+      let good = 0;
+      $$('.quiz-question', wrap).forEach((box, qi) => {
+        const opts = $$('.list-group-item', box);
+        opts[questions[qi].a].classList.add('list-group-item-success');
+        const fb = $('.quiz-feedback', box);
+        if (answers[qi] === questions[qi].a) { good++; fb.className = 'quiz-feedback small mt-2 text-success'; fb.textContent = '✔ Správne. ' + questions[qi].e; }
+        else {
+          if (answers[qi] !== null) opts[answers[qi]].classList.add('list-group-item-danger');
+          fb.className = 'quiz-feedback small mt-2 text-danger';
+          fb.textContent = (answers[qi] === null ? '– Bez odpovede. ' : '✖ Nesprávne. ') + questions[qi].e;
+        }
+      });
+      holder.classList.add('quiz-done');
+      score.textContent = `Výsledok: ${good} / ${questions.length}`;
+    });
+    resetBtn.addEventListener('click', () => {
+      answers.fill(null);
+      holder.classList.remove('quiz-done');
+      $$('.list-group-item', wrap).forEach(b => b.classList.remove('vybrana', 'list-group-item-success', 'list-group-item-danger'));
+      score.textContent = '';
+    });
+    holder.append(wrap, controls);
+  });
+
+  /* ============================================================
+     1 DOM strom
+     ============================================================ */
+  (() => {
+    const page = $('#domPage');
+    const treeBox = $('#domTree');
+    const map = new Map(); // element -> uzol v strome
+    function build(el) {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.className = 'tree-node';
+      span.innerHTML = openTag(el);
+      span.addEventListener('click', () => select(el));
+      map.set(el, span);
+      li.append(span);
+      const ul = document.createElement('ul');
+      el.childNodes.forEach(n => {
+        if (n.nodeType === 1) ul.append(build(n));
+        else if (n.nodeType === 3 && n.textContent.trim()) {
+          const t = document.createElement('li');
+          t.className = 'tree-text';
+          t.textContent = '"' + n.textContent.trim() + '"';
+          ul.append(t);
+        }
+      });
+      if (ul.children.length) li.append(ul);
+      return li;
+    }
+    function select(el) {
+      highlight([el], page);
+      $$('.tree-node.active', treeBox).forEach(s => s.classList.remove('active'));
+      map.get(el)?.classList.add('active');
+    }
+    const root = document.createElement('ul');
+    const doc = document.createElement('li');
+    doc.innerHTML = '<span class="obj">document</span>';
+    const docUl = document.createElement('ul');
+    docUl.append(build($('article', page)));
+    doc.append(docUl);
+    root.append(doc);
+    treeBox.append(root);
+    page.addEventListener('click', e => {
+      const el = e.target.closest('article, article *');
+      if (el && page.contains(el)) select(el);
+    });
+  })();
+
+  /* ============================================================
+     2 Selektovanie
+     ============================================================ */
+  (() => {
+    const root = $('#selRoot');
+    const con = $('#selConsole');
+    const actions = {
+      byId: () => document.getElementById('otazky'),
+      byClass: () => root.getElementsByClassName('acc'),
+      byTag: () => root.getElementsByTagName('p'),
+      qs: () => root.querySelector('.panel'),
+      qsP: () => root.querySelector('.panel p'),
+      qsa: () => root.querySelectorAll('.acc'),
+      none: () => root.querySelector('.neexistuje')
+    };
+    $$('[data-sel]').forEach(btn => btn.addEventListener('click', () => {
+      const result = actions[btn.dataset.sel]();
+      const els = result === null ? [] : (result instanceof Element ? [result] : [...result]);
+      highlight(els, root);
+      logTo(con, '> console.log(' + btn.textContent + ')', 'muted');
+      logTo(con, describe(result), result === null ? 'err' : '');
+    }));
+    const input = $('#selInput');
+    function runOwn() {
+      const sel = input.value.trim();
+      if (!sel) { highlight([], root); return; }
+      try {
+        const list = root.querySelectorAll(sel);
+        highlight([...list], root);
+        input.classList.remove('is-invalid');
+        clearConsole(con);
+        logTo(con, `> document.querySelectorAll("${sel}")`, 'muted');
+        logTo(con, describe(list));
+      } catch (e) {
+        input.classList.add('is-invalid');
+      }
+    }
+    input.addEventListener('input', runOwn);
+  })();
+
+  /* ============================================================
+     3 Pridávanie
+     ============================================================ */
+  (() => {
+    const pamat = $('#pamat'), stranka = $('#addPage'), info = $('#krokInfo'), html = $('#addHtml');
+    const k1 = $('#krok1'), k2 = $('#krok2'), k3 = $('#krok3');
+    let div1 = null, pocet = 0;
+    const refresh = () => showHTML(html, stranka);
+    function showMemory() {
+      if (!div1) { pamat.innerHTML = '<span class="text-secondary small">zatiaľ prázdna</span>'; return; }
+      pamat.innerHTML = '<pre class="code-inspector small mb-0"></pre>';
+      showHTML(pamat.firstChild, div1, true);
+    }
+    k1.addEventListener('click', () => {
+      pocet++;
+      div1 = document.createElement('div');
+      div1.className = 'demo-box alt mt-2';
+      showMemory();
+      info.innerHTML = '<strong>Nič sa na stránke nestalo – prečo?</strong> Prvok existuje len v pamäti JavaScriptu. Pokračuj krokom 2.';
+      k1.disabled = true; k2.disabled = false;
+    });
+    k2.addEventListener('click', () => {
+      div1.textContent = 'Som nový div č. ' + pocet;
+      showMemory();
+      info.textContent = 'Prvok má text, ale na stránke stále nie je. Až krok 3 ho vloží do stránky.';
+      k2.disabled = true; k3.disabled = false;
+    });
+    k3.addEventListener('click', () => {
+      stranka.append(div1);
+      div1 = null;
+      showMemory();
+      refresh();
+      info.innerHTML = '<strong>Hotovo!</strong> append vložil prvok na koniec stránky. Môžeš kliknúť na krok 1 a pridať ďalší.';
+      k3.disabled = true; k1.disabled = false;
+    });
+    $('#krokReset').addEventListener('click', () => {
+      div1 = null; pocet = 0;
+      stranka.innerHTML = '<h3 class="h5">Domov</h3>';
+      showMemory(); refresh();
+      info.textContent = 'Klikni na krok 1.';
+      k1.disabled = false; k2.disabled = true; k3.disabled = true;
+    });
+    refresh();
+
+    // nákupný zoznam
+    const pole = $('#novaPolozka'), zoznam = $('#zoznam');
+    function pridaj(naZaciatok) {
+      if (pole.value.trim() === '') { pole.focus(); return; }
+      const li = document.createElement('li');
+      li.textContent = pole.value;
+      li.classList.add('list-group-item');
+      if (naZaciatok) zoznam.prepend(li); else zoznam.append(li);
+      pole.value = '';
+      pole.focus();
+    }
+    $('#pridajKoniec').addEventListener('click', () => pridaj(false));
+    $('#pridajZaciatok').addEventListener('click', () => pridaj(true));
+    pole.addEventListener('keydown', e => { if (e.key === 'Enter') pridaj(false); });
+  })();
+
+  /* ============================================================
+     4 Obsah
+     ============================================================ */
+  (() => {
+    const input = $('#obsahText');
+    $('#zapisVsetky').addEventListener('click', () => {
+      const text = input.value;
+      $('#outInnerText').innerText = text;
+      $('#outTextContent').textContent = text;
+      $('#outInnerHTML').innerHTML = text;
+    });
+    const clanok = $('#clanok'), con = $('#readConsole');
+    showHTML($('#clanokHtml'), clanok, true);
+    $$('[data-read]').forEach(btn => btn.addEventListener('click', () => {
+      const prop = btn.dataset.read;
+      let value = clanok[prop];
+      if (prop !== 'innerHTML') value = value.split('\n').map(s => s.trim()).filter(Boolean).join('\n');
+      else value = value.trim().replace(/\n\s+/g, '\n');
+      logTo(con, `clanok.${prop}:`, 'muted');
+      logTo(con, value);
+    }));
+  })();
+
+  /* ============================================================
+     5 Mazanie
+     ============================================================ */
+  (() => {
+    const karty = $('#karty'), html = $('#kartyHtml'), con = $('#kartyConsole');
+    const original = karty.innerHTML;
+    function refresh(msg) {
+      showHTML(html, karty, true);
+      clearConsole(con);
+      if (msg) logTo(con, msg, 'muted');
+      logTo(con, 'karty.children.length → ' + karty.children.length);
+    }
+    $$('[data-zmaz]').forEach(btn => btn.addEventListener('click', () => {
+      const b = $('#kartaB');
+      const akcia = btn.dataset.zmaz;
+      if (akcia === 'reset') { karty.innerHTML = original; refresh(); return; }
+      if (!b) {
+        refresh();
+        logTo(con, 'kartaB už v DOM neexistuje – remove() ho vymazal. Klikni na „Obnoviť ukážku“.', 'err');
+        return;
+      }
+      if (akcia === 'skry') b.style.display = 'none';
+      if (akcia === 'ukaz') b.style.display = '';
+      if (akcia === 'remove') b.remove();
+      refresh(btn.textContent);
+    }));
+    refresh();
+  })();
+
+  /* ============================================================
+     6 Atribúty
+     ============================================================ */
+  (() => {
+    const bulbSVG = on => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170">${on ? '<g stroke="#ffc107" stroke-width="5" stroke-linecap="round"><line x1="60" y1="22" x2="60" y2="8"/><line x1="82" y1="28" x2="89" y2="16"/><line x1="38" y1="28" x2="31" y2="16"/><line x1="98" y1="44" x2="110" y2="37"/><line x1="22" y1="44" x2="10" y2="37"/><line x1="104" y1="66" x2="117" y2="66"/><line x1="16" y1="66" x2="3" y2="66"/></g>' : ''}<path d="M60 28a38 38 0 0 0-22 69c6 5 9 11 9 18v5h26v-5c0-7 3-13 9-18A38 38 0 0 0 60 28z" fill="${on ? '#ffe066' : '#e9ecef'}" stroke="${on ? '#f0a500' : '#adb5bd'}" stroke-width="3"/><path d="M52 106l4-20 4 9 4-9 4 20" fill="none" stroke="${on ? '#b8860b' : '#adb5bd'}" stroke-width="2.5" stroke-linejoin="round"/><rect x="45" y="122" width="30" height="8" rx="3" fill="#adb5bd"/><rect x="45" y="132" width="30" height="8" rx="3" fill="#adb5bd"/><path d="M50 142h20l-4 10h-12z" fill="#6c757d"/></svg>`;
+    const uri = on => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(bulbSVG(on));
+    const zarovka = $('#zarovka'), kod = $('#atrKod'), html = $('#atrHtml');
+    zarovka.src = uri(false);
+    function show(el, code) { setCode(kod, code); showHTML(html, el, true); }
+    function nastavZarovku(on) {
+      const subor = on ? 'img/zarovka-on.svg' : 'img/zarovka-off.svg';
+      zarovka.setAttribute('src', uri(on));
+      zarovka.dataset.file = subor;
+      show(zarovka, `const zarovka = document.querySelector("#zarovka");\nzarovka.setAttribute("src", "${subor}");`);
+    }
+    $('#zapni').addEventListener('click', () => nastavZarovku(true));
+    $('#vypni').addEventListener('click', () => nastavZarovku(false));
+
+    const heslo = $('#hesloAtr'), ukaz = $('#ukazHeslo');
+    ukaz.addEventListener('click', () => {
+      if (heslo.getAttribute('type') === 'password') {
+        heslo.setAttribute('type', 'text');
+        ukaz.textContent = 'Skry heslo';
+        show(heslo, 'if (heslo.getAttribute("type") === "password") {\n  heslo.setAttribute("type", "text");\n}');
+      } else {
+        heslo.setAttribute('type', 'password');
+        ukaz.textContent = 'Ukáž heslo';
+        show(heslo, '// inak ho znova skryjeme\nheslo.setAttribute("type", "password");');
+      }
+    });
+
+    const suhlas = $('#suhlasAtr'), odoslat = $('#odoslatAtr');
+    suhlas.addEventListener('change', () => {
+      if (suhlas.checked) {
+        odoslat.removeAttribute('disabled');
+        show(odoslat, 'suhlas.addEventListener("change", function () {\n  if (suhlas.checked) {\n    odoslat.removeAttribute("disabled");\n  }\n});');
+      } else {
+        odoslat.setAttribute('disabled', '');
+        show(odoslat, '// checkbox odškrtnutý → tlačidlo znova zablokujeme\nodoslat.setAttribute("disabled", "");');
+      }
+    });
+    odoslat.addEventListener('click', () => { odoslat.textContent = 'Odoslané ✔'; setTimeout(() => odoslat.textContent = 'Odoslať', 1200); });
+    showHTML(html, zarovka, true);
+  })();
+
+  /* ============================================================
+     7 Triedy
+     ============================================================ */
+  (() => {
+    const box = $('#triedyBox'), kod = $('#triedyKod'), con = $('#triedyConsole'), holder = $('#triedyTlacidla');
+    const triedy = ['bg-primary', 'text-white', 'shadow-lg', 'rounded-pill', 'fs-3', 'border-danger', 'border-3', 'text-uppercase'];
+    const original = box.className;
+    function stav() {
+      clearConsole(con);
+      logTo(con, 'triedyBox.className → "' + box.className + '"');
+      $$('button', holder).forEach(b => b.classList.toggle('active', box.classList.contains(b.dataset.trieda)));
+    }
+    triedy.forEach(t => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-sm btn-outline-primary font-monospace';
+      b.dataset.trieda = t;
+      b.textContent = t;
+      b.addEventListener('click', () => {
+        box.classList.toggle(t);
+        setCode(kod, `const triedyBox = document.querySelector("#triedyBox");\ntriedyBox.classList.toggle("${t}");`);
+        stav();
+      });
+      holder.append(b);
+    });
+    $('#triedaAdd').addEventListener('click', () => { box.classList.add('shadow-lg'); setCode(kod, 'triedyBox.classList.add("shadow-lg");'); stav(); });
+    $('#triedaRemove').addEventListener('click', () => { box.classList.remove('shadow-lg'); setCode(kod, 'triedyBox.classList.remove("shadow-lg");'); stav(); });
+    $('#triedaContains').addEventListener('click', () => {
+      setCode(kod, 'console.log(triedyBox.classList.contains("shadow-lg"));');
+      stav();
+      logTo(con, 'classList.contains("shadow-lg") → ' + box.classList.contains('shadow-lg'));
+    });
+    const reset = document.createElement('button');
+    reset.type = 'button'; reset.className = 'btn btn-sm btn-outline-secondary'; reset.textContent = 'Obnoviť';
+    reset.addEventListener('click', () => { box.className = original; setCode(kod, '// pôvodné triedy\ntriedyBox.className = "' + original + '";'); stav(); });
+    holder.append(reset);
+    stav();
+  })();
+
+  /* ============================================================
+     8 Štýly
+     ============================================================ */
+  (() => {
+    const box = $('#stylBox'), kod = $('#stylKod');
+    const c = { bg: $('#stBg'), color: $('#stColor'), pad: $('#stPadding'), font: $('#stFont'), rad: $('#stRadius'), rot: $('#stRotate') };
+    const defaults = { bg: '#ffffff', color: '#212529', pad: 10, font: 16, rad: 0, rot: 0 };
+    function apply() {
+      box.style.backgroundColor = c.bg.value;
+      box.style.color = c.color.value;
+      box.style.padding = c.pad.value + 'px';
+      box.style.fontSize = c.font.value + 'px';
+      box.style.borderRadius = c.rad.value + 'px';
+      box.style.transform = `rotate(${c.rot.value}deg)`;
+      $('#stPaddingVal').textContent = c.pad.value + 'px';
+      $('#stFontVal').textContent = c.font.value + 'px';
+      $('#stRadiusVal').textContent = c.rad.value + 'px';
+      $('#stRotateVal').textContent = c.rot.value;
+      setCode(kod, [
+        'const stylBox = document.querySelector("#stylBox");',
+        `stylBox.style.backgroundColor = "${c.bg.value}";`,
+        `stylBox.style.color = "${c.color.value}";`,
+        `stylBox.style.padding = "${c.pad.value}px";`,
+        `stylBox.style.fontSize = "${c.font.value}px";`,
+        `stylBox.style.borderRadius = "${c.rad.value}px";`,
+        `stylBox.style.transform = "rotate(${c.rot.value}deg)";`
+      ].join('\n'));
+    }
+    Object.values(c).forEach(inp => inp.addEventListener('input', apply));
+    $('#stReset').addEventListener('click', () => { Object.keys(c).forEach(k => c[k].value = defaults[k]); apply(); });
+    apply();
+  })();
+
+  /* ============================================================
+     9 Udalosti
+     ============================================================ */
+  (() => {
+    const con = $('#udalostiConsole');
+    const zaloguj = text => {
+      logTo(con, text);
+      while (con.children.length > 30) con.firstChild.remove();
+    };
+    let pocet = 0;
+    $('#klikTlacidlo').addEventListener('click', () => {
+      pocet++;
+      $('#klikPocet').textContent = pocet;
+      zaloguj('click → počet = ' + pocet);
+    });
+    const meno = $('#inputUdalost');
+    meno.addEventListener('input', () => {
+      $('#inputMeno').textContent = meno.value || '…';
+      $('#inputDlzka').textContent = meno.value.length;
+    });
+    meno.addEventListener('change', () => zaloguj('change → value = "' + meno.value + '"'));
+    const plocha = $('#mysPlocha'), bod = $('#mysBod'), info = $('#mysInfo');
+    plocha.addEventListener('mousemove', e => {
+      bod.style.display = 'block';
+      bod.style.left = e.offsetX + 'px';
+      bod.style.top = e.offsetY + 'px';
+      info.textContent = `offsetX: ${e.offsetX}, offsetY: ${e.offsetY} | clientX: ${e.clientX}, clientY: ${e.clientY}`;
+    });
+    plocha.addEventListener('mouseleave', () => { bod.style.display = 'none'; });
+    plocha.addEventListener('mousedown', e => {
+      const tl = ['ľavé', 'stredné', 'pravé'][e.button] || e.button;
+      zaloguj(`mousedown → event.button = ${e.button} (${tl} tlačidlo)`);
+    });
+    plocha.addEventListener('contextmenu', e => e.preventDefault());
+    const kl = $('#klavesInput');
+    kl.addEventListener('keydown', e => {
+      $('#klavesKey').textContent = e.key === ' ' ? '␣' : e.key;
+      $('#klavesInfo').innerHTML = `event.key: "${esc(e.key)}"<br>event.code: "${esc(e.code)}"<br>shiftKey: ${e.shiftKey} · ctrlKey: ${e.ctrlKey} · altKey: ${e.altKey}`;
+      zaloguj(`keydown → key = "${e.key}"`);
+    });
+  })();
+
+  /* ============================================================
+     10 Inputy
+     ============================================================ */
+  (() => {
+    const a = $('#cisloA'), b = $('#cisloB'), con = $('#scitajConsole');
+    $('#scitajZle').addEventListener('click', () => {
+      const r = a.value + b.value;
+      logTo(con, `a.value + b.value → "${r}"   (typeof: ${typeof r})`, 'err');
+    });
+    $('#scitajDobre').addEventListener('click', () => {
+      const r = Number(a.value) + Number(b.value);
+      logTo(con, `Number(a.value) + Number(b.value) → ${r}   (typeof: ${typeof r})`);
+    });
+
+    const kod = $('#fKod'), fcon = $('#fConsole');
+    $('#fCitaj').addEventListener('click', () => {
+      setCode(kod, [
+        'const meno = document.getElementById("fMeno").value;',
+        'const vek = Number(document.getElementById("fVek").value);',
+        'const krajina = document.getElementById("fKrajina").value;',
+        'const gdpr = document.getElementById("fGdpr").checked;',
+        'const pohlavie = document.querySelector(\'input[name="fPohlavie"]:checked\');',
+        '',
+        'console.log(meno, vek, krajina, gdpr);',
+        'console.log(pohlavie ? pohlavie.value : "nevybraté");'
+      ].join('\n'));
+      const p = document.querySelector('input[name="fPohlavie"]:checked');
+      clearConsole(fcon);
+      logTo(fcon, 'meno: "' + $('#fMeno').value + '"');
+      logTo(fcon, 'vek: ' + Number($('#fVek').value) + ($('#fVek').value === '' ? '   ← prázdny input dá Number("") = 0 !' : ''));
+      logTo(fcon, 'krajina: "' + $('#fKrajina').value + '"');
+      logTo(fcon, 'gdpr: ' + $('#fGdpr').checked);
+      logTo(fcon, 'pohlavie: ' + (p ? p.value : 'nevybraté'));
+    });
+    $('#fVypln').addEventListener('click', () => {
+      $('#fMeno').value = 'Jana';
+      $('#fVek').value = 17;
+      $('#fKrajina').value = 'SK';
+      $('#fGdpr').checked = true;
+      $('#fZena').checked = true;
+      setCode(kod, [
+        'document.getElementById("fMeno").value = "Jana";',
+        'document.getElementById("fVek").value = 17;',
+        'document.getElementById("fKrajina").value = "SK";',
+        'document.getElementById("fGdpr").checked = true;',
+        'document.getElementById("fZena").checked = true;'
+      ].join('\n'));
+      clearConsole(fcon);
+      logTo(fcon, 'Hodnoty sme do formulára vložili JavaScriptom.', 'muted');
+    });
+  })();
+
+  /* ============================================================
+     11 Kalkulačka (ukážka)
+     ============================================================ */
+  (() => {
+    const vysledok = $('#calcResult');
+    function solve() {
+      const priklad = vysledok.value;
+      if (!/^[0-9+\-*/. ]+$/.test(priklad)) { vysledok.value = priklad === '' ? '' : 'Chyba'; return; }
+      try {
+        const cislo = Function('"use strict"; return (' + priklad + ')')();
+        vysledok.value = isFinite(cislo) ? Math.round(cislo * 1e10) / 1e10 : 'Chyba';
+      } catch (e) { vysledok.value = 'Chyba'; }
+    }
+    $('#calcDemo').addEventListener('click', e => {
+      const btn = e.target.closest('[data-calc]');
+      if (!btn) return;
+      const x = btn.dataset.calc;
+      if (vysledok.value === 'Chyba') vysledok.value = '';
+      if (x === 'C') vysledok.value = '';
+      else if (x === '=') solve();
+      else vysledok.value += x;
+    });
+  })();
+
+  /* ============================================================
+     12 Playground
+     ============================================================ */
+  (() => {
+    const MINI_HTML = `<header class="bg-body-tertiary px-3 py-2 mb-3 d-flex justify-content-between">
+  <a href="#">Logo</a>
+  <nav>Domov · O nás · Q&amp;A · Kontakt</nav>
+</header>
+<h1>Domov</h1>
+<article>
+  <p>Text s <b>boldom</b></p>
+  <p style="display:none;">Text 2</p>
+</article>
+<section id="otazky" class="container">
+  <h2>Najčastejšie otázky</h2>
+  <div class="acc">Otázka 1</div>
+  <div class="panel"><p>Odpoveď 1</p></div>
+  <div class="acc">Otázka 2</div>
+  <div class="panel"><p>Odpoveď 2</p></div>
+  <div class="acc">Otázka 3</div>
+  <div class="panel"><p>Odpoveď 3</p></div>
+</section>
+<ul id="zoznam">
+  <li>auto</li>
+  <li>motorka</li>
+  <li>bicykel</li>
+</ul>
+<button id="tlacidlo" class="btn btn-primary">Klikni</button>`;
+
+    const PRESETS = [
+      ['Selektovanie elementov', `const otazky = document.getElementById("otazky");
+console.log(otazky);
+
+const vsetkyOtazky = document.querySelectorAll(".acc");
+console.log("Počet otázok: " + vsetkyOtazky.length);
+
+// každú otázku zafarbíme
+vsetkyOtazky.forEach(function (otazka) {
+  otazka.style.color = "crimson";
+});`],
+      ['createElement + append', `const body = document.body;
+const div1 = document.createElement("div");
+// po tomto riadku sa na stránke ešte nič nezmení...
+
+div1.textContent = "Som nový div!";
+div1.classList.add("alert", "alert-success", "m-3");
+body.append(div1); // ...až teraz je div na stránke`],
+      ['innerText vs. innerHTML', `const body = document.body;
+const div1 = document.createElement("div");
+const div2 = document.createElement("div");
+body.append(div1);
+body.append(div2);
+
+const text = "Moj <b>hruby</b> text";
+div1.innerText = text; // textContent by urobilo to isté
+div2.innerHTML = text;`],
+      ['Získavanie obsahu', `const article = document.querySelector("article");
+console.log(article.textContent); // všetok text, aj skrytý
+console.log(article.innerText);   // iba viditeľný text
+console.log(article.innerHTML);   // HTML kód`],
+      ['Mazanie: remove()', `const article = document.querySelector("article");
+article.remove();
+
+console.log(document.querySelector("article")); // null – už neexistuje`],
+      ['Atribúty a triedy', `const html = document.querySelector("html");
+html.setAttribute("lang", "en");
+console.log(html.getAttribute("lang"));
+
+const article = document.querySelector("article");
+article.classList.add("bg-warning-subtle", "p-3", "rounded");
+console.log(article.className);`],
+      ['Štýly', `const article = document.querySelector("article");
+article.style.backgroundColor = "red";
+article.style.color = "white";
+article.style.padding = "10%";`],
+      ['Udalosť click', `const tlacidlo = document.querySelector("#tlacidlo");
+let pocet = 0;
+
+tlacidlo.addEventListener("click", function () {
+  pocet++;
+  tlacidlo.textContent = "Klikol si " + pocet + "×";
+  console.log("klik č. " + pocet);
+});`],
+      ['Zoznam z poľa (cyklus)', `const dopravnyProstriedok = ["auto", "motorka", "bicykel", "kolobežka"];
+const zoznam = document.querySelector("#zoznam");
+zoznam.innerHTML = ""; // vyprázdnime pôvodný zoznam
+
+for (const prostriedok of dopravnyProstriedok) {
+  const li = document.createElement("li");
+  li.textContent = prostriedok;
+  zoznam.append(li);
+}`],
+      ['Prázdny kód', `// Tu píš svoj kód
+`]
+    ];
+
+    const frame = $('#playFrame'), code = $('#playCode'), con = $('#playConsole'), preset = $('#playPreset');
+    PRESETS.forEach(([name], i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = name;
+      preset.append(o);
+    });
+    $('#playHtml').innerHTML = (() => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = MINI_HTML;
+      return prettyHTML(tmp).trimEnd();
+    })();
+
+    function run() {
+      clearConsole(con);
+      const userCode = code.value.replace(/<\/script/gi, '<\\/script');
+      const bridge = `(function () {
+  function fmt(v) {
+    if (v === null) return 'null';
+    if (v === undefined) return 'undefined';
+    if (v instanceof Element) { var h = v.outerHTML; return h.length > 400 ? h.slice(0, 400) + ' …' : h; }
+    if (v instanceof NodeList || v instanceof HTMLCollection) {
+      var n = v instanceof NodeList ? 'NodeList' : 'HTMLCollection';
+      return n + '(' + v.length + ') [ ' + Array.prototype.map.call(v, function (e) { return e.tagName.toLowerCase() + (e.className ? '.' + String(e.className).trim().split(/\\s+/).join('.') : ''); }).join(', ') + ' ]';
+    }
+    if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+    return String(v);
+  }
+  ['log', 'info', 'warn', 'error'].forEach(function (k) {
+    console[k] = function () {
+      parent.postMessage({ __lab: true, type: k, text: Array.prototype.map.call(arguments, fmt).join(' ') }, '*');
+    };
+  });
+  window.addEventListener('error', function (e) {
+    parent.postMessage({ __lab: true, type: 'error', text: e.message + (e.lineno ? ' (riadok ' + (e.lineno - OFFSET) + ')' : '') }, '*');
+  });
+})();`;
+      const head = `<!doctype html><html lang="sk"><head><meta charset="utf-8"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{padding:1rem;font-size:15px}.acc{font-weight:600;background:#eef2ff;padding:.25rem .5rem;border-radius:.3rem;margin-top:.3rem;cursor:pointer}.panel p{margin:.2rem .5rem}h1{font-size:1.8rem}h2{font-size:1.2rem}</style></head><body>${MINI_HTML}<script>`;
+      const middle = `<\/script>\n<script>\n`;
+      // riadok, na ktorom začína kód používateľa (pre správne číslo riadku v chybe)
+      const before = head + bridge + middle;
+      const offset = before.split('\n').length - 1;
+      frame.srcdoc = head + bridge.replace('OFFSET', offset) + middle + userCode + '\n<\/script></body></html>';
+    }
+    window.addEventListener('message', e => {
+      if (e.source !== frame.contentWindow || !e.data || !e.data.__lab) return;
+      logTo(con, e.data.text, e.data.type === 'error' ? 'err' : '');
+    });
+    function load(i) { code.value = PRESETS[i][1]; run(); }
+    preset.addEventListener('change', () => load(preset.value));
+    $('#playReset').addEventListener('click', () => load(preset.value));
+    $('#playRun').addEventListener('click', run);
+    code.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const s = code.selectionStart;
+        code.setRangeText('  ', s, code.selectionEnd, 'end');
+      }
+    });
+    load(0);
+  })();
+</script>
+</body>
+</html>
