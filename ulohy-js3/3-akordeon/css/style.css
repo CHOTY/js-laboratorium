@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.accordion {
+  border-bottom: 1px solid #ddd;
+}
+
+.question {
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+
+/* najskôr skryjeme odpovede */
+.accordion .answer {
+  display: none;
+}
+
+/* pred každú otázku pridáme pomocou ::before znak + */
+.question::before {
+  content: '+ ';
+}
+
+/* otázka pod myšou alebo v otvorenom akordeóne */
+.question:hover,
+.accordion.active .question {
+  background-color: #bfbcbc;
+  cursor: pointer;
+}
+
+/* zobrazená odpoveď – trieda active na .accordion */
+.accordion.active .answer {
+  display: block;
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+
+/* pri otvorenej otázke namiesto + dáme - */
+.accordion.active .question::before {
+  content: '- ';
+}

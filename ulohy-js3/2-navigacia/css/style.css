@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  color: #1f2937;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* ---------- hlavička a menu ---------- */
+.main-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  background-color: #1f2937;
+  max-width: none;
+}
+
+.main-header > a {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+}
+
+.main-menu {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-menu a {
+  color: #e5e7eb;
+  text-decoration: none;
+}
+
+.main-menu a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.hamburger {
+  display: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+main {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* ---------- mobil ---------- */
+@media (max-width: 768px) {
+  .main-menu {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  /* trieda responsive menu zobrazí pod hlavičkou */
+  .main-menu.responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 0 20px 10px;
+    background-color: #1f2937;
+  }
+
+  .main-menu.responsive a {
+    display: block;
+    padding: 10px 0;
+    border-top: 1px solid #374151;
+  }
+}

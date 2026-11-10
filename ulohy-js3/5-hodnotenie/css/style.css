@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  padding: 40px 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f3f4f6;
+}
+
+.karta {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 30px;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  color: #1f2937;
+}
+
+.hviezda {
+  display: inline-block;
+  font-size: 3rem;
+  color: #d1d5db;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.1s, transform 0.1s;
+}
+
+/* rozsvietená hviezda – túto triedu pridáva a odoberá JavaScript */
+.hviezda.svieti {
+  color: #f59e0b;
+  transform: scale(1.1);
+}
+
+#text {
+  margin-bottom: 0;
+  font-size: 1.1rem;
+  color: #374151;
+}

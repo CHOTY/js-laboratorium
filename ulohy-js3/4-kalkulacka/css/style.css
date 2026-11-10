@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 30px 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f3f4f6;
+}
+
+h1 {
+  text-align: center;
+  color: #1f2937;
+}
+
+/* telo kalkulačky */
+.calculator {
+  width: 300px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #1f2937;
+  border-radius: 18px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* všetky tlačidlá */
+button {
+  flex: 1;
+  height: 46px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* čísla a bodka */
+.button {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+/* + - * / */
+.operator {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+/* = */
+.equal-sign {
+  background-color: #10b981;
+  color: #fff;
+}
+
+/* vymazať */
+#clear {
+  flex: 0 0 90px;
+  background-color: #ef4444;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* displej */
+.result {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  text-align: right;
+  font-family: "Courier New", monospace;
+  font-size: 1.3rem;
+  font-weight: bold;
+}

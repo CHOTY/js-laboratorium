@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript – funkcie a udalosti</title>
+  <meta name="description" content="JS 3 – typy funkcií, anonymné a arrow funkcie, udalosti, onclick, event handler a addEventListener. Interaktívne ukážky a úlohy.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f8fc; }
+    code { color: #9a2878; }
+    .section-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; scroll-margin-top: 1rem; }
+    .section-number { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; padding: 0 .4rem; border-radius: 1rem; background: #d1f2e4; color: #146c43; font-weight: 700; margin-right: .5rem; }
+    .demo-area { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; overflow: hidden; }
+    .tiny-label { font-size: .8rem; color: #657086; }
+
+    .code-inspector { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 0; font: .85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .code-inspector .kw { color: #c4b5fd; }
+    .code-inspector .str { color: #86efac; }
+    .code-inspector .com { color: #9ca3af; font-style: italic; }
+    .code-inspector .obj { color: #93c5fd; }
+    .code-inspector .num { color: #fdba74; }
+    .code-inspector .tag { color: #93c5fd; }
+    .code-inspector .attr { color: #fcd34d; }
+    .code-inspector .value { color: #86efac; }
+    .code-inspector .ln { display: block; min-height: 1.55em; margin: 0 -.5rem; padding: 0 .5rem; border-radius: .3rem; }
+    .copy-wrap { position: relative; }
+    .copy-wrap > pre { padding-top: 2.1rem; }
+    .copy-btn { position: absolute; top: .45rem; right: .45rem; font-size: .7rem; padding: .1rem .45rem; border-radius: .35rem; border: 1px solid #ffffff30; background: #ffffff14; color: #e5e7eb; }
+    .copy-btn:hover { background: #ffffff2a; }
+
+    .console-out { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3.2rem; max-height: 260px; overflow: auto; font: .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .console-out .line { padding: .15rem 0; border-bottom: 1px solid #ffffff10; }
+    .console-out .line::before { content: "› "; color: #60a5fa; }
+    .console-out .line.err { color: #fca5a5; }
+    .console-out .line.err::before { content: "✖ "; color: #f87171; }
+    .console-out .line.warn { color: #fde68a; }
+    .console-out .line.warn::before { content: "⚠ "; color: #fbbf24; }
+    .console-out .line.hint { color: #fcd34d; font-family: system-ui, sans-serif; font-size: .8rem; }
+    .console-out .line.hint::before { content: "→ "; color: #fcd34d; }
+    .console-out .line.muted { color: #6b7280; }
+    .console-out .line.muted::before { content: ""; }
+
+    .code-btn { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .8rem; text-align: left; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+    .snippet { display: flex; flex-direction: column; gap: .5rem; height: 100%; }
+    .snippet .console-out { min-height: 2.6rem; }
+    .snippet-title { font-weight: 600; font-size: .95rem; }
+    .mini-frame { width: 100%; border: 0; background: #fff; border-radius: .5rem; display: block; }
+
+    .types-grid .type-card { height: 100%; border-radius: .75rem; background: #fff; border: 1px solid #e3e7f0; padding: 1rem; }
+    .type-card .badge { font-weight: 600; }
+    .zadanie-out p { margin-bottom: .35rem; font-size: 1.05rem; }
+
+    .step-btns .btn { font-size: .8rem; }
+    .ev-table td { transition: background-color .6s ease; }
+    .ev-table tr.flash td { background-color: #fff3a8 !important; transition: none; }
+    .ev-table td.count { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; text-align: right; width: 4rem; }
+    .ev-box { min-height: 120px; border-radius: .75rem; border: 2px solid #76c9a7; background: #e2f7ef; color: #155b43; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600; user-select: none; cursor: pointer; padding: 1rem; }
+
+    .live-btn { min-width: 9rem; transition: background-color .15s, border .15s; }
+
+    /* ukážka navigácie (Úloha 2) */
+    .demo-site { max-width: 360px; margin: 0 auto; border: 1px solid #d6dbe6; border-radius: .75rem; overflow: hidden; background: #fff; }
+    .demo-site .main-header { background: #1f2937; color: #fff; padding: .6rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .demo-site .main-header > a { color: #fff; font-weight: 700; text-decoration: none; }
+    .demo-site .hamburger { color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; user-select: none; text-decoration: none; }
+    .demo-site .main-nav { display: contents; }
+    .demo-site .main-menu { display: none; list-style: none; margin: .5rem 0 0; padding: 0; width: 100%; order: 3; }
+    .demo-site .main-menu.responsive { display: block; }
+    .demo-site .main-menu a { display: block; color: #e5e7eb; padding: .45rem 0; border-top: 1px solid #ffffff1f; text-decoration: none; }
+    .demo-site .page { padding: 1rem; color: #6b7280; font-size: .9rem; }
+
+    /* ukážka akordeónu (Úloha 3) – štýly zo slajdu */
+    .demo-acc .question { background-color: #f7f7f7; color: black; padding: 2%; }
+    .demo-acc .accordion .answer { display: none; }
+    .demo-acc .question::before { content: '+ '; }
+    .demo-acc .question:hover, .demo-acc .accordion.active .question { background-color: #bfbcbc; cursor: pointer; }
+    .demo-acc .accordion.active .answer { display: block; background-color: #f7f7f7; color: black; padding: 2%; }
+    .demo-acc .accordion.active .question::before { content: '- '; }
+
+    /* ukážka kalkulačky (Úloha 4) */
+    .calc-demo { width: 300px; max-width: 100%; margin: 0 auto; background: #1f2937; padding: 18px; border-radius: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .calc-demo .calc-row { display: flex; justify-content: space-between; gap: 8px; }
+    .calc-demo button { flex: 1; height: 46px; border: 0; border-radius: 10px; font-size: 1.1rem; font-weight: 600; background: #e5e7eb; color: #111827; cursor: pointer; }
+    .calc-demo button:hover { filter: brightness(1.08); }
+    .calc-demo .operator { background: #f59e0b; color: #fff; }
+    .calc-demo .equal-sign { background: #10b981; color: #fff; }
+    .calc-demo #cdClear { flex: 0 0 90px; background: #ef4444; color: #fff; font-size: .9rem; }
+    .calc-demo .result { flex: 1; min-width: 0; height: 46px; border: 0; border-radius: 10px; padding: 0 12px; text-align: right; font: 600 1.25rem ui-monospace, Menlo, Consolas, monospace; background: #f9fafb; }
+
+    /* ukážka hodnotenia (Úloha 5) */
+    .stars-demo { text-align: center; }
+    .stars-demo .hviezda { font-size: 2.6rem; color: #d1d5db; cursor: pointer; transition: color .1s, transform .1s; display: inline-block; user-select: none; }
+    .stars-demo .hviezda.svieti { color: #f59e0b; transform: scale(1.1); }
+
+    .quiz-question { margin-bottom: 1.25rem; }
+    .quiz-question .list-group-item { cursor: pointer; }
+    .quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
+
+    #playFrame { height: 330px; }
+    #playCode { min-height: 360px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85rem; tab-size: 2; }
+    .task-card { border: 2px solid #d1f2e4; border-radius: 1rem; padding: 1.25rem; background: #fbfefc; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">JavaScript laboratórium</a>
+    <div class="d-flex flex-wrap gap-1">
+      <a class="btn btn-sm btn-outline-light" href="js1.html">JS 1 · Základy</a>
+      <a class="btn btn-sm btn-outline-light" href="js2.html">JS 2 · DOM</a>
+      <a class="btn btn-sm btn-light" href="js3.html" aria-current="page">JS 3 · Udalosti</a>
+    </div>
+  </div>
+</nav>
+
+<header class="container py-5" id="top">
+  <span class="badge text-bg-success mb-3">JavaScript 3</span>
+  <h1 class="display-5 fw-bold">Viac o funkciách a udalostiach</h1>
+  <p class="lead col-lg-8">Typy funkcií, anonymné a arrow funkcie a tri spôsoby, ako stránka zareaguje na kliknutie. Na konci si navigáciu, akordeón aj kalkulačku prerobíme tak, aby v HTML nebol ani jeden <code>onclick</code>.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#rozcvicka">0 · Rozcvička</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#typy">1 · Typy funkcií</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#anonymne">2 · Anonymné</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#arrow">3 · Arrow</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#eventy">4 · Udalosti</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#klik">5 · onclick vs. listener</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#navigacia">6 · Navigácia</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#akordeon">7 · Akordeón</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#playground">8 · Playground</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Úlohy na hodinu</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 0 ROZCVIČKA -->
+  <section class="card section-card mb-4" id="rozcvicka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">0</span>Rozcvička z JS 2</h2>
+      <p>Štyri otázky z minulej hodiny – dnes ich budeme potrebovať.</p>
+      <div data-quiz="rozcvicka"></div>
+    </div>
+  </section>
+
+  <!-- 1 TYPY FUNKCIÍ -->
+  <section class="card section-card mb-4" id="typy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Tri typy funkcií</h2>
+      <p>Doteraz sme písali funkcie v tvare <code>function nazovFunkcie() { … }</code>. Podľa toho, koľko hodnôt funkcia dostane, rozlišujeme tri typy:</p>
+      <div class="row g-3 types-grid mb-3">
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">bez parametra</span>
+<pre class="code-inspector js">function ahoj() {
+  return "Ahoj";
+}
+ahoj();  // "Ahoj"</pre>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">s jedným parametrom</span>
+<pre class="code-inspector js">function pozdravMeno(meno) {
+  return ahoj() + " " + meno;
+}
+pozdravMeno("Jožo");  // "Ahoj Jožo"</pre>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">s viacerými parametrami</span>
+<pre class="code-inspector js">function obsahStvorca(strana, jednotka) {
+  return strana * strana + jednotka;
+}
+obsahStvorca(5, "cm");  // "25cm"</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Zadanie 1</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <p class="small mb-2">Napíš do HTML tri odseky:</p>
+<pre class="code-inspector html" data-copy>&lt;p id="bez_parametra"&gt;Funkcia bez parametra: &lt;/p&gt;
+&lt;p id="jeden_parameter"&gt;Funkcia s jedným parametrom: &lt;/p&gt;
+&lt;p id="dva_parametre"&gt;Funkcia s dvoma parametrami: &lt;/p&gt;</pre>
+          <ol class="small mt-3 mb-0">
+            <li class="mb-1"><strong>a)</strong> Premenná <code>bez_parametra</code> načíta odsek <code>#bez_parametra</code>. Funkcia <code>ahoj()</code> vráti text „Ahoj“. Výsledok pripíš k odseku.</li>
+            <li class="mb-1"><strong>b)</strong> Premenná <code>jeden_parameter</code>, funkcia <code>pozdravMeno(meno)</code> zavolá <code>ahoj()</code> a pripíše k nej meno.</li>
+            <li><strong>c)</strong> Premenná <code>dva_parametre</code>, funkcia <code>obsahStvorca(strana, jednotka)</code> vypíše obsah aj s jednotkou a mocninou, napr. 25cm<sup>2</sup>. Vyber vhodnú metódu, aby sa mocnina zobrazila správne.</li>
+          </ol>
+        </div>
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Takto má vyzerať výsledok – skús meniť hodnoty</div>
+          <div class="demo-area zadanie-out mb-2">
+            <p>Funkcia bez parametra: <span id="z1a"></span></p>
+            <p>Funkcia s jedným parametrom: <span id="z1b"></span></p>
+            <p class="mb-0">Funkcia s dvoma parametrami: <span id="z1c"></span></p>
+          </div>
+          <div class="row g-2">
+            <div class="col-sm-4"><label class="form-label small mb-0" for="z1Meno">meno</label><input class="form-control form-control-sm" id="z1Meno" value="Jožo"></div>
+            <div class="col-4 col-sm-2"><label class="form-label small mb-0" for="z1Strana">strana</label><input type="number" class="form-control form-control-sm" id="z1Strana" value="5"></div>
+            <div class="col-4 col-sm-2"><label class="form-label small mb-0" for="z1Jednotka">jednotka</label><input class="form-control form-control-sm" id="z1Jednotka" value="cm"></div>
+            <div class="col-4 col-sm-4"><label class="form-label small mb-0" for="z1Metoda">c) pripíš cez</label><select class="form-select form-select-sm" id="z1Metoda"><option value="innerHTML">innerHTML</option><option value="textContent">textContent</option></select></div>
+          </div>
+          <p class="tiny-label mt-2 mb-0">Prepni <code>textContent</code> a pozri sa, čo sa stane s mocninou.</p>
+        </div>
+      </div>
+      <details class="mt-3">
+        <summary class="fw-semibold">Riešenie Zadania 1 (najprv to skús sám)</summary>
+<pre class="code-inspector js mt-2" data-copy>const bez_parametra = document.getElementById("bez_parametra");
+const jeden_parameter = document.getElementById("jeden_parameter");
+const dva_parametre = document.getElementById("dva_parametre");
+
+// a) funkcia bez parametra
+function ahoj() {
+  return "Ahoj";
+}
+bez_parametra.textContent += ahoj();
+
+// b) funkcia s jedným parametrom – vo vnútri volá inú funkciu
+function pozdravMeno(meno) {
+  return ahoj() + " " + meno;
+}
+jeden_parameter.textContent += pozdravMeno("Jožo");
+
+// c) funkcia s dvoma parametrami
+function obsahStvorca(strana, jednotka) {
+  return strana * strana + jednotka + "&lt;sup&gt;2&lt;/sup&gt;";
+}
+dva_parametre.innerHTML += obsahStvorca(5, "cm"); // innerHTML, inak by sa &lt;sup&gt; vypísalo ako text</pre>
+      </details>
+      <p class="tiny-label mt-2 mb-0"><code>+=</code> text <strong>pripíše</strong> k tomu, čo už v odseku je. Samotné <code>=</code> by pôvodný text „Funkcia bez parametra:“ prepísalo.</p>
+    </div>
+  </section>
+
+  <!-- 2 ANONYMNÉ FUNKCIE -->
+  <section class="card section-card mb-4" id="anonymne">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Anonymné funkcie</h2>
+      <p>Anonymná funkcia je funkcia <strong>bez mena</strong>. Môže mať parametre ako každá iná. Keďže ju nemôžeme zavolať menom, používa sa tromi spôsobmi:</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">1. Uložená do premennej</div>
+<pre class="code-inspector js">const vynasob = function (x, y) {
+  return x * y;
+};
+
+console.log(vynasob(2, 4));</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Meno má premenná, nie funkcia.</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">2. Odovzdaná inej funkcii</div>
+<pre class="code-inspector js">setTimeout(function () {
+  console.log("Prešla 1 sekunda");
+}, 1000);
+
+console.log("Toto sa vypíše skôr");</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Funkciu dostane <code>setTimeout</code> a spustí ju neskôr. Presne takto ju o chvíľu odovzdáme <code>addEventListener</code>.</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">3. Zavolaná hneď</div>
+<pre class="code-inspector js">// funkcia
+(function () {
+  console.log("Toto je anonymná funkcia");
+})
+// zavolanie funkcie
+();</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Zátvorky okolo funkcie z nej spravia hodnotu, <code>()</code> za nimi ju hneď spustí. Hovorí sa tomu IIFE.</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info small mt-3 mb-0">Najčastejšie uvidíš anonymnú funkciu pri udalostiach: <code>tlacidlo.addEventListener("click", function () { … });</code> – funkcia nemá meno, lebo ju nikde inde nevoláme.</div>
+    </div>
+  </section>
+
+  <!-- 3 ARROW FUNKCIE -->
+  <section class="card section-card mb-4" id="arrow">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Arrow funkcie</h2>
+      <p>Arrow funkcia nie je nový typ funkcie, len <strong>kratší zápis</strong>. Nepoužíva slovo <code>function</code> a funkciu priradí do premennej pomocou šípky <code>=&gt;</code>. Uvidíš ju často v kóde iných programátorov. Vyber si funkciu a prejdi prevod krok po kroku.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="arPriklad" aria-label="Funkcia na prevod">
+              <option value="nahodne">bez parametra – nahodneCislo()</option>
+              <option value="umocni" selected>s jedným parametrom – umocni(x)</option>
+              <option value="vynasob">s dvoma parametrami – vynasob(x, y)</option>
+              <option value="pozdrav">s viacerými príkazmi – pozdrav(meno)</option>
+            </select>
+          </div>
+          <div class="btn-group flex-wrap step-btns mb-2" role="group" aria-label="Kroky prevodu" id="arKroky"></div>
+          <pre class="code-inspector js" id="arKod"></pre>
+          <div class="alert alert-light border small mt-2 mb-0" id="arVysvetlenie"></div>
+        </div>
+        <div class="col-lg-5">
+          <button type="button" class="btn btn-sm btn-success mb-2" id="arSpusti">▶ Spustiť tento krok</button>
+          <div class="console-out" id="arConsole" style="min-height: 120px"><div class="line muted">Konzola</div></div>
+          <div class="table-responsive mt-3">
+            <table class="table table-sm small mb-0">
+              <thead><tr><th>Klasický zápis</th><th>Arrow zápis</th></tr></thead>
+              <tbody>
+                <tr><td><code>function nahodneCislo() { return Math.random(); }</code></td><td><code>const nahodneCislo = () =&gt; Math.random();</code></td></tr>
+                <tr><td><code>function umocni(x) { return x * x; }</code></td><td><code>const umocni = (x) =&gt; x * x;</code></td></tr>
+                <tr><td><code>function vynasob(x, y) { return x * y; }</code></td><td><code>const vynasob = (x, y) =&gt; x * y;</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title">Pozor: so zloženými zátvorkami treba <code>return</code></div>
+<pre class="code-inspector js">const zdvojnasob = (x) =&gt; { x * 2 };
+const zdvojnasob2 = (x) =&gt; { return x * 2; };
+const zdvojnasob3 = (x) =&gt; x * 2;
+
+console.log(zdvojnasob(5), zdvojnasob2(5), zdvojnasob3(5));</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="alert alert-warning small h-100 mb-0">
+            <strong>Kedy arrow funkciu nepoužiť:</strong> arrow funkcia nemá vlastné <code>this</code>. Ak v listeneri potrebuješ <code>this</code> (prvok, na ktorý sa kliklo), použi <code>function () { … }</code>. Uvidíme to na akordeóne v sekcii 7.
+            <hr>
+            V prezentácii sa používa <code>var</code>. Dnes píšeme <code>const</code> – funkciu v premennej už nemeníme.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 UDALOSTI -->
+  <section class="card section-card mb-4" id="eventy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Udalosti (eventy)</h2>
+      <p><strong>Udalosť</strong> je niečo, čo urobil používateľ – klikol, prešiel myšou nad prvok, stlačil kláves, odoslal formulár… Reakcii na udalosti sa hovorí <strong>event handling</strong>. Skús si to: pohraj sa s prvkami vľavo a sleduj, ktoré riadky tabuľky sa rozsvietia.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="ev-box mb-3" id="evBox">Prejdi sem myšou, klikni a podrž tlačidlo</div>
+          <form id="evForm" class="demo-area">
+            <label class="form-label small mb-0" for="evInput">Textové pole</label>
+            <input class="form-control form-control-sm mb-2" id="evInput" placeholder="Klikni sem a píš…">
+            <label class="form-label small mb-0" for="evSelect">Výber</label>
+            <select class="form-select form-select-sm mb-2" id="evSelect">
+              <option>JavaScript</option><option>HTML</option><option>CSS</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-success">Odoslať formulár</button>
+          </form>
+          <p class="tiny-label mt-2 mb-1">Udalosť <code>resize</code> spustíš zmenou veľkosti okna.</p>
+          <div class="console-out" id="evConsole"><div class="line muted">Posledné udalosti</div></div>
+        </div>
+        <div class="col-lg-7">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle ev-table mb-0">
+              <thead><tr><th>Event</th><th>Handler</th><th>Kedy nastane</th><th class="text-end">Počet</th></tr></thead>
+              <tbody id="evTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">Event je názov udalosti (<code>click</code>), handler je vlastnosť prvku s predponou <code>on</code> (<code>onclick</code>). Rozdiel uvidíme hneď v ďalšej sekcii.</p>
+    </div>
+  </section>
+
+  <!-- 5 ONCLICK VS LISTENER -->
+  <section class="card section-card mb-4" id="klik">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Tri spôsoby, ako reagovať na kliknutie</h2>
+      <p>Pri kalkulačke sme mali <code>onclick</code> na každom tlačidle a HTML bolo neprehľadné. Čo keby sme mali akordeón so 100 položkami? Reakciu na kliknutie vieme nastaviť aj priamo v JavaScripte, bez zásahu do HTML.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">a) atribút <code>onclick</code> v HTML</h3>
+<pre class="code-inspector js">&lt;button id="myBtn" onclick="klik()"&gt;Klikni na mňa&lt;/button&gt;
+
+function klik() {
+  const btn = document.getElementById("myBtn");
+  btn.innerHTML = "klikol si";
+}</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnA">Klikni na mňa</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">b) event handler v JS</h3>
+<pre class="code-inspector js">&lt;button id="myBtn"&gt;Klikni na mňa&lt;/button&gt;
+
+const btn = document.getElementById("myBtn");
+function zmenText() {
+  btn.innerHTML = "Klikol si";
+}
+btn.onclick = zmenText;</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnB">Klikni na mňa</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">c) <code>addEventListener</code></h3>
+<pre class="code-inspector js">&lt;button id="myBtn"&gt;Klikni na mňa&lt;/button&gt;
+
+const btn = document.getElementById("myBtn");
+btn.addEventListener("click", () =&gt; {
+  btn.innerHTML = "Klikol si";
+});</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnC">Klikni na mňa</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-link px-0 mt-1" id="btnReset">Obnoviť texty tlačidiel</button>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Pozor: funkciu odovzdávame bez zátvoriek</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title text-danger">So zátvorkami – zle</div>
+<pre class="code-inspector js">function zmenText() {
+  console.log("zmenText sa spustila!");
+}
+const btn = document.createElement("button");
+btn.onclick = zmenText();
+console.log("btn.onclick je:", btn.onclick);</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Funkcia sa spustila <strong>hneď pri načítaní</strong> a do <code>onclick</code> sa uložil jej výsledok (nič). Kliknutie potom nerobí nič.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title text-success">Bez zátvoriek – správne</div>
+<pre class="code-inspector js">function zmenText() {
+  console.log("zmenText sa spustila!");
+}
+const btn = document.createElement("button");
+btn.onclick = zmenText;
+console.log("btn.onclick je:", btn.onclick);</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Spustiť</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Odovzdali sme <strong>samotnú funkciu</strong>. Prehliadač ju spustí až po kliknutí.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Úvaha: dve funkcie na jedno kliknutie</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h4 class="h6 mb-0">Event handler <code>onclick</code> dvakrát</h4>
+<pre class="code-inspector js">function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+btn.onclick = firstFunction;
+btn.onclick = secondFunction;</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start" id="btnHandler2">Klikni na mňa</button>
+            <div class="console-out" id="handler2Console"><div class="line muted">Konzola</div></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h4 class="h6 mb-0"><code>addEventListener</code> dvakrát</h4>
+<pre class="code-inspector js">function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+btn.addEventListener("click", firstFunction);
+btn.addEventListener("click", secondFunction);</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start" id="btnListener2">Klikni na mňa</button>
+            <div class="console-out" id="listener2Console"><div class="line muted">Konzola</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="small mt-2">Prvok môže mať len <strong>jeden handler</strong> rovnakého typu – druhé priradenie prvé prepíše. <strong>Listenerov</strong> môže mať koľko chce a spustia sa v poradí, v akom sme ich pridali. Preto sa v praxi používa <code>addEventListener</code>.</p>
+<pre class="code-inspector js">// to isté s anonymnými arrow funkciami
+btn.addEventListener("click", () =&gt; { console.log(1); });
+btn.addEventListener("click", () =&gt; { console.log(2); });</pre>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Ďalšie udalosti myši na jednom tlačidle</h3>
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-7">
+<pre class="code-inspector js">const btn = document.getElementById("myBtn");
+btn.addEventListener("click", () =&gt; btn.innerHTML = "Klikol si");
+btn.addEventListener("mouseover", () =&gt; btn.style.backgroundColor = "red");
+btn.addEventListener("mouseleave", () =&gt; btn.style.backgroundColor = "green");
+btn.addEventListener("mousedown", () =&gt; btn.style.border = "10px solid black");
+btn.addEventListener("mouseup", () =&gt; btn.style.border = "10px solid yellow");</pre>
+        </div>
+        <div class="col-lg-5 text-center">
+          <button type="button" class="btn btn-light border live-btn py-3" id="btnMys">Klikni na mňa</button>
+          <div><button type="button" class="btn btn-sm btn-link" id="btnMysReset">Obnoviť</button></div>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th></th><th>Kde je kód</th><th>Viac funkcií na jednu udalosť</th><th>Použitie</th></tr></thead>
+          <tbody>
+            <tr><td><code>onclick="…"</code> v HTML</td><td>v HTML aj v JS</td><td>nie</td><td>rýchle pokusy; pri veľa prvkoch neprehľadné</td></tr>
+            <tr><td><code>prvok.onclick = funkcia</code></td><td>len v JS</td><td>nie – posledné priradenie vyhrá</td><td>jednoduché prípady</td></tr>
+            <tr class="table-success"><td><code>prvok.addEventListener("click", funkcia)</code></td><td>len v JS</td><td>áno</td><td><strong>odporúčaný spôsob</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny-label mt-2 mb-0"><code>addEventListener(event, funkcia, useCapture)</code> – tretí parameter je nepovinný a zatiaľ ho nepotrebujeme. Kto chce ísť hlbšie: <a href="https://www.youtube.com/watch?v=XF1_MlZ5l6M">video o event listeneroch</a>.</p>
+    </div>
+  </section>
+
+  <!-- 6 NAVIGÁCIA -->
+  <section class="card section-card mb-4" id="navigacia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Úloha 2: navigácia bez onclick</h2>
+      <p>Prerob kód navigácie tak, aby namiesto atribútu <code>onclick</code> používal <strong>event listener</strong>. Klikni na ☰ v ukážke a prejdi štyri kroky – od pôvodného kódu po najkratší zápis.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-site" id="navDemo">
+            <header class="main-header">
+              <a href="#navigacia">Logo</a>
+              <nav class="main-nav">
+                <ul class="main-menu" id="navMenu">
+                  <li><a href="#navigacia">Domov</a></li>
+                  <li><a href="#navigacia">O nás</a></li>
+                  <li><a href="#navigacia">Q&amp;A</a></li>
+                  <li><a href="#navigacia">Kontakt</a></li>
+                </ul>
+                <a class="hamburger" id="navHamburger" role="button" tabindex="0" aria-label="Menu">☰</a>
+              </nav>
+            </header>
+            <div class="page">Takto vyzerá stránka na mobile – menu je skryté, kým neklikneš na ☰.</div>
+          </div>
+          <p class="text-center font-monospace small mt-2 mb-0">menu.className → <strong id="navClass">"main-menu"</strong></p>
+        </div>
+        <div class="col-lg-7">
+          <div class="btn-group flex-wrap step-btns mb-2" role="group" aria-label="Kroky navigácie" id="navKroky">
+            <button type="button" class="btn btn-outline-success" data-krok="0">1 · pôvodne</button>
+            <button type="button" class="btn btn-outline-success" data-krok="1">2 · listener</button>
+            <button type="button" class="btn btn-outline-success" data-krok="2">3 · toggle</button>
+            <button type="button" class="btn btn-outline-success" data-krok="3">4 · arrow</button>
+          </div>
+          <div class="alert alert-light border small mb-2" id="navVysvetlenie"></div>
+          <div class="tiny-label mb-1">HTML</div>
+          <pre class="code-inspector mb-2" id="navHtml"></pre>
+          <div class="tiny-label mb-1">js/app.js</div>
+          <pre class="code-inspector" id="navJs"></pre>
+        </div>
+      </div>
+      <p class="small mt-3 mb-0">Štartovací kód (HTML, CSS a pôvodný JS s <code>onclick</code>) je v priečinku <code>2-navigacia</code> v <a href="#ulohy">úlohách na hodinu</a>.</p>
+    </div>
+  </section>
+
+  <!-- 7 AKORDEÓN -->
+  <section class="card section-card mb-4" id="akordeon">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Úloha 3: akordeón</h2>
+      <p>Vytvor akordeón: odpovede sú skryté a po kliknutí na otázku sa zobrazia. Otázka po prejdení myšou a po rozkliknutí zmení farbu.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Hotový akordeón</div>
+          <div class="demo-acc demo-area p-0" id="accDemo">
+            <div class="accordion">
+              <div class="question">Question 1</div>
+              <div class="answer">Answer 1</div>
+            </div>
+            <div class="accordion">
+              <div class="question">Question 2</div>
+              <div class="answer">Answer 2</div>
+            </div>
+            <div class="accordion">
+              <div class="question">Question 3</div>
+              <div class="answer">Answer 3</div>
+            </div>
+          </div>
+          <ol class="small mt-3 mb-0">
+            <li>Odpovede (<code>.answer</code>) skryjeme cez <code>display: none</code>.</li>
+            <li>Trieda <code>active</code> na <code>.accordion</code> ich zobrazí (<code>display: block</code>).</li>
+            <li>JavaScript len prepína triedu <code>active</code> po kliknutí.</li>
+          </ol>
+        </div>
+        <div class="col-lg-7">
+          <div class="btn-group mb-2" role="group" aria-label="Kód akordeónu" id="accTaby">
+            <button type="button" class="btn btn-sm btn-success" data-tab="accHtml">HTML</button>
+            <button type="button" class="btn btn-sm btn-outline-success" data-tab="accCss">CSS</button>
+            <button type="button" class="btn btn-sm btn-outline-success" data-tab="accJs">js/accordion.js</button>
+          </div>
+<pre class="code-inspector html acc-tab" id="accHtml" data-copy>&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Question 1&lt;/div&gt;
+  &lt;div class="answer"&gt;Answer 1&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Question 2&lt;/div&gt;
+  &lt;div class="answer"&gt;Answer 2&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Question 3&lt;/div&gt;
+  &lt;div class="answer"&gt;Answer 3&lt;/div&gt;
+&lt;/div&gt;</pre>
+<pre class="code-inspector acc-tab d-none" id="accCss" data-copy>.question {
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+/* najskôr skryjeme odpovede */
+.accordion .answer {
+  display: none;
+}
+/* pred každú otázku pridáme pomocou ::before znak + */
+.question::before {
+  content: '+ ';
+}
+/* otázka pod myšou alebo v otvorenom akordeóne */
+.question:hover,
+.accordion.active .question {
+  background-color: #bfbcbc;
+  cursor: pointer;
+}
+/* zobrazená odpoveď */
+.accordion.active .answer {
+  display: block;
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+/* pri otvorenej otázke namiesto + dáme - */
+.accordion.active .question::before {
+  content: '- ';
+}</pre>
+<pre class="code-inspector js acc-tab d-none" id="accJs" data-copy>const accordion = document.getElementsByClassName("accordion");
+
+// máme viacero akordeónov, potrebujeme nimi prejsť
+for (const a of accordion) {
+  // každému pridáme listener
+  a.addEventListener("click", function () {
+    // this = presne ten akordeón, na ktorý sa práve kliklo
+    this.classList.toggle("active");
+  });
+}</pre>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Pokus: čo ak namiesto function napíšeme arrow funkciu?</h3>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-acc demo-area p-0" id="accArrow">
+            <div class="accordion"><div class="question">Question 1</div><div class="answer">Answer 1</div></div>
+            <div class="accordion"><div class="question">Question 2</div><div class="answer">Answer 2</div></div>
+          </div>
+          <div class="console-out mt-2" id="accArrowConsole"><div class="line muted">Klikni na otázku vyššie</div></div>
+        </div>
+        <div class="col-lg-7">
+<pre class="code-inspector js">for (const a of accordion) {
+  a.addEventListener("click", () =&gt; {
+    this.classList.toggle("active");  // this tu NIE JE akordeón!
+  });
+}</pre>
+          <p class="small mt-2 mb-2">Arrow funkcia nemá vlastné <code>this</code>, preto akordeón nefunguje. Ak chceš arrow funkciu, použi premennú z cyklu:</p>
+<pre class="code-inspector js">for (const a of accordion) {
+  a.addEventListener("click", () =&gt; a.classList.toggle("active"));
+}</pre>
+        </div>
+      </div>
+      <div class="alert alert-info small mt-3 mb-0"><strong>Ešte lepšie:</strong> listener daj na <code>.question</code>, nie na celý <code>.accordion</code>. Inak sa akordeón zatvorí aj po kliknutí na odpoveď (vyskúšaj si to hore). Riešenie: <code>otazka.addEventListener("click", () =&gt; otazka.parentElement.classList.toggle("active"));</code></div>
+    </div>
+  </section>
+
+  <!-- 8 PLAYGROUND -->
+  <section class="card section-card mb-4" id="playground">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>JavaScript playground</h2>
+      <p>Napíš vlastný kód alebo si vyber príklad a spusti ho. Ukážková stránka vpravo obsahuje odseky zo Zadania 1, tlačidlo <code>#myBtn</code> a akordeón zo sekcie 7.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="playPreset" aria-label="Pripravené príklady"></select>
+            <button type="button" class="btn btn-sm btn-success" id="playRun">▶ Spustiť</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="playReset">Obnoviť príklad</button>
+          </div>
+          <textarea class="form-control" id="playCode" spellcheck="false"></textarea>
+          <p class="tiny-label mt-1 mb-0">Skratka: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> spustí kód. <kbd>Tab</kbd> odsadí riadok.</p>
+        </div>
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Ukážková stránka</div>
+          <div class="demo-area p-1"><iframe class="mini-frame" id="playFrame" title="Ukážková stránka playgroundu" sandbox="allow-scripts allow-modals"></iframe></div>
+          <div class="tiny-label mt-2 mb-1">Konzola</div>
+          <div class="console-out" id="playConsole" style="min-height: 120px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Rýchly kvíz</h2>
+      <p>Skús odpovedať bez pomoci. Po vyhodnotení uvidíš aj vysvetlenie.</p>
+      <div data-quiz="kviz"></div>
+    </div>
+  </section>
+
+  <!-- 10 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Úlohy na hodinu</h2>
+      <p>Pripravené súbory si stiahni ako jeden <code>.zip</code>, alebo si ich pozri na GitHube. V úlohách 3 až 5 je hotové HTML a CSS, ale <strong>žiadny JavaScript</strong> – ten napíšeš ty. Súbor <code>js/…</code> si vytvoríš a pripojíš sám.</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-success" href="ulohy-js3.zip" download>Stiahnuť úlohy (.zip)</a>
+        <a class="btn btn-outline-success" href="https://github.com/CHOTY/js-laboratorium/tree/main/ulohy-js3">Pozrieť na GitHube</a>
+      </div>
+      <div class="table-responsive mb-4">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>Priečinok</th><th>Úloha</th><th>Čo je pripravené</th></tr></thead>
+          <tbody>
+            <tr><td><code>1-funkcie</code></td><td>Zadanie 1 – tri typy funkcií</td><td>HTML s odsekmi, prázdny <code>js/app.js</code></td></tr>
+            <tr><td><code>2-navigacia</code></td><td>Úloha 2 – navigácia bez onclick</td><td>HTML, CSS a pôvodný JS s <code>onclick</code> na prerobenie</td></tr>
+            <tr><td><code>3-akordeon</code></td><td>Úloha 3 – akordeón</td><td>HTML a CSS, bez JS</td></tr>
+            <tr class="table-success"><td><code>4-kalkulacka</code></td><td>Úloha 4 – kalkulačka s listenermi</td><td>HTML a CSS, bez JS a bez <code>onclick</code></td></tr>
+            <tr class="table-success"><td><code>5-hodnotenie</code></td><td>Úloha 5 – hodnotenie hviezdičkami</td><td>HTML a CSS, bez JS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="task-card mb-4" id="uloha4">
+        <h3 class="h5">Úloha 4: kalkulačka bez jediného onclick <span class="badge text-bg-light border align-middle">≈ 20 min</span></h3>
+        <p>Kalkulačku z minulej hodiny máš v priečinku <code>4-kalkulacka</code> znova – ale tentoraz v HTML <strong>nie je žiadny <code>onclick</code></strong> a nie je pripojený ani JavaScript. Rozbehni ju iba pomocou <code>addEventListener</code>.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1">Vytvor súbor <code>js/kalkulacka.js</code> a pripoj ho pred <code>&lt;/body&gt;</code>.</li>
+              <li class="mb-1">Všetky tlačidlá s číslami a operátormi (triedy <code>.button</code> a <code>.operator</code>) obslúž <strong>jedným cyklom</strong> – nie 16 listenermi pod sebou. Znak, ktorý treba pridať na displej, je text tlačidla.</li>
+              <li class="mb-1">Tlačidlo <code>#clear</code> vymaže displej <code>#result</code>.</li>
+              <li class="mb-1">Tlačidlo <code>#equals</code> vypočíta príklad (funkciu na výpočet už poznáš z minulej hodiny).</li>
+              <li>Aspoň jeden listener napíš ako <strong>arrow funkciu</strong>.</li>
+            </ol>
+            <p class="small mb-2"><strong>Bonus:</strong> ovládanie klávesnicou (<code>keydown</code> na <code>document</code>), „Chyba“ pri delení nulou, kláves <kbd>Backspace</kbd> zmaže posledný znak.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 1 – ako nájsť všetky tlačidlá naraz</summary>
+<pre class="code-inspector js mt-2">const tlacidla = document.querySelectorAll(".button, .operator");
+console.log(tlacidla.length); // 15</pre>
+            </details>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 2 – listener v cykle</summary>
+<pre class="code-inspector js mt-2">for (const tlacidlo of tlacidla) {
+  tlacidlo.addEventListener("click", () =&gt; {
+    // tlacidlo.textContent je napr. "7" alebo "+"
+  });
+}</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Nápoveda 3 – výpočet</summary>
+              <p class="small mt-2 mb-0">Rovnako ako minule: skontroluj, že na displeji sú len čísla, bodka a <code>+ - * /</code>, potom <code>eval(priklad)</code> v <code>try { … } catch { … }</code>. Výpočet si daj do vlastnej funkcie – zíde sa aj pri klávesnici.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Takto má fungovať (vyskúšaj aj klávesnicu)</div>
+            <div class="calc-demo" id="calcDemo">
+              <div class="calc-row"><input type="text" id="cdResult" class="result" readonly aria-label="Displej"><button type="button" id="cdClear">vymazať</button></div>
+              <div class="calc-row"><button type="button" class="button">7</button><button type="button" class="button">8</button><button type="button" class="button">9</button><button type="button" class="operator">/</button></div>
+              <div class="calc-row"><button type="button" class="button">4</button><button type="button" class="button">5</button><button type="button" class="button">6</button><button type="button" class="operator">*</button></div>
+              <div class="calc-row"><button type="button" class="button">1</button><button type="button" class="button">2</button><button type="button" class="button">3</button><button type="button" class="operator">-</button></div>
+              <div class="calc-row"><button type="button" class="button">0</button><button type="button" class="button">.</button><button type="button" id="cdEquals" class="equal-sign">=</button><button type="button" class="operator">+</button></div>
+            </div>
+            <div class="form-check form-switch mt-2 d-flex justify-content-center gap-2">
+              <input class="form-check-input" type="checkbox" role="switch" id="cdKlavesnica">
+              <label class="form-check-label small" for="cdKlavesnica">ovládanie klávesnicou</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-card" id="uloha5">
+        <h3 class="h5">Úloha 5: hodnotenie hviezdičkami <span class="badge text-bg-light border align-middle">≈ 15 min</span></h3>
+        <p>V priečinku <code>5-hodnotenie</code> je päť hviezdičiek. Rozsvieť ich podľa myši a po kliknutí zapamätaj hodnotenie. Precvičíš si tri rôzne udalosti z tabuľky v sekcii 4.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1"><code>mouseover</code> na hviezde: rozsvieti sa ona a všetky pred ňou (pridaj im triedu <code>svieti</code>).</li>
+              <li class="mb-1"><code>mouseout</code>: hviezdy sa vrátia na uložené hodnotenie (na začiatku 0 – nesvieti žiadna).</li>
+              <li class="mb-1"><code>click</code>: hodnotenie sa uloží a do odseku <code>#text</code> sa vypíše napr. „Tvoje hodnotenie: 4/5“.</li>
+              <li>Každá hviezda má atribút <code>data-hodnota</code> s číslom 1 až 5.</li>
+            </ol>
+            <p class="small mb-2"><strong>Bonus:</strong> iný text podľa počtu hviezd (1 = „Nič moc“ … 5 = „Super hodina!“), tlačidlo „Zrušiť hodnotenie“.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 1 – číslo z data atribútu</summary>
+<pre class="code-inspector js mt-2">const hodnota = Number(hviezda.getAttribute("data-hodnota"));
+// alebo kratšie: Number(hviezda.dataset.hodnota)</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Nápoveda 2 – pomocná funkcia</summary>
+              <p class="small mt-2 mb-2">Napíš si funkciu <code>rozsviet(pocet)</code>, ktorá prejde všetky hviezdy a tie s hodnotou ≤ <code>pocet</code> rozsvieti, ostatné zhasne. Všetky tri listenery ju potom len zavolajú s iným číslom.</p>
+<pre class="code-inspector js">let hodnotenie = 0;
+
+function rozsviet(pocet) {
+  // ...
+}</pre>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Takto má fungovať</div>
+            <div class="demo-area stars-demo">
+              <h4 class="h6">Ako sa ti páčila dnešná hodina?</h4>
+              <div id="hviezdyDemo">
+                <span class="hviezda" data-hodnota="1">★</span><span class="hviezda" data-hodnota="2">★</span><span class="hviezda" data-hodnota="3">★</span><span class="hviezda" data-hodnota="4">★</span><span class="hviezda" data-hodnota="5">★</span>
+              </div>
+              <p class="mt-2 mb-0" id="hviezdyText">Klikni na hviezdičku</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  JavaScript 3 · Funkcie a udalosti · Dokumentácia: <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener">MDN – addEventListener</a> · <a href="https://developer.mozilla.org/sk/docs/Web/JavaScript/Reference/Functions/Arrow_functions">MDN – arrow funkcie</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ============================================================
+     Pomocné funkcie
+     ============================================================ */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  function esc(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightJS(src) {
+    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|undefined|typeof|this)\b|\b(document|console|window|location|history|screen|navigator|Number|Math|setTimeout)\b|\b(\d+(?:\.\d+)?)\b/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      const cls = m[1] ? 'com' : m[2] ? 'str' : m[3] ? 'kw' : m[4] ? 'obj' : 'num';
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  function setCode(el, text) { el.innerHTML = highlightJS(text); }
+
+  function highlightHTML(src) {
+    return esc(src).replace(/(&lt;\/?)([a-zA-Z0-9!]+)((?:\s+[a-zA-Z-]+(?:="[^"]*")?)*)(\s*\/?&gt;)/g, (m, open, tag, attrs, close) =>
+      `<span class="tag">${open}${tag}</span>` +
+      attrs.replace(/([a-zA-Z-]+)(="[^"]*")?/g, (mm, name, val) => `<span class="attr">${name}</span>` + (val ? `=<span class="value">${val.slice(1)}</span>` : '')) +
+      `<span class="tag">${close}</span>`);
+  }
+
+  // kód rozdelený na riadky, aby sa dali zvýrazňovať
+  function renderLines(pre, lines) {
+    pre.innerHTML = lines.map(l => `<span class="ln">${highlightJS(l)}</span>`).join('');
+    return $$('.ln', pre);
+  }
+
+  // hodnota tak, ako ju ukáže konzola
+  function fmt(v, nested = false) {
+    if (typeof v === 'string') return nested ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'bigint') return String(v);
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anonymná') + '()';
+    if (Array.isArray(v)) return '[' + v.map(x => fmt(x, true)).join(', ') + ']';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ` id="${v.id}"` : '') + (v.classList.length ? ` class="${[...v.classList].filter(c => c !== 'inspect-target').join(' ')}"` : '') + '>';
+    if (v instanceof HTMLCollection || v instanceof NodeList) return (v instanceof HTMLCollection ? 'HTMLCollection' : 'NodeList') + '(' + v.length + ') [' + [...v].map(e => fmt(e)).join(', ') + ']';
+    try { return '{ ' + Object.entries(v).map(([k, x]) => k + ': ' + fmt(x, true)).join(', ') + ' }'; } catch (e) { return String(v); }
+  }
+
+  // chybové hlášky po slovensky
+  const CHYBY = [
+    [/is not defined/, 'premenná alebo funkcia s týmto menom neexistuje – skontroluj preklep a veľké/malé písmená'],
+    [/Assignment to constant variable/, 'do konštanty (const) nemožno priradiť novú hodnotu'],
+    [/has already been declared/, 'premenná s týmto menom už existuje – let ani const nemožno vytvoriť dvakrát'],
+    [/Missing initializer in const/, 'const musí dostať hodnotu hneď pri vytvorení'],
+    [/is not a function/, 'toto nie je funkcia – nie je v názve preklep?'],
+    [/Cannot (read|set) properties of undefined/, 'hodnota je undefined – v arrow funkcii this neukazuje na prvok, na ktorý sa kliklo'],
+    [/Cannot (read|set) properties of null/, 'prvok sa nenašiel (je null) – existuje také id? Je už HTML načítané?'],
+    [/Unexpected token|Unexpected end of input|missing \) after|Invalid or unexpected token|Unexpected identifier/, 'chyba v zápise – skontroluj zátvorky, úvodzovky a čiarky']
+  ];
+  const preloz = msg => (CHYBY.find(([re]) => re.test(msg)) || [, ''])[1];
+
+  function logTo(box, text, cls = '') {
+    $$('.line.muted', box).forEach(l => l.remove());
+    const line = document.createElement('div');
+    line.className = 'line ' + cls;
+    line.textContent = text;
+    box.append(line);
+    box.scrollTop = box.scrollHeight;
+  }
+  function logError(box, name, message) {
+    logTo(box, (name ? name + ': ' : '') + message, 'err');
+    const sk = preloz(message);
+    if (sk) logTo(box, sk, 'hint');
+  }
+  function clearConsole(box) { box.innerHTML = ''; }
+
+  // spustí kód a výstup console.log presmeruje do boxu
+  function runSnippet(code, box) {
+    clearConsole(box);
+    const out = cls => (...args) => logTo(box, args.map(a => fmt(a)).join(' '), cls);
+    const fakeConsole = { log: out(''), info: out(''), warn: out('warn'), error: out('err'), table: out('') };
+    try {
+      new Function('console', code)(fakeConsole);
+    } catch (e) {
+      logError(box, e.name, e.message);
+    }
+    if (!box.children.length) logTo(box, '(nič sa nevypísalo)', 'muted');
+  }
+
+  function highlight(elements, scope) {
+    $$('.inspect-target', scope).forEach(e => e.classList.remove('inspect-target'));
+    elements.forEach(e => e && e.classList && e.classList.add('inspect-target'));
+  }
+
+  // ---------- iframe ukážky: konzola z iframe sa posiela sem ----------
+  const frameBoxes = [];
+  window.addEventListener('message', e => {
+    const f = frameBoxes.find(x => x.frame.contentWindow === e.source);
+    if (!f || !e.data || !e.data.__lab) return;
+    if (e.data.type === 'error') logError(f.box, '', e.data.text);
+    else logTo(f.box, e.data.text, e.data.type === 'warn' ? 'warn' : '');
+  });
+  function bridge(offset = 0) {
+    return `<script>(function () {
+  function fmt(v, n) {
+    if (typeof v === 'string') return n ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return '[' + v.map(function (x) { return fmt(x, true); }).join(', ') + ']';
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anonymná') + '()';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ' id="' + v.id + '"' : '') + '>';
+    if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+    return String(v);
+  }
+  ['log', 'info', 'warn', 'error', 'table'].forEach(function (k) {
+    console[k] = function () {
+      parent.postMessage({ __lab: true, type: k, text: Array.prototype.map.call(arguments, function (a) { return fmt(a); }).join(' ') }, '*');
+    };
+  });
+  window.addEventListener('error', function (e) {
+    var riadok = e.lineno && ${offset} ? ' (riadok ' + (e.lineno - ${offset}) + ')' : '';
+    parent.postMessage({ __lab: true, type: 'error', text: e.message.replace(/^Uncaught /, '') + riadok }, '*');
+  });
+})();<\/script>`;
+  }
+  const FRAME_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{padding:.75rem 1rem;font-size:15px}h1{font-size:1.6rem}</style>';
+
+  // statické bloky kódu zafarbíme
+  $$('pre.code-inspector.js').forEach(pre => setCode(pre, pre.textContent));
+  $$('pre.code-inspector.html').forEach(pre => { pre.innerHTML = highlightHTML(pre.textContent); });
+
+  // všetky .snippet bloky s tlačidlom Spustiť
+  $$('.snippet').forEach(sn => {
+    const pre = $('pre', sn), box = $('.console-out', sn), btn = $('.run', sn);
+    if (!box.children.length) logTo(box, 'Konzola – klikni na Spustiť', 'muted');
+    if (btn) btn.addEventListener('click', () => runSnippet(pre.textContent, box));
+  });
+
+  /* ============================================================
+     Kopírovanie kódu
+     ============================================================ */
+  async function kopiruj(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.append(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e2) { /* nič */ }
+      ta.remove();
+    }
+    btn.textContent = 'Skopírované ✓';
+    setTimeout(() => { btn.textContent = 'Kopírovať'; }, 1500);
+  }
+  $$('pre[data-copy]').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'copy-wrap';
+    if (pre.classList.contains('d-none')) { wrap.classList.add('d-none'); pre.classList.remove('d-none'); }
+    if (pre.classList.contains('mt-2')) { wrap.classList.add('mt-2'); pre.classList.remove('mt-2'); }
+    pre.before(wrap);
+    wrap.append(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Kopírovať';
+    btn.addEventListener('click', () => kopiruj(pre.textContent, btn));
+    wrap.append(btn);
+  });
+
+  /* ============================================================
+     Kvízy
+     ============================================================ */
+  const QUIZZES = {
+    rozcvicka: [
+      { q: 'Čo vráti document.querySelector(".panel")?', o: ['všetky prvky s triedou panel', 'prvý prvok s triedou panel', 'text vnútri prvku'], a: 1, e: 'querySelector vráti prvý nájdený prvok, všetky nájdené vráti querySelectorAll.' },
+      { q: 'Čo urobí prvok.classList.toggle("active")?', o: ['vždy triedu pridá', 'ak triedu má, odoberie ju, inak ju pridá', 'vymaže všetky triedy prvku'], a: 1, e: 'toggle = prepínač. Dnes ním otvoríme menu aj akordeón.' },
+      { q: 'Displej kalkulačky je <input id="result">. Ako pridáš na jeho koniec znak "7"?', o: ['document.getElementById("result").textContent = "7"', 'document.getElementById("result").value += "7"', 'document.getElementById("result").innerHTML = "7"'], a: 1, e: 'Obsah inputu je vo vlastnosti value a += pridáva na koniec.' },
+      { q: 'Ako sa minule spúšťala funkcia po kliknutí na tlačidlo kalkulačky?', o: ["atribútom onclick=\"display('7')\" priamo v HTML", 'cez CSS', 'funkcia sa spustila sama pri načítaní'], a: 0, e: 'Atribút onclick v HTML. Dnes uvidíme, prečo to pri veľa tlačidlách nie je ideálne a ako to spraviť lepšie.' }
+    ],
+    kviz: [
+      { q: 'const umocni = x => x * x; – čo vráti umocni(3)?', o: ['6', '9', 'chybu – chýbajú zátvorky okolo x'], a: 1, e: 'Pri jednom parametri zátvorky vynechať môžeme. 3 · 3 = 9.' },
+      { q: 'const f = (x) => { x * 2 }; – čo vráti f(5)?', o: ['10', 'undefined', '"x * 2"'], a: 1, e: 'So zloženými zátvorkami musí byť return. Kratšie a správne: (x) => x * 2.' },
+      { q: 'Ktorý zápis je arrow verzia funkcie function vynasob(x, y) { return x * y; }?', o: ['const vynasob = (x, y) => x * y;', 'const vynasob = x, y => x * y;', 'const vynasob => (x, y) { x * y };'], a: 0, e: 'Pri dvoch parametroch zátvorky zostávajú a šípka ide hneď za ne.' },
+      { q: 'Čo je anonymná funkcia?', o: ['funkcia bez parametrov', 'funkcia bez mena', 'funkcia, ktorá nič nevracia'], a: 1, e: 'Anonymná = bez mena. Najčastejšie ju odovzdávame inej funkcii, napr. addEventListener.' },
+      { q: 'btn.onclick = prva; btn.onclick = druha; – čo sa stane po kliknutí?', o: ['spustí sa prva aj druha', 'spustí sa iba druha', 'spustí sa iba prva'], a: 1, e: 'Prvok môže mať len jeden handler rovnakého typu – druhé priradenie prepíše prvé.' },
+      { q: 'btn.addEventListener("click", prva); btn.addEventListener("click", druha); – čo sa stane po kliknutí?', o: ['spustí sa iba druha', 'spustia sa obe – najprv prva, potom druha', 'chyba – listener na click už existuje'], a: 1, e: 'Listenerov môže byť viac a spustia sa v poradí, v akom sme ich pridali.' },
+      { q: 'Prečo píšeme btn.onclick = zmenText; bez zátvoriek?', o: ['zátvorky sú v JavaScripte nepovinné', 'so zátvorkami by sa funkcia spustila hneď pri načítaní stránky', 'bez zátvoriek sa funkcia spustí rýchlejšie'], a: 1, e: 'zmenText je funkcia, zmenText() je jej spustenie. Prehliadaču odovzdávame funkciu, spustí ju sám až po kliknutí.' },
+      { q: 'Ktorá udalosť nastane, keď kurzor myši opustí prvok?', o: ['mouseover', 'mouseout', 'blur'], a: 1, e: 'mouseover = myš príde na prvok, mouseout = myš z neho odíde. blur je pri prvkoch formulára.' },
+      { q: 'V akordeóne použijeme a.addEventListener("click", () => this.classList.toggle("active")). Čo sa stane?', o: ['funguje rovnako ako s function', 'nefunguje – arrow funkcia nemá vlastné this', 'otvoria sa všetky akordeóny naraz'], a: 1, e: 'V arrow funkcii this neukazuje na prvok, na ktorý sa kliklo. Použi function () { … } alebo premennú a.' },
+      { q: 'Ako pripíšeš do odseku 25cm² tak, aby sa 2 zobrazila ako mocnina?', o: ['odsek.textContent += "25cm<sup>2</sup>"', 'odsek.innerHTML += "25cm<sup>2</sup>"', 'odsek.value += "25cm2"'], a: 1, e: 'Len innerHTML spracuje značku <sup>. textContent by ju vypísal ako obyčajný text.' }
+    ]
+  };
+
+  $$('[data-quiz]').forEach(holder => {
+    const questions = QUIZZES[holder.dataset.quiz];
+    const answers = new Array(questions.length).fill(null);
+    const wrap = document.createElement('div');
+    questions.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-question';
+      const title = document.createElement('p');
+      title.className = 'fw-semibold mb-2';
+      title.textContent = `${qi + 1}. ${item.q}`;
+      const list = document.createElement('div');
+      list.className = 'list-group';
+      item.o.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-group-item list-group-item-action font-monospace small';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+          if (holder.classList.contains('quiz-done')) return;
+          answers[qi] = oi;
+          $$('.list-group-item', list).forEach(b => b.classList.remove('vybrana'));
+          btn.classList.add('vybrana');
+        });
+        list.append(btn);
+      });
+      const fb = document.createElement('div');
+      fb.className = 'small mt-2';
+      box.append(title, list, fb);
+      wrap.append(box);
+    });
+    const controls = document.createElement('div');
+    controls.className = 'd-flex flex-wrap align-items-center gap-2';
+    controls.innerHTML = '<button type="button" class="btn btn-primary">Vyhodnotiť</button><button type="button" class="btn btn-outline-secondary">Vymazať odpovede</button><span class="fw-semibold ms-2"></span>';
+    const [evalBtn, resetBtn, score] = controls.children;
+    evalBtn.addEventListener('click', () => {
+      let good = 0;
+      $$('.quiz-question', wrap).forEach((box, qi) => {
+        const opts = $$('.list-group-item', box);
+        opts[questions[qi].a].classList.add('list-group-item-success');
+        const fb = box.lastElementChild;
+        if (answers[qi] === questions[qi].a) { good++; fb.className = 'small mt-2 text-success'; fb.textContent = '✔ Správne. ' + questions[qi].e; }
+        else {
+          if (answers[qi] !== null) opts[answers[qi]].classList.add('list-group-item-danger');
+          fb.className = 'small mt-2 text-danger';
+          fb.textContent = (answers[qi] === null ? '– Bez odpovede. ' : '✖ Nesprávne. ') + questions[qi].e;
+        }
+      });
+      holder.classList.add('quiz-done');
+      score.textContent = `Výsledok: ${good} / ${questions.length}`;
+    });
+    resetBtn.addEventListener('click', () => {
+      answers.fill(null);
+      holder.classList.remove('quiz-done');
+      $$('.list-group-item', wrap).forEach(b => b.classList.remove('vybrana', 'list-group-item-success', 'list-group-item-danger'));
+      $$('.quiz-question > div:last-child', wrap).forEach(fb => { fb.textContent = ''; });
+      score.textContent = '';
+    });
+    holder.append(wrap, controls);
+  });
+
+  /* ============================================================
+     1 Zadanie 1 – tri typy funkcií
+     ============================================================ */
+  (() => {
+    const meno = $('#z1Meno'), strana = $('#z1Strana'), jednotka = $('#z1Jednotka'), metoda = $('#z1Metoda');
+    function ahoj() { return 'Ahoj'; }
+    function pozdravMeno(m) { return ahoj() + ' ' + m; }
+    function obsahStvorca(s, j) { return s * s + j + '<sup>2</sup>'; }
+    function vykresli() {
+      $('#z1a').textContent = ahoj();
+      $('#z1b').textContent = pozdravMeno(meno.value);
+      const vysledok = obsahStvorca(Number(strana.value), esc(jednotka.value));
+      if (metoda.value === 'innerHTML') $('#z1c').innerHTML = vysledok;
+      else $('#z1c').textContent = vysledok;
+    }
+    [meno, strana, jednotka, metoda].forEach(el => el.addEventListener('input', vykresli));
+    vykresli();
+  })();
+
+  /* ============================================================
+     3 Arrow funkcie – prevod krok po kroku
+     ============================================================ */
+  (() => {
+    const PRIKLADY = {
+      nahodne: { meno: 'nahodneCislo', par: '', telo: 'Math.random()', volanie: 'console.log(nahodneCislo());' },
+      umocni: { meno: 'umocni', par: 'x', telo: 'x * x', volanie: 'console.log(umocni(4));' },
+      vynasob: { meno: 'vynasob', par: 'x, y', telo: 'x * y', volanie: 'console.log(vynasob(2, 4));' },
+      pozdrav: { meno: 'pozdrav', par: 'meno', riadky: ['const text = "Ahoj " + meno;', 'return text + "!";'], volanie: 'console.log(pozdrav("Jana"));' }
+    };
+    const NAZVY = ['1 · function', '2 · anonymná', '3 · šípka =>', '4 · bez { } a return', '5 · bez zátvoriek'];
+    const vyber = $('#arPriklad'), kroky = $('#arKroky'), pre = $('#arKod'), vysv = $('#arVysvetlenie'), box = $('#arConsole');
+    let krok = 0;
+
+    function kod(p, k) {
+      const telo = p.riadky ? p.riadky.map(r => '  ' + r).join('\n') : '  return ' + p.telo + ';';
+      if (k === 0) return `function ${p.meno}(${p.par}) {\n${telo}\n}`;
+      if (k === 1) return `const ${p.meno} = function (${p.par}) {\n${telo}\n};`;
+      if (k === 2 || p.riadky) return `const ${p.meno} = (${p.par}) => {\n${telo}\n};`;
+      if (k === 3 || p.par === '' || p.par.includes(',')) return `const ${p.meno} = (${p.par}) => ${p.telo};`;
+      return `const ${p.meno} = ${p.par} => ${p.telo};`;
+    }
+    function vysvetlenie(p, k) {
+      if (k === 0) return 'Klasická pomenovaná funkcia – tak, ako ju poznáme.';
+      if (k === 1) return 'Anonymná funkcia uložená do premennej. Meno sa presunulo z funkcie do premennej <code>const</code>.';
+      if (k === 2) return 'Zmažeme slovo <code>function</code> a za zátvorky s parametrami pridáme šípku <code>=&gt;</code>. Toto už je arrow funkcia.';
+      if (p.riadky) return 'Táto funkcia má <strong>viac príkazov</strong>, preto <code>{ }</code> aj <code>return</code> musia zostať. Kratšie to už nejde.';
+      if (k === 3) return 'Funkcia len vracia jeden výraz, takže zmažeme <code>{ }</code> aj <code>return</code> – výsledok sa vráti automaticky.';
+      if (p.par === '') return 'Bez parametra musia prázdne zátvorky <code>()</code> zostať. Krok 4 je najkratší možný zápis.';
+      if (p.par.includes(',')) return 'Pri dvoch a viac parametroch zátvorky zostávajú. Krok 4 je najkratší možný zápis.';
+      return 'Pri <strong>jednom</strong> parametri môžeme vynechať aj zátvorky okolo neho. Krok 4 aj 5 sú správne – vyber si.';
+    }
+    function aktualnyKod() {
+      const p = PRIKLADY[vyber.value];
+      return kod(p, krok) + '\n\n' + p.volanie;
+    }
+    function vykresli() {
+      const p = PRIKLADY[vyber.value];
+      $$('button', kroky).forEach((b, i) => {
+        b.classList.toggle('btn-success', i === krok);
+        b.classList.toggle('btn-outline-success', i !== krok);
+      });
+      setCode(pre, aktualnyKod());
+      vysv.innerHTML = vysvetlenie(p, krok);
+    }
+    NAZVY.forEach((nazov, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-outline-success';
+      b.textContent = nazov;
+      b.addEventListener('click', () => { krok = i; vykresli(); runSnippet(aktualnyKod(), box); });
+      kroky.append(b);
+    });
+    vyber.addEventListener('change', () => { krok = 0; vykresli(); clearConsole(box); logTo(box, 'Konzola', 'muted'); });
+    $('#arSpusti').addEventListener('click', () => runSnippet(aktualnyKod(), box));
+    vykresli();
+  })();
+
+  /* ============================================================
+     4 Udalosti – tabuľka naživo
+     ============================================================ */
+  (() => {
+    const EVENTY = [
+      ['click', 'onclick', 'Pri kliknutí myšou na prvok'],
+      ['mouseover', 'onmouseover', 'Keď sa kurzor myši dostane na prvok'],
+      ['mouseout', 'onmouseout', 'Keď kurzor myši opustí prvok'],
+      ['mousedown', 'onmousedown', 'Keď je tlačidlo myši stlačené nad prvkom'],
+      ['mouseup', 'onmouseup', 'Po uvoľnení tlačidla myši nad prvkom'],
+      ['mousemove', 'onmousemove', 'Keď sa myš pohne'],
+      ['keydown', 'onkeydown', 'Keď používateľ stlačí kláves'],
+      ['keyup', 'onkeyup', 'Keď používateľ kláves uvoľní'],
+      ['focus', 'onfocus', 'Keď používateľ klikne do inputu (zameria sa naň)'],
+      ['blur', 'onblur', 'Keď používateľ z inputu odíde (klikne inam)'],
+      ['input', 'oninput', 'Pri každej zmene textu v inpute'],
+      ['change', 'onchange', 'Keď používateľ zmení hodnotu prvku formulára a potvrdí ju'],
+      ['submit', 'onsubmit', 'Keď používateľ odošle formulár'],
+      ['load', 'onload', 'Keď prehliadač dokončí načítanie stránky'],
+      ['resize', 'onresize', 'Keď sa zmení veľkosť okna prehliadača']
+    ];
+    const tab = $('#evTabulka'), box = $('#evConsole');
+    const pocty = {}, riadky = {};
+    EVENTY.forEach(([ev, handler, popis]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><code>${ev}</code></td><td><code>${handler}</code></td><td class="small">${popis}</td><td class="count">0</td>`;
+      tab.append(tr);
+      pocty[ev] = 0;
+      riadky[ev] = tr;
+    });
+    function zaznamenaj(ev, kde) {
+      pocty[ev]++;
+      const tr = riadky[ev];
+      tr.lastChild.textContent = pocty[ev];
+      tr.classList.add('flash');
+      clearTimeout(tr.casovac);
+      tr.casovac = setTimeout(() => tr.classList.remove('flash'), 120);
+      if (ev === 'mousemove' || ev === 'resize') return;
+      logTo(box, `${ev} – ${kde}`);
+      while (box.children.length > 8) box.firstChild.remove();
+    }
+    const plocha = $('#evBox');
+    ['click', 'mouseover', 'mouseout', 'mousedown', 'mouseup', 'mousemove'].forEach(ev =>
+      plocha.addEventListener(ev, () => zaznamenaj(ev, 'zelená plocha')));
+    const input = $('#evInput');
+    ['keydown', 'keyup', 'focus', 'blur', 'input', 'change'].forEach(ev =>
+      input.addEventListener(ev, e => zaznamenaj(ev, ev.startsWith('key') ? `kláves "${e.key}"` : 'textové pole')));
+    const select = $('#evSelect');
+    ['focus', 'blur', 'change'].forEach(ev => select.addEventListener(ev, () => zaznamenaj(ev, 'výber: ' + select.value)));
+    $('#evForm').addEventListener('submit', e => {
+      e.preventDefault(); // stránka sa neobnoví
+      zaznamenaj('submit', 'formulár (odoslanie sme zastavili cez preventDefault)');
+    });
+    window.addEventListener('resize', () => zaznamenaj('resize', 'okno'));
+    if (document.readyState === 'complete') zaznamenaj('load', 'stránka');
+    else window.addEventListener('load', () => zaznamenaj('load', 'stránka sa načítala'));
+  })();
+
+  /* ============================================================
+     5 onclick, handler, listener
+     ============================================================ */
+  (() => {
+    // a) atribút onclick v HTML
+    window.klik = function () {
+      const btn = document.getElementById('btnA');
+      btn.innerHTML = 'klikol si';
+    };
+    $('#btnA').setAttribute('onclick', 'klik()');
+
+    // b) event handler
+    const btnB = document.getElementById('btnB');
+    function zmenText() {
+      btnB.innerHTML = 'Klikol si';
+    }
+    btnB.onclick = zmenText;
+
+    // c) addEventListener
+    const btnC = document.getElementById('btnC');
+    btnC.addEventListener('click', () => {
+      btnC.innerHTML = 'Klikol si';
+    });
+
+    $('#btnReset').addEventListener('click', () => {
+      ['#btnA', '#btnB', '#btnC'].forEach(id => { $(id).innerHTML = 'Klikni na mňa'; });
+    });
+
+    // úvaha: dve funkcie
+    const box1 = $('#handler2Console'), box2 = $('#listener2Console');
+    const h2 = $('#btnHandler2');
+    h2.onclick = () => logTo(box1, '1');
+    h2.onclick = () => logTo(box1, '2');
+    const l2 = $('#btnListener2');
+    l2.addEventListener('click', () => logTo(box2, '1'));
+    l2.addEventListener('click', () => logTo(box2, '2'));
+
+    // ďalšie udalosti myši
+    const btn = $('#btnMys');
+    btn.addEventListener('click', () => btn.innerHTML = 'Klikol si');
+    btn.addEventListener('mouseover', () => btn.style.backgroundColor = 'red');
+    btn.addEventListener('mouseleave', () => btn.style.backgroundColor = 'green');
+    btn.addEventListener('mousedown', () => btn.style.border = '10px solid black');
+    btn.addEventListener('mouseup', () => btn.style.border = '10px solid yellow');
+    $('#btnMysReset').addEventListener('click', () => {
+      btn.removeAttribute('style');
+      btn.innerHTML = 'Klikni na mňa';
+    });
+  })();
+
+  /* ============================================================
+     6 Úloha 2 – navigácia
+     ============================================================ */
+  (() => {
+    const htmlMenu = (onclick) => `<header class="container main-header">
+  <a href="#">Logo</a>
+  <nav class="main-nav">
+    <ul class="main-menu" id="main-menu">
+      <li><a href="index.html">Domov</a></li>
+      <li><a href="o-nas.html">O nás</a></li>
+      <li><a href="qna.html">Q&A</a></li>
+      <li><a href="kontakt.html">Kontakt</a></li>
+    </ul>
+    <a class="hamburger"${onclick ? ' onclick="myNav()"' : ''}>
+      <i class="fa fa-bars"></i>
+    </a>
+  </nav>
+</header>`;
+    const podmienka = `function myNav() {
+  const menu = document.querySelector(".main-menu");
+  if (menu.className === "main-menu") {
+    menu.className += " responsive";
+  } else {
+    menu.className = "main-menu";
+  }
+}`;
+    const KROKY = [
+      {
+        text: 'Pôvodný stav: <code>myNav()</code> sa volá z atribútu <code>onclick</code> v HTML. Podmienka kontroluje <code>className</code> a ručne pridáva alebo odoberá triedu <code>responsive</code>.',
+        html: htmlMenu(true),
+        js: podmienka
+      },
+      {
+        text: 'Z HTML <strong>zmažeme <code>onclick</code></strong>. V JS si nájdeme hamburger a pridáme mu listener. Funkciu <code>myNav</code> odovzdáme <strong>bez zátvoriek</strong>.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", myNav);\n\n' + podmienka
+      },
+      {
+        text: 'Celú podmienku nahradí <code>classList.toggle("responsive")</code> – trieda sa sama pridá alebo odoberie.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", myNav);\n\nfunction myNav() {\n  const menu = document.querySelector(".main-menu");\n  menu.classList.toggle("responsive");\n}'
+      },
+      {
+        text: 'Funkciu <code>myNav</code> nikde inde nevoláme, môže byť teda <strong>anonymná</strong> – a rovno v arrow zápise.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", () => {\n  const menu = document.querySelector(".main-menu");\n  menu.classList.toggle("responsive");\n});'
+      }
+    ];
+    const menu = $('#navMenu'), hamburger = $('#navHamburger');
+    function prepni() {
+      menu.classList.toggle('responsive');
+      $('#navClass').textContent = JSON.stringify(menu.className);
+    }
+    hamburger.addEventListener('click', prepni);
+    hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); prepni(); } });
+    $$('#navMenu a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+
+    function ukaz(k) {
+      $$('#navKroky button').forEach((b, i) => {
+        b.classList.toggle('btn-success', i === k);
+        b.classList.toggle('btn-outline-success', i !== k);
+      });
+      $('#navVysvetlenie').innerHTML = KROKY[k].text;
+      $('#navHtml').innerHTML = highlightHTML(KROKY[k].html);
+      setCode($('#navJs'), KROKY[k].js);
+    }
+    $$('#navKroky button').forEach(b => b.addEventListener('click', () => ukaz(Number(b.dataset.krok))));
+    ukaz(0);
+  })();
+
+  /* ============================================================
+     7 Úloha 3 – akordeón
+     ============================================================ */
+  (() => {
+    // hotový akordeón – presne ako na slajde, len s const
+    const accordion = $('#accDemo').getElementsByClassName('accordion');
+    for (const a of accordion) {
+      a.addEventListener('click', function () {
+        this.classList.toggle('active');
+      });
+    }
+
+    // taby HTML / CSS / JS
+    $$('#accTaby button').forEach(b => b.addEventListener('click', () => {
+      $$('#accTaby button').forEach(x => {
+        x.classList.toggle('btn-success', x === b);
+        x.classList.toggle('btn-outline-success', x !== b);
+      });
+      $$('.acc-tab').forEach(pre => {
+        const obal = pre.closest('.copy-wrap') || pre;
+        obal.classList.toggle('d-none', pre.id !== b.dataset.tab);
+      });
+    }));
+
+    // pokus s arrow funkciou – this tu nie je akordeón
+    const box = $('#accArrowConsole');
+    for (const a of $('#accArrow').getElementsByClassName('accordion')) {
+      a.addEventListener('click', () => {
+        try {
+          this.classList.toggle('active');
+        } catch (e) {
+          logError(box, e.name, e.message);
+          logTo(box, 'this tu je: ' + (this === window ? 'window (celé okno), nie akordeón' : fmt(this)), 'hint');
+        }
+      });
+    }
+  })();
+
+  /* ============================================================
+     8 Playground
+     ============================================================ */
+  (() => {
+    const FRAME_HTML = `<p id="bez_parametra">Funkcia bez parametra: </p>
+<p id="jeden_parameter">Funkcia s jedným parametrom: </p>
+<p id="dva_parametre">Funkcia s dvoma parametrami: </p>
+<button id="myBtn" class="btn btn-outline-success btn-sm mb-3">Klikni na mňa</button>
+<div class="accordion"><div class="question">Question 1</div><div class="answer">Answer 1</div></div>
+<div class="accordion"><div class="question">Question 2</div><div class="answer">Answer 2</div></div>
+<div class="accordion"><div class="question">Question 3</div><div class="answer">Answer 3</div></div>`;
+    const FRAME_STYLE = '<style>p{margin-bottom:.35rem}.question{background-color:#f7f7f7;color:black;padding:2%}.accordion .answer{display:none}.question::before{content:"+ "}.question:hover,.accordion.active .question{background-color:#bfbcbc;cursor:pointer}.accordion.active .answer{display:block;background-color:#f7f7f7;color:black;padding:2%}.accordion.active .question::before{content:"- "}</style>';
+    const PRESETS = [
+      ['Zadanie 1 – kostra', `const bez_parametra = document.getElementById("bez_parametra");
+const jeden_parameter = document.getElementById("jeden_parameter");
+const dva_parametre = document.getElementById("dva_parametre");
+
+// a) napíš funkciu ahoj(), ktorá vráti "Ahoj", a pripíš výsledok k odseku
+
+
+// b) napíš funkciu pozdravMeno(meno), ktorá zavolá ahoj() a pridá meno
+
+
+// c) napíš funkciu obsahStvorca(strana, jednotka) – výsledok napr. 25cm²
+`],
+      ['Arrow funkcie (zo slajdov)', `// FUNKCIA BEZ PARAMETRA
+function nahodneCislo() {
+  return Math.random();
+}
+const nahodne_cislo = () => Math.random();
+
+// FUNKCIA S JEDNÝM PARAMETROM
+function umocni(x) {
+  return x * x;
+}
+const mocnina = (x) => x * x;
+
+// FUNKCIA S DVOMA PARAMETRAMI
+function vynasob(x, y) {
+  return x * y;
+}
+const nasobok = (x, y) => x * y;
+
+console.log(nahodneCislo(), nahodne_cislo());
+console.log(umocni(4), mocnina(4));
+console.log(vynasob(2, 4), nasobok(2, 4));`],
+      ['Anonymná funkcia', `// zavolaná hneď
+(function () {
+  console.log("Toto je anonymná funkcia");
+})();
+
+// uložená do premennej
+const pozdrav = function (meno) {
+  return "Ahoj " + meno;
+};
+console.log(pozdrav("Jana"));`],
+      ['onclick vs. addEventListener', `const btn = document.getElementById("myBtn");
+
+function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+
+// skús tieto dva riadky zameniť za:
+// btn.onclick = firstFunction;
+// btn.onclick = secondFunction;
+btn.addEventListener("click", firstFunction);
+btn.addEventListener("click", secondFunction);
+
+console.log("Klikni na tlačidlo v ukážke");`],
+      ['Udalosti myši na tlačidle', `const btn = document.getElementById("myBtn");
+
+btn.addEventListener("click", () => btn.innerHTML = "Klikol si");
+btn.addEventListener("mouseover", () => btn.style.backgroundColor = "red");
+btn.addEventListener("mouseleave", () => btn.style.backgroundColor = "green");
+btn.addEventListener("mousedown", () => btn.style.border = "10px solid black");
+btn.addEventListener("mouseup", () => btn.style.border = "10px solid yellow");`],
+      ['Akordeón', `const accordion = document.getElementsByClassName("accordion");
+
+for (const a of accordion) {
+  a.addEventListener("click", function () {
+    this.classList.toggle("active");
+  });
+}
+
+console.log("Počet akordeónov: " + accordion.length);`],
+      ['Prázdny kód', `// Tu píš svoj kód
+`]
+    ];
+    const frame = $('#playFrame'), code = $('#playCode'), box = $('#playConsole'), preset = $('#playPreset');
+    frameBoxes.push({ frame, box });
+    PRESETS.forEach(([name], i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = name;
+      preset.append(o);
+    });
+    function run() {
+      clearConsole(box);
+      const userCode = code.value.replace(/<\/script/gi, '<\\/script');
+      const pred = `<!doctype html><html lang="sk"><head><meta charset="utf-8">${FRAME_CSS}${FRAME_STYLE}`;
+      const telo = '</head><body>' + FRAME_HTML + '\n<script>\n';
+      const offset = (pred + bridge(1) + telo).split('\n').length - 1;
+      frame.srcdoc = pred + bridge(offset) + telo + userCode + '\n<\/script></body></html>';
+      setTimeout(() => { if (!box.children.length) logTo(box, '(nič sa nevypísalo)', 'muted'); }, 600);
+    }
+    function load(i) { code.value = PRESETS[i][1]; run(); }
+    preset.addEventListener('change', () => load(preset.value));
+    $('#playReset').addEventListener('click', () => load(preset.value));
+    $('#playRun').addEventListener('click', run);
+    code.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        code.setRangeText('  ', code.selectionStart, code.selectionEnd, 'end');
+      }
+    });
+    load(0);
+  })();
+
+  /* ============================================================
+     10 Úloha 4 – kalkulačka (ukážka hotového riešenia)
+     ============================================================ */
+  (() => {
+    const displej = $('#cdResult');
+    const tlacidla = $$('#calcDemo .button, #calcDemo .operator');
+    function pridaj(znak) {
+      if (displej.value === 'Chyba') displej.value = '';
+      displej.value += znak;
+    }
+    for (const tlacidlo of tlacidla) {
+      tlacidlo.addEventListener('click', () => pridaj(tlacidlo.textContent.trim()));
+    }
+    $('#cdClear').addEventListener('click', () => { displej.value = ''; });
+    function vypocitaj() {
+      const priklad = displej.value;
+      if (priklad === '') return;
+      if (!/^[0-9+\-*/.]+$/.test(priklad)) { displej.value = 'Chyba'; return; }
+      try {
+        const vysledok = Function('"use strict"; return (' + priklad + ')')();
+        displej.value = isFinite(vysledok) ? Math.round(vysledok * 1e10) / 1e10 : 'Chyba';
+      } catch (e) {
+        displej.value = 'Chyba';
+      }
+    }
+    $('#cdEquals').addEventListener('click', vypocitaj);
+    document.addEventListener('keydown', e => {
+      if (!$('#cdKlavesnica').checked) return;
+      if (e.target.matches('textarea, select, input:not([readonly]):not([type=checkbox])')) return;
+      if ('0123456789+-*/.'.includes(e.key) && e.key.length === 1) { pridaj(e.key); e.preventDefault(); }
+      else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); vypocitaj(); }
+      else if (e.key === 'Escape') displej.value = '';
+      else if (e.key === 'Backspace') { e.preventDefault(); displej.value = displej.value.slice(0, -1); }
+    });
+  })();
+
+  /* ============================================================
+     10 Úloha 5 – hodnotenie hviezdičkami (ukážka)
+     ============================================================ */
+  (() => {
+    const hviezdy = $$('#hviezdyDemo .hviezda'), text = $('#hviezdyText');
+    const TEXTY = ['', 'Nič moc', 'Dalo sa', 'Dobré', 'Veľmi dobré', 'Super hodina!'];
+    let hodnotenie = 0;
+    function rozsviet(pocet) {
+      for (const h of hviezdy) {
+        if (Number(h.dataset.hodnota) <= pocet) h.classList.add('svieti');
+        else h.classList.remove('svieti');
+      }
+    }
+    for (const h of hviezdy) {
+      const hodnota = Number(h.dataset.hodnota);
+      h.addEventListener('mouseover', () => rozsviet(hodnota));
+      h.addEventListener('mouseout', () => rozsviet(hodnotenie));
+      h.addEventListener('click', () => {
+        hodnotenie = hodnota;
+        rozsviet(hodnotenie);
+        text.textContent = `Tvoje hodnotenie: ${hodnotenie}/5 – ${TEXTY[hodnotenie]}`;
+      });
+    }
+  })();
+</script>
+</body>
+</html>
