@@ -108,10 +108,11 @@
     <a class="btn btn-sm btn-outline-secondary" href="#styly">8 · Štýly</a>
     <a class="btn btn-sm btn-outline-secondary" href="#udalosti">9 · Udalosti</a>
     <a class="btn btn-sm btn-outline-secondary" href="#inputy">10 · Inputy</a>
-    <a class="btn btn-sm btn-outline-secondary" href="#kalkulacka">11 · Kalkulačka</a>
-    <a class="btn btn-sm btn-outline-secondary" href="#playground">12 · Playground</a>
-    <a class="btn btn-sm btn-outline-secondary" href="#kviz">13 · Kvíz</a>
-    <a class="btn btn-sm btn-outline-secondary" href="#ulohy">14 · Úlohy</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#trycatch">11 · try / catch</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kalkulacka">12 · Kalkulačka</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#playground">13 · Playground</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">14 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#ulohy">15 · Úlohy</a>
   </div>
   <p class="tiny-label mt-3 mb-0">Tip: otvor si vývojárske nástroje klávesom <kbd>F12</kbd> – záložky <strong>Prieskumník</strong> (Elements) a <strong>Konzola</strong> (Console).</p>
 </header>
@@ -662,10 +663,43 @@ tlacidlo.addEventListener("click", function () {
     </div>
   </section>
 
-  <!-- 11 KALKULAČKA -->
+  <!-- 11 TRY / CATCH -->
+  <section class="card section-card mb-4" id="trycatch">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">11</span>Zachytenie chyby: try / catch</h2>
+      <p>Keď v kóde nastane chyba, JavaScript sa zastaví a <strong>zvyšok kódu sa už nevykoná</strong>. Kód, pri ktorom chybu nevieme vopred vylúčiť, obalíme do <code>try</code>. Ak v ňom nastane chyba, program preskočí do <code>catch</code> a pokračuje ďalej. Presne toto využijeme v kalkulačke, keď niekto zadá napríklad „5++“.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <pre class="code-inspector js" id="tcKod"></pre>
+        </div>
+        <div class="col-lg-6">
+          <label class="form-label small mb-1" for="tcPriklad">priklad =</label>
+          <div class="input-group mb-2">
+            <input class="form-control font-monospace" id="tcPriklad" value="7*8+1">
+            <button type="button" class="btn btn-primary" id="tcSpusti">▶ Spustiť</button>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-1 mb-2 small">
+            <span class="text-secondary me-1">Skús:</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary py-0 font-monospace" data-tc="7*8+1">7*8+1</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary py-0 font-monospace" data-tc="5++">5++</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary py-0 font-monospace" data-tc="10/">10/</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary py-0 font-monospace" data-tc="abc">abc</button>
+          </div>
+          <div class="console-out" id="tcConsole"></div>
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="tcBez">
+            <label class="form-check-label small" for="tcBez">spustiť <strong>bez</strong> try / catch</label>
+          </div>
+        </div>
+      </div>
+      <p class="tiny-label mt-2 mb-0"><code>chyba.message</code> je text chyby od prehliadača. Do <code>catch</code> sa program dostane <strong>len vtedy</strong>, keď v <code>try</code> nastala chyba – inak sa <code>catch</code> preskočí.</p>
+    </div>
+  </section>
+
+  <!-- 12 KALKULAČKA -->
   <section class="card section-card mb-4" id="kalkulacka">
     <div class="card-body p-4">
-      <h2 class="h4"><span class="section-number">11</span>Úloha: kalkulačka</h2>
+      <h2 class="h4"><span class="section-number">12</span>Úloha: kalkulačka</h2>
       <p>Takto má fungovať hotová kalkulačka. HTML a CSS máte pripravené v súbore <code>kalkulacka.html</code>, vašou úlohou je doprogramovať tri funkcie v <code>js/kalkulacka.js</code>.</p>
       <div class="row g-4 align-items-start">
         <div class="col-lg-5">
@@ -703,7 +737,7 @@ tlacidlo.addEventListener("click", function () {
           </details>
           <details class="mb-2">
             <summary class="fw-semibold">Nápoveda 3 – ako vypočítať text „7*8+1“?</summary>
-            <p class="small mt-2 mb-0">Najjednoduchšie je funkcia <code>eval(text)</code>, ktorá text vyhodnotí ako JavaScript. Je však nebezpečná – vykoná <em>akýkoľvek</em> kód. Preto najprv skontroluj, že text obsahuje len čísla, bodku a znaky <code>+ - * /</code>. Chyby (napr. „5++“) zachytíš cez <code>try { … } catch { … }</code>.</p>
+            <p class="small mt-2 mb-0">Najjednoduchšie je funkcia <code>eval(text)</code>, ktorá text vyhodnotí ako JavaScript. Je však nebezpečná – vykoná <em>akýkoľvek</em> kód. Preto najprv skontroluj, že text obsahuje len čísla, bodku a znaky <code>+ - * /</code>. Chyby (napr. „5++“) zachytíš cez <code>try { … } catch { … }</code> – pozri <a href="#trycatch">sekciu 11</a>.</p>
           </details>
           <details>
             <summary class="fw-semibold">Bonus</summary>
@@ -718,10 +752,10 @@ tlacidlo.addEventListener("click", function () {
     </div>
   </section>
 
-  <!-- 12 PLAYGROUND -->
+  <!-- 13 PLAYGROUND -->
   <section class="card section-card mb-4" id="playground">
     <div class="card-body p-4">
-      <h2 class="h4"><span class="section-number">12</span>JavaScript playground</h2>
+      <h2 class="h4"><span class="section-number">13</span>JavaScript playground</h2>
       <p>Napíš JavaScript a spusti ho na ukážkovej stránke vpravo. <code>console.log</code> sa vypíše pod ňou. Vyber si pripravený príklad alebo píš vlastný kód.</p>
       <div class="row g-3">
         <div class="col-lg-6">
@@ -747,19 +781,19 @@ tlacidlo.addEventListener("click", function () {
     </div>
   </section>
 
-  <!-- 13 KVÍZ -->
+  <!-- 14 KVÍZ -->
   <section class="card section-card mb-4" id="kviz">
     <div class="card-body p-4">
-      <h2 class="h4"><span class="section-number">13</span>Rýchly kvíz</h2>
+      <h2 class="h4"><span class="section-number">14</span>Rýchly kvíz</h2>
       <p>Skús odpovedať bez pomoci. Po vyhodnotení uvidíš aj vysvetlenie.</p>
       <div data-quiz="kviz"></div>
     </div>
   </section>
 
-  <!-- 14 ÚLOHY -->
+  <!-- 15 ÚLOHY -->
   <section class="card section-card mb-4" id="ulohy">
     <div class="card-body p-4">
-      <h2 class="h4"><span class="section-number">14</span>Mini úlohy</h2>
+      <h2 class="h4"><span class="section-number">15</span>Mini úlohy</h2>
       <ol class="mb-3">
         <li class="mb-2">Na stránke <code>qna.html</code> nájdi pomocou <code>querySelectorAll</code> všetky otázky (<code>.acc</code>) a vypíš ich počet do konzoly.</li>
         <li class="mb-2">Cez <code>createElement</code> a <code>append</code> pridaj na koniec stránky <code>index.html</code> pätičku s textom „© 2026 Moja stránka“.</li>
@@ -793,7 +827,7 @@ tlacidlo.addEventListener("click", function () {
 
   // jednoduché zvýraznenie JavaScriptu
   function highlightJS(src) {
-    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|typeof)\b|\b(document|console|window)\b/g;
+    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|typeof|try|catch|finally|throw)\b|\b(document|console|window)\b/g;
     let out = '', last = 0, m;
     while ((m = re.exec(src))) {
       out += esc(src.slice(last, m.index));
@@ -1398,7 +1432,45 @@ tlacidlo.addEventListener("click", function () {
   })();
 
   /* ============================================================
-     11 Kalkulačka (ukážka)
+     11 try / catch
+     ============================================================ */
+  (() => {
+    const input = $('#tcPriklad'), box = $('#tcConsole'), bez = $('#tcBez'), pre = $('#tcKod');
+    const KOD_S = 'try {\n  // kód, ktorý môže zlyhať\n  const vysledok = eval(priklad);\n  console.log("Výsledok: " + vysledok);\n} catch (chyba) {\n  // sem sa skočí, len ak nastala chyba\n  console.log("Chyba: " + chyba.message);\n}\n\nconsole.log("Program pokračuje ďalej");';
+    const KOD_BEZ = 'const vysledok = eval(priklad);\nconsole.log("Výsledok: " + vysledok);\n\nconsole.log("Program pokračuje ďalej");';
+    const vypocitaj = text => Function('"use strict"; return (' + text + ')')();
+    function spusti() {
+      clearConsole(box);
+      const priklad = input.value;
+      if (bez.checked) {
+        try {
+          logTo(box, 'Výsledok: ' + vypocitaj(priklad));
+        } catch (chyba) {
+          logTo(box, 'Uncaught ' + chyba.name + ': ' + chyba.message, 'err');
+          logTo(box, 'Program sa zastavil – posledný riadok sa už nevykonal.', 'muted');
+          return;
+        }
+        logTo(box, 'Program pokračuje ďalej');
+      } else {
+        try {
+          logTo(box, 'Výsledok: ' + vypocitaj(priklad));
+        } catch (chyba) {
+          logTo(box, 'Chyba: ' + chyba.message);
+        }
+        logTo(box, 'Program pokračuje ďalej');
+      }
+    }
+    function ukazKod() { setCode(pre, bez.checked ? KOD_BEZ : KOD_S); }
+    $('#tcSpusti').addEventListener('click', spusti);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') spusti(); });
+    $$('[data-tc]').forEach(b => b.addEventListener('click', () => { input.value = b.dataset.tc; spusti(); }));
+    bez.addEventListener('change', () => { ukazKod(); spusti(); });
+    ukazKod();
+    spusti();
+  })();
+
+  /* ============================================================
+     12 Kalkulačka (ukážka)
      ============================================================ */
   (() => {
     const vysledok = $('#calcResult');
@@ -1422,7 +1494,7 @@ tlacidlo.addEventListener("click", function () {
   })();
 
   /* ============================================================
-     12 Playground
+     13 Playground
      ============================================================ */
   (() => {
     const MINI_HTML = `<header class="bg-body-tertiary px-3 py-2 mb-3 d-flex justify-content-between">
