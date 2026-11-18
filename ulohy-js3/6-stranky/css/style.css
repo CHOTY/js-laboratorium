@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background-color: #f3f4f6;
+}
+
+/* ---------- hlavička s menu (zostáva hore aj pri posúvaní) ---------- */
+.hlavicka {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background-color: #1f2937;
+}
+
+.logo {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.menu a {
+  color: #d1d5db;
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+}
+
+.menu a:hover {
+  color: #fff;
+}
+
+/* aktívna položka menu – triedu pridáva a odoberá JavaScript */
+.menu a.aktivna {
+  color: #fff;
+  border-bottom-color: #10b981;
+}
+
+/* ---------- obsah ---------- */
+.obsah {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+.stranka {
+  background-color: #fff;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* skrytá stránka – triedu pridáva a odoberá JavaScript */
+.skryta {
+  display: none;
+}
+
+.uvod {
+  font-size: 1.15rem;
+  color: #4b5563;
+}
+
+h2 {
+  margin-top: 32px;
+}
+
+.tlacidlo {
+  margin-top: 30px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #10b981;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tlacidlo:hover {
+  background-color: #059669;
+}

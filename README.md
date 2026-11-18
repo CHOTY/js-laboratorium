@@ -37,6 +37,8 @@ Priečinok [`ulohy-js3`](ulohy-js3) (aj ako [`ulohy-js3.zip`](ulohy-js3.zip)) �
 | `3-akordeon` | Úloha 3 – akordeón |
 | `4-kalkulacka` | Úloha 4 – kalkulačka bez jediného `onclick` (bez JS) |
 | `5-hodnotenie` | Úloha 5 – hodnotenie hviezdičkami (bez JS) |
+| `6-stranky` | Úloha 6 – dve stránky v jednom HTML, prepínanie cez JS (bez JS) |
+| `7-registracia` | Úloha 7 – registračný formulár: zobrazenie hesla, farba tlačidla, odoslanie (bez JS) |
 
 ## Technické informácie
 

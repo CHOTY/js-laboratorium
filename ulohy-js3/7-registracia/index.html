@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrácia</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="karta">
+    <h1>Registrácia</h1>
+
+    <form id="registracia" novalidate>
+      <div class="riadok">
+        <div class="pole">
+          <label for="meno">Meno</label>
+          <input type="text" id="meno">
+        </div>
+        <div class="pole">
+          <label for="priezvisko">Priezvisko</label>
+          <input type="text" id="priezvisko">
+        </div>
+      </div>
+
+      <div class="pole">
+        <label for="email">E-mail (bude tvoj login)</label>
+        <input type="email" id="email">
+      </div>
+
+      <div class="pole">
+        <label for="heslo">Heslo</label>
+        <div class="heslo-riadok">
+          <input type="password" id="heslo">
+          <button type="button" id="ukazHeslo" class="oko">Zobraziť</button>
+        </div>
+      </div>
+
+      <div class="pole">
+        <label for="datum">Dátum narodenia</label>
+        <input type="date" id="datum">
+      </div>
+
+      <button type="submit" id="registrovat" class="hlavne-tlacidlo">Registrovať</button>
+    </form>
+  </section>
+
+  <!-- JavaScript si vytvor a pripoj sám -->
+</body>
+</html>

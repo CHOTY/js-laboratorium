@@ -93,6 +93,24 @@
     .stars-demo .hviezda { font-size: 2.6rem; color: #d1d5db; cursor: pointer; transition: color .1s, transform .1s; display: inline-block; user-select: none; }
     .stars-demo .hviezda.svieti { color: #f59e0b; transform: scale(1.1); }
 
+    /* ukážka dvoch stránok v jednom HTML (Úloha 6) */
+    .spa-demo { height: 330px; overflow-y: auto; border: 1px solid #d6dbe6; border-radius: .75rem; background: #f3f4f6; }
+    .spa-demo .spa-hlavicka { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: .55rem .9rem; background: #1f2937; color: #fff; font-weight: 700; font-size: .9rem; }
+    .spa-demo nav { display: flex; gap: .9rem; }
+    .spa-demo nav a { color: #d1d5db; text-decoration: none; font-weight: 400; border-bottom: 2px solid transparent; }
+    .spa-demo nav a.aktivna { color: #fff; border-bottom-color: #10b981; }
+    .spa-demo .spa-stranka { margin: .8rem; padding: .9rem 1rem; background: #fff; border-radius: .6rem; font-size: .9rem; }
+    .spa-demo .spa-stranka h4 { font-size: 1.05rem; }
+    .spa-demo .skryta { display: none; }
+    .spa-demo button { border: 0; border-radius: .5rem; padding: .45rem .9rem; background: #10b981; color: #fff; font-weight: 600; }
+
+    /* ukážka registrácie (Úloha 7) */
+    .reg-demo { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; }
+    .reg-demo label { font-size: .8rem; font-weight: 600; color: #374151; margin-bottom: .1rem; }
+    .reg-tlacidlo { width: 100%; border: 0; border-radius: .6rem; padding: .6rem; background: #2563eb; color: #fff; font-weight: 700; transition: background-color .2s; }
+    .reg-tlacidlo.zvyraznene { background: #7c3aed; }
+    .reg-tlacidlo.odoslane { background: #16a34a; }
+
     .quiz-question { margin-bottom: 1.25rem; }
     .quiz-question .list-group-item { cursor: pointer; }
     .quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
@@ -558,7 +576,7 @@ btn.addEventListener("mouseup", () =&gt; btn.style.border = "10px solid yellow")
           <div class="alert alert-light border small mb-2" id="navVysvetlenie"></div>
           <div class="tiny-label mb-1">HTML</div>
           <pre class="code-inspector mb-2" id="navHtml"></pre>
-          <div class="tiny-label mb-1">js/app.js</div>
+          <div class="tiny-label mb-1">js/navigacia.js</div>
           <pre class="code-inspector" id="navJs"></pre>
         </div>
       </div>
@@ -718,7 +736,7 @@ for (const a of accordion) {
   <section class="card section-card mb-4" id="ulohy">
     <div class="card-body p-4">
       <h2 class="h4"><span class="section-number">10</span>Úlohy na hodinu</h2>
-      <p>Pripravené súbory si stiahni ako jeden <code>.zip</code>, alebo si ich pozri na GitHube. V úlohách 3 až 5 je hotové HTML a CSS, ale <strong>žiadny JavaScript</strong> – ten napíšeš ty. Súbor <code>js/…</code> si vytvoríš a pripojíš sám.</p>
+      <p>Pripravené súbory si stiahni ako jeden <code>.zip</code>, alebo si ich pozri na GitHube. V úlohách 3 až 7 je hotové HTML a CSS, ale <strong>žiadny JavaScript</strong> – ten napíšeš ty. Súbor <code>js/…</code> si vytvoríš a pripojíš sám.</p>
       <div class="d-flex flex-wrap gap-2 mb-3">
         <a class="btn btn-success" href="ulohy-js3.zip" download>Stiahnuť úlohy (.zip)</a>
         <a class="btn btn-outline-success" href="https://github.com/CHOTY/js-laboratorium/tree/main/ulohy-js3">Pozrieť na GitHube</a>
@@ -727,11 +745,13 @@ for (const a of accordion) {
         <table class="table table-sm align-middle mb-0">
           <thead><tr><th>Priečinok</th><th>Úloha</th><th>Čo je pripravené</th></tr></thead>
           <tbody>
-            <tr><td><code>1-funkcie</code></td><td>Zadanie 1 – tri typy funkcií</td><td>HTML s odsekmi, prázdny <code>js/app.js</code></td></tr>
-            <tr><td><code>2-navigacia</code></td><td>Úloha 2 – navigácia bez onclick</td><td>HTML, CSS a pôvodný JS s <code>onclick</code> na prerobenie</td></tr>
+            <tr><td><code>1-funkcie</code></td><td>Zadanie 1 – tri typy funkcií</td><td>HTML s odsekmi, <code>js/funkcie.js</code> so zadaním</td></tr>
+            <tr><td><code>2-navigacia</code></td><td>Úloha 2 – navigácia bez onclick</td><td>HTML, CSS a pôvodný <code>js/navigacia.js</code> s <code>onclick</code> na prerobenie</td></tr>
             <tr><td><code>3-akordeon</code></td><td>Úloha 3 – akordeón</td><td>HTML a CSS, bez JS</td></tr>
             <tr class="table-success"><td><code>4-kalkulacka</code></td><td>Úloha 4 – kalkulačka s listenermi</td><td>HTML a CSS, bez JS a bez <code>onclick</code></td></tr>
             <tr class="table-success"><td><code>5-hodnotenie</code></td><td>Úloha 5 – hodnotenie hviezdičkami</td><td>HTML a CSS, bez JS</td></tr>
+            <tr><td><code>6-stranky</code></td><td>Úloha 6 – dve stránky v jednom HTML</td><td>HTML a CSS, bez JS</td></tr>
+            <tr><td><code>7-registracia</code></td><td>Úloha 7 – registračný formulár</td><td>HTML a CSS, bez JS</td></tr>
           </tbody>
         </table>
       </div>
@@ -820,6 +840,123 @@ function rozsviet(pocet) {
               </div>
               <p class="mt-2 mb-0" id="hviezdyText">Klikni na hviezdičku</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h5 mt-5 mb-1">Ďalšie úlohy na precvičenie</h3>
+      <p class="small text-secondary mb-3">Pre tých, čo sú hotoví skôr, alebo ako domáca úloha. Aj tu je pripravené len HTML a CSS.</p>
+
+      <div class="task-card mb-4" id="uloha6">
+        <h3 class="h5">Úloha 6: dve stránky v jednom HTML <span class="badge text-bg-light border align-middle">≈ 15 min</span></h3>
+        <p>V priečinku <code>6-stranky</code> je jeden HTML súbor, ktorý je v skutočnosti rozdelený na dve stránky – <strong>Domov</strong> a <strong>Kontakt</strong> (dve <code>&lt;section&gt;</code>). Kontakt je na začiatku skrytý triedou <code>skryta</code>. Naprogramuj prepínanie medzi nimi bez načítania novej stránky.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1">Klik na <strong>Kontakt</strong> v menu (<code>#menuKontakt</code>) skryje sekciu <code>#domov</code> a zobrazí <code>#kontakt</code> – pridávaj a odoberaj triedu <code>skryta</code>. Klik na <strong>Domov</strong> (<code>#menuDomov</code>) naopak.</li>
+              <li class="mb-1">Po prepnutí posuň stránku na <strong>úplný vrch</strong>: <code>window.scrollTo(0, 0)</code>. Inak by nová stránka začínala niekde v strede.</li>
+              <li class="mb-1">Rovnako majú fungovať tlačidlá na konci stránok: <code>#naKontakt</code> a <code>#naDomov</code>.</li>
+              <li>Aktívna položka menu má triedu <code>aktivna</code> (zelené podčiarknutie).</li>
+            </ol>
+            <p class="small mb-2"><strong>Bonus:</strong> podľa stránky zmeň aj názov karty prehliadača (<code>document.title</code>); posun nech je plynulý: <code>window.scrollTo({ top: 0, behavior: "smooth" })</code>.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 1 – jedna funkcia pre štyri listenery</summary>
+              <p class="small mt-2 mb-2">Dve položky menu a dve tlačidlá robia to isté, líšia sa len stránkou. Napíš funkciu <code>ukazStranku(stranka)</code> a listenery ju budú len volať.</p>
+<pre class="code-inspector js">function ukazStranku(stranka) {
+  if (stranka === "kontakt") {
+    // skry domov, zobraz kontakt, prepni triedu aktivna v menu
+  } else {
+    // naopak
+  }
+  window.scrollTo(0, 0);
+}</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Nápoveda 2 – odkazy s href="#"</summary>
+              <p class="small mt-2 mb-0">Položky menu sú odkazy <code>&lt;a href="#"&gt;</code>. Aby prehliadač nepridal do adresy znak <code>#</code>, zavolaj v listeneri <code>event.preventDefault()</code> – rovnako ako pri formulári.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Takto má fungovať – posuň sa dole a klikni na tlačidlo</div>
+            <div class="spa-demo" id="spaDemo">
+              <div class="spa-hlavicka">
+                <span>Krúžok</span>
+                <nav><a href="#" id="spaMenuDomov" class="aktivna">Domov</a><a href="#" id="spaMenuKontakt">Kontakt</a></nav>
+              </div>
+              <section class="spa-stranka" id="spaDomov">
+                <h4>Vitaj na krúžku programovania</h4>
+                <p>Každý štvrtok sa stretávame v počítačovej učebni a programujeme. Začiatočníci sú vítaní.</p>
+                <p>Na krúžku si tvoríme vlastné webové stránky – od HTML cez CSS až po JavaScript.</p>
+                <p>Každý si počas roka vytvorí vlastný projekt: osobnú stránku, hru alebo kvíz.</p>
+                <p>Tento mesiac pracujeme na kvízoch, budúci mesiac nás čaká súťaž o najkrajšiu kalkulačku.</p>
+                <p>Ak sa chceš pridať, kontakt nájdeš na druhej stránke.</p>
+                <button type="button" id="spaNaKontakt">Prejsť na kontakt →</button>
+              </section>
+              <section class="spa-stranka skryta" id="spaKontakt">
+                <h4>Kontakt</h4>
+                <p>Počítačová učebňa č. 12, 2. poschodie, každý štvrtok od 14:00.</p>
+                <p><strong>Musím vedieť programovať?</strong><br>Nie, začíname od začiatku.</p>
+                <p><strong>Potrebujem vlastný počítač?</strong><br>Nie, v učebni sú počítače pre všetkých.</p>
+                <p><strong>Koľko to stojí?</strong><br>Krúžok je zadarmo.</p>
+                <button type="button" id="spaNaDomov">← Späť na domov</button>
+              </section>
+            </div>
+            <p class="tiny-label text-center mt-1 mb-0">V ukážke sa posúva len rámček, na tvojej stránke to bude celé okno.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-card" id="uloha7">
+        <h3 class="h5">Úloha 7: registračný formulár <span class="badge text-bg-light border align-middle">≈ 20 min</span></h3>
+        <p>V priečinku <code>7-registracia</code> je hotový formulár: meno, priezvisko, e-mail, heslo a dátum narodenia. V CSS sú pripravené triedy <code>zvyraznene</code> a <code>odoslane</code> – JavaScript ich bude len pridávať a odoberať.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1"><strong>Zobraziť heslo:</strong> tlačidlo <code>#ukazHeslo</code> prepína pole <code>#heslo</code> medzi bodkami a čitateľným textom (atribút <code>type</code>: <code>password</code> ↔ <code>text</code>) a mení svoj text na „Skryť“ / „Zobraziť“.</li>
+              <li class="mb-1"><strong>Farba pod myšou:</strong> keď je myš nad tlačidlom <code>#registrovat</code>, pridaj mu triedu <code>zvyraznene</code> (<code>mouseover</code>). Keď myš odíde, triedu odober (<code>mouseout</code>). V CSS zámerne nie je <code>:hover</code>.</li>
+              <li><strong>Odoslanie</strong> – udalosť <code>submit</code> na formulári, nezabudni na <code>event.preventDefault()</code>:
+                <ul class="mt-1">
+                  <li>vyskakovacie okno (<code>alert</code>) s loginom (e-mail) a heslom,</li>
+                  <li>vymaž meno, priezvisko, e-mail, heslo aj dátum narodenia,</li>
+                  <li>tlačidlo dostane triedu <code>odoslane</code> (zelené) a text „Odoslané ✓“,</li>
+                  <li>po 3 sekundách sa tlačidlo vráti do pôvodného stavu.</li>
+                </ul>
+              </li>
+            </ol>
+            <p class="small mb-2"><strong>Bonus:</strong> ak je niektoré pole prázdne, formulár neodošli a upozorni používateľa; po odoslaní heslo znova skry.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 1 – zobrazenie hesla</summary>
+<pre class="code-inspector js mt-2">heslo.setAttribute("type", "text");      // heslo je čitateľné
+heslo.setAttribute("type", "password");  // znova bodky</pre>
+              <p class="small mt-2 mb-0">Rovnako sme to robili v JS 2 v sekcii Atribúty.</p>
+            </details>
+            <details class="mb-2">
+              <summary class="fw-semibold">Nápoveda 2 – niečo až o 3 sekundy</summary>
+<pre class="code-inspector js mt-2">setTimeout(() =&gt; {
+  // tento kód sa spustí až o 3 sekundy
+}, 3000);</pre>
+              <p class="small mt-2 mb-0">Poznáš ho zo sekcie 2 – anonymná funkcia odovzdaná inej funkcii.</p>
+            </details>
+            <details>
+              <summary class="fw-semibold">Nápoveda 3 – vymazanie polí</summary>
+              <p class="small mt-2 mb-0">Každému poľu nastav <code>.value = ""</code>, napríklad <code>document.getElementById("meno").value = "";</code>. Hodnoty, ktoré chceš ukázať v <code>alert</code>, si prečítaj <strong>predtým</strong>, ako polia vymažeš.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Takto má fungovať</div>
+            <form class="reg-demo" id="regDemo" novalidate>
+              <div class="d-flex gap-2">
+                <div class="mb-2 flex-fill"><label for="rgMeno">Meno</label><input class="form-control form-control-sm" id="rgMeno"></div>
+                <div class="mb-2 flex-fill"><label for="rgPriezvisko">Priezvisko</label><input class="form-control form-control-sm" id="rgPriezvisko"></div>
+              </div>
+              <div class="mb-2"><label for="rgEmail">E-mail (login)</label><input type="email" class="form-control form-control-sm" id="rgEmail"></div>
+              <div class="mb-2">
+                <label for="rgHeslo">Heslo</label>
+                <div class="d-flex gap-2"><input type="password" class="form-control form-control-sm" id="rgHeslo"><button type="button" class="btn btn-sm btn-light border text-nowrap" id="rgUkaz">Zobraziť</button></div>
+              </div>
+              <div class="mb-3"><label for="rgDatum">Dátum narodenia</label><input type="date" class="form-control form-control-sm" id="rgDatum"></div>
+              <button type="submit" class="reg-tlacidlo" id="rgRegistrovat">Registrovať</button>
+            </form>
           </div>
         </div>
       </div>
@@ -1562,6 +1699,67 @@ console.log("Počet akordeónov: " + accordion.length);`],
         text.textContent = `Tvoje hodnotenie: ${hodnotenie}/5 – ${TEXTY[hodnotenie]}`;
       });
     }
+  })();
+
+  /* ============================================================
+     10 Úloha 6 – dve stránky v jednom HTML (ukážka)
+     ============================================================ */
+  (() => {
+    const ramcek = $('#spaDemo');
+    const domov = $('#spaDomov'), kontakt = $('#spaKontakt');
+    const menuDomov = $('#spaMenuDomov'), menuKontakt = $('#spaMenuKontakt');
+    function ukazStranku(stranka) {
+      const jeKontakt = stranka === 'kontakt';
+      kontakt.classList.toggle('skryta', !jeKontakt);
+      domov.classList.toggle('skryta', jeKontakt);
+      menuKontakt.classList.toggle('aktivna', jeKontakt);
+      menuDomov.classList.toggle('aktivna', !jeKontakt);
+      ramcek.scrollTo({ top: 0, behavior: 'smooth' }); // na stránke: window.scrollTo(0, 0)
+    }
+    menuDomov.addEventListener('click', e => { e.preventDefault(); ukazStranku('domov'); });
+    menuKontakt.addEventListener('click', e => { e.preventDefault(); ukazStranku('kontakt'); });
+    $('#spaNaKontakt').addEventListener('click', () => ukazStranku('kontakt'));
+    $('#spaNaDomov').addEventListener('click', () => ukazStranku('domov'));
+  })();
+
+  /* ============================================================
+     10 Úloha 7 – registračný formulár (ukážka)
+     ============================================================ */
+  (() => {
+    const formular = $('#regDemo'), heslo = $('#rgHeslo'), ukaz = $('#rgUkaz'), tlacidlo = $('#rgRegistrovat');
+    const POLIA = ['#rgMeno', '#rgPriezvisko', '#rgEmail', '#rgHeslo', '#rgDatum'];
+    let casovac = null;
+    function skryHeslo() {
+      heslo.setAttribute('type', 'password');
+      ukaz.textContent = 'Zobraziť';
+    }
+    ukaz.addEventListener('click', () => {
+      if (heslo.getAttribute('type') === 'password') {
+        heslo.setAttribute('type', 'text');
+        ukaz.textContent = 'Skryť';
+      } else {
+        skryHeslo();
+      }
+    });
+    tlacidlo.addEventListener('mouseover', () => tlacidlo.classList.add('zvyraznene'));
+    tlacidlo.addEventListener('mouseout', () => tlacidlo.classList.remove('zvyraznene'));
+    formular.addEventListener('submit', e => {
+      e.preventDefault();
+      if (POLIA.some(id => $(id).value.trim() === '')) {
+        alert('Vyplň všetky polia.');
+        return;
+      }
+      alert('Registrácia prebehla úspešne!\n\nLogin: ' + $('#rgEmail').value + '\nHeslo: ' + heslo.value);
+      POLIA.forEach(id => { $(id).value = ''; });
+      skryHeslo();
+      tlacidlo.classList.add('odoslane');
+      tlacidlo.textContent = 'Odoslané ✓';
+      clearTimeout(casovac);
+      casovac = setTimeout(() => {
+        tlacidlo.classList.remove('odoslane');
+        tlacidlo.textContent = 'Registrovať';
+      }, 3000);
+    });
   })();
 </script>
 </body>
