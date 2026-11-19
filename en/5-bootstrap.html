@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5 · Responsive units and Bootstrap – installation step by step</title>
+  <meta name="description" content="Lesson 5 – responsive units rem, em, %, vw, vh and clamp(), the Bootstrap 5 framework: installation via CDN or by downloading, breakpoints, containers, the grid, spacing and components. Tasks: team.html, a pizzeria, a modal window.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #7952b3; --accent-bg: #ede9fe; }
+    .install-tabs .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bp-table td, .bp-table th { white-space: nowrap; }
+    .bp-table tr.now td { background: var(--accent-bg); font-weight: 600; }
+    .preset-btns .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bs-demo { border: 1px solid #e3e7f0; border-radius: .9rem; background: #fff; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+    .bs-demo > h3 { font-size: .95rem; font-weight: 700; padding: .7rem 1rem .2rem; margin: 0; }
+    .bs-demo > p { font-size: .82rem; color: #6b7280; padding: 0 1rem; margin: 0 0 .5rem; }
+    .bs-render { padding: .5rem 1rem 1rem; }
+    .bs-demo .code-inspector { border-radius: 0; margin-top: auto; font-size: .76rem; max-height: 260px; overflow: auto; }
+    .bs-demo .copy-wrap { margin-top: auto; }
+    .unit-table td { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82rem; }
+    .err-list li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lesson 5</span>
+  <h1 class="display-5 fw-bold">Responsive units and Bootstrap</h1>
+  <p class="lead col-lg-8">First the units that let a page adapt to the screen and to the font size set in the browser. Then <strong>Bootstrap</strong> – ready-made CSS and JavaScript with which you build a responsive page in a few minutes. We will go through the installation step by step from the very beginning.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#jednotky">1 · Responsive units</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bootstrap">2 · What Bootstrap is</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#instalacia">3 · Installation</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#breakpointy">4 · Breakpoints and containers</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#mriezka">5 · The grid</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#zarovnanie">6 · Alignment and spacing</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#komponenty">7 · Components</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">8 · Quiz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">9 · Tasks</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="jednotky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Responsive units</h2>
+      <div class="table-responsive">
+        <table class="table table-sm small align-middle unit-table">
+          <thead><tr><th>Unit</th><th>Relative to what</th><th>When to use it</th></tr></thead>
+          <tbody>
+            <tr><td>rem</td><td style="font-family:inherit">the font size of the root <code>&lt;html&gt;</code> (rem = <em>root em</em>, 16 px by default)</td><td style="font-family:inherit">fonts and spacing – when a visually impaired person enlarges the font in the browser, the page grows with it</td></tr>
+            <tr><td>em</td><td style="font-family:inherit">the parent’s font size (body 5 px → paragraph 2em = 10 px)</td><td style="font-family:inherit">things that should grow with the text around them (button padding)</td></tr>
+            <tr><td>%</td><td style="font-family:inherit">the parent’s width</td><td style="font-family:inherit">fluid columns – this is how the Bootstrap grid sets its widths too</td></tr>
+            <tr><td>vw / vh</td><td style="font-family:inherit">1 % of the width / height of the browser window (viewport)</td><td style="font-family:inherit">a section the full height of the screen (<code>100vh</code>), font size based on the window width</td></tr>
+            <tr><td>clamp(min, ideal, max)</td><td style="font-family:inherit">the ideal value, but never less than min and never more than max</td><td style="font-family:inherit">responsive font size without media queries: <code>clamp(1.5rem, 5vw, 3rem)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">Change the window width and compare three headings – one in <code>px</code>, one in <code>vw</code> and one with <code>clamp()</code>:</p>
+      <div id="unitResizer"></div>
+      <p class="small text-secondary mt-2 mb-0">The heading in <code>vw</code> is tiny on a phone and huge on a big monitor. <code>clamp()</code> grows with the window, but only within sensible limits. Another option – different sizes for different devices – you know from lesson 4: media queries.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="bootstrap">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>What Bootstrap is</h2>
+      <p><strong>Bootstrap</strong> is the best-known CSS <em>framework</em> – a package of ready-made CSS and JavaScript for building responsive pages. It was created at Twitter in 2011. Instead of writing your own CSS you add ready-made classes to elements: <code>class="btn btn-primary"</code> makes a nice blue button, <code>class="row"</code> and <code>class="col"</code> split the page into columns. At its core is a <strong>12-column grid</strong>.</p>
+      <div class="row g-3 small">
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-success">Advantages</strong><ul class="mb-0 mt-1"><li>speeds up development – the grid, buttons, forms and menus are ready</li><li>works the same in all browsers</li><li>clean, symmetrical layouts and good habits (mobile-first)</li><li>huge documentation and plenty of examples</li></ul></div></div>
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-danger">Disadvantages</strong><ul class="mb-0 mt-1"><li>sites look alike (“bootstrappy”)</li><li>adds a lot of code you won’t use</li><li>you have to learn its classes and rules</li><li>if you want something completely different, overriding the styles takes time</li></ul></div></div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">We use version <strong>5.3</strong>. Documentation: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">getbootstrap.com/docs/5.3</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="instalacia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Installation step by step</h2>
+      <p>Bootstrap is basically two files: <code>bootstrap.min.css</code> (the styles, goes into the head) and <code>bootstrap.bundle.min.js</code> (interactive parts such as dropdown menus or modal windows, goes at the end of <code>&lt;body&gt;</code>). You can load them from the internet (CDN) or download them into your project. The <code>.min</code> suffix means a <em>minified</em> file – without spaces and comments, smaller and faster; suitable for a published site.</p>
+      <div class="d-flex flex-wrap gap-2 mb-4 install-tabs" data-tabs>
+        <button type="button" class="btn btn-outline-secondary active" data-tab="instCdn">A · Via CDN (recommended)</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instDownload">B · Downloaded into the project</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instNpm">C · Via npm (advanced)</button>
+      </div>
+
+      <div id="instCdn">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Prepare the project</h3><p class="small mb-0">A new folder with <code>index.html</code> and <code>css/style.css</code> in it, open in your editor with Live Server running – exactly as in <a href="0-setup.html">lesson 0</a>.</p></li>
+          <li><h3 class="h6 mb-1">Find the CDN links</h3><p class="small mb-0">A CDN (Content Delivery Network) is a server from which the browser downloads the files. On <a href="https://getbootstrap.com/">getbootstrap.com</a> click <strong>Docs</strong> → <strong>Get started</strong> → the <em>Quick start</em> / <em>Include via CDN</em> part. There are two lines there – <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code>.</p></li>
+          <li><h3 class="h6 mb-1">CSS into the head</h3><p class="small mb-0">Put the line with <code>&lt;link … bootstrap.min.css&gt;</code> into <code>&lt;head&gt;</code> after the meta viewport. Link <strong>your</strong> <code>style.css</code> only <strong>after</strong> Bootstrap – that way you can override its styles.</p></li>
+          <li><h3 class="h6 mb-1">JavaScript at the end of body</h3><p class="small mb-0">Put the line with <code>&lt;script … bootstrap.bundle.min.js&gt;</code> right before <code>&lt;/body&gt;</code>. Without it the page still shows, but dropdown menus, modal windows and closing alerts won’t work.</p></li>
+          <li><h3 class="h6 mb-1">Check that it works</h3><p class="small mb-0">Save and look at the browser: the button is purple-blue and rounded (CSS works) and after clicking “Try JavaScript” the text expands (JS works). If not, open <kbd>F12</kbd> → <em>Console</em> and look at the errors.</p></li>
+        </ol>
+        <p class="small fw-semibold mb-1">The whole skeleton – copy it into <code>index.html</code>:</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My page with Bootstrap&lt;/title&gt;
+  &lt;!-- 1. Bootstrap CSS --&gt;
+  &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;!-- 2. my CSS only after it --&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container py-5"&gt;
+    &lt;h1&gt;Hello, Bootstrap!&lt;/h1&gt;
+    &lt;button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#test"&gt;
+      Try JavaScript
+    &lt;/button&gt;
+    &lt;div class="collapse mt-3" id="test"&gt;
+      &lt;div class="alert alert-success"&gt;Both CSS and JavaScript work.&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 3. Bootstrap JS at the end of body --&gt;
+  &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p class="small text-secondary mt-2 mb-0">A CDN needs the internet. On getbootstrap.com the links also have the attributes <code>integrity</code> and <code>crossorigin</code> – they check that nobody has tampered with the file; you can keep them.</p>
+      </div>
+
+      <div id="instDownload" class="d-none">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Download the compiled files</h3><p class="small mb-0">On <a href="https://getbootstrap.com/docs/5.3/getting-started/download/">getbootstrap.com → Download</a> click <strong>Download</strong> in the <strong>Compiled CSS and JS</strong> part. An archive <code>bootstrap-5.3.x-dist.zip</code> downloads.</p></li>
+          <li><h3 class="h6 mb-1">Unzip it and pick what you need</h3><p class="small mb-0">The archive contains <code>css</code> and <code>js</code> folders with lots of files. Two are enough: <code>css/bootstrap.min.css</code> and <code>js/bootstrap.bundle.min.js</code>. (<em>bundle</em> = including the Popper library for dropdowns and tooltips; you don’t need the <code>.map</code> files.)</p></li>
+          <li><h3 class="h6 mb-1">Copy them into your project</h3>
+<div class="tree small mt-1" style="background:#111827;color:#e5e7eb;border-radius:.6rem;padding:.7rem 1rem;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto">my-website/
+├── index.html
+├── css/
+│   ├── bootstrap.min.css   ← from the downloaded archive
+│   └── style.css           ← your styles
+└── js/
+    └── bootstrap.bundle.min.js</div></li>
+          <li><h3 class="h6 mb-1">Link them with a relative path</h3>
+<pre class="code-inspector mt-1" data-lang="html" data-copy>
+&lt;head&gt;
+  …
+  &lt;link href="css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  …
+  &lt;script src="js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+</pre></li>
+          <li><h3 class="h6 mb-1">Check that it works</h3><p class="small mb-0">Same as with the CDN – put the button and the collapsible text from the skeleton next to this into body. The advantage: the page works even without the internet. If the styles didn’t load, check the path (<kbd>F12</kbd> → <em>Network</em> – a 404 error means a wrong path).</p></li>
+        </ol>
+      </div>
+
+      <div id="instNpm" class="d-none">
+        <p class="small">Professional projects manage libraries with <strong>npm</strong> (the package manager for Node.js). You don’t need it in class, but it’s good to know it exists:</p>
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Install Node.js</h3><p class="small mb-0">The LTS version from <a href="https://nodejs.org/">nodejs.org</a>. Check it in the terminal with the command <code>node -v</code>.</p></li>
+          <li><h3 class="h6 mb-1">Install Bootstrap into the project</h3>
+<pre class="code-inspector mt-1" data-lang="text" data-copy>npm init -y
+npm install bootstrap@5.3.3</pre></li>
+          <li><h3 class="h6 mb-1">Link the files from <code>node_modules</code></h3>
+<pre class="code-inspector mt-1" data-lang="html">&lt;link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</pre>
+          <p class="small text-secondary mt-1 mb-0">In practice the files are processed further by a tool (e.g. Vite) that bundles them with your code.</p></li>
+        </ol>
+      </div>
+
+      <h3 class="h6 mt-4">Common mistakes</h3>
+      <ul class="small err-list mb-0">
+        <li><strong>Missing meta viewport</strong> – on a phone the grid doesn’t wrap and the page is tiny.</li>
+        <li><strong>Your own CSS comes before Bootstrap</strong> – Bootstrap overrides your styles. Put your <code>&lt;link&gt;</code> after it.</li>
+        <li><strong>A tutorial for an old version</strong> – Bootstrap 3 and 4 (and older materials) used <code>data-toggle</code>, <code>col-xs-6</code>, <code>glyphicon</code> and needed jQuery. In Bootstrap 5 it is <code>data-bs-toggle</code>, <code>col-6</code>, icons are a separate library <a href="https://icons.getbootstrap.com/">Bootstrap Icons</a> and jQuery isn’t needed.</li>
+        <li><strong>Interactive parts don’t respond</strong> – <code>bootstrap.bundle.min.js</code> is missing, or you linked <code>bootstrap.min.js</code> without Popper.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="breakpointy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Breakpoints and containers</h2>
+      <p>A <strong>breakpoint</strong> is a screen width at which the layout can change. Bootstrap has six of them and you will see their abbreviations in class names (<code>col-md-6</code>, <code>d-lg-none</code>…). It is <strong>mobile-first</strong>: a class with an abbreviation applies from that width <em>upwards</em>.</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="table-responsive">
+            <table class="table table-sm small bp-table mb-2" id="bpTable">
+              <thead><tr><th>Breakpoint</th><th>Abbreviation</th><th>Window width</th><th>.container</th></tr></thead>
+              <tbody>
+                <tr data-min="0"><td>Extra small</td><td><em>no abbreviation</em></td><td>&lt; 576 px</td><td>100 %</td></tr>
+                <tr data-min="576"><td>Small</td><td><code>sm</code></td><td>≥ 576 px</td><td>540 px</td></tr>
+                <tr data-min="768"><td>Medium</td><td><code>md</code></td><td>≥ 768 px</td><td>720 px</td></tr>
+                <tr data-min="992"><td>Large</td><td><code>lg</code></td><td>≥ 992 px</td><td>960 px</td></tr>
+                <tr data-min="1200"><td>Extra large</td><td><code>xl</code></td><td>≥ 1200 px</td><td>1140 px</td></tr>
+                <tr data-min="1400"><td>Extra extra large</td><td><code>xxl</code></td><td>≥ 1400 px</td><td>1320 px</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="small mb-0">
+            <li><code>.container</code> wraps the content, centres it and gives it a maximum width at each breakpoint.</li>
+            <li><code>.container-fluid</code> is always 100 % wide.</li>
+            <li><code>.container-md</code> is 100 % up to md, then it behaves like <code>.container</code>.</li>
+            <li>Containers can be nested, but usually you don’t need to – one around the content is enough.</li>
+          </ul>
+        </div>
+        <div class="col-lg-7"><div id="bpResizer"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="mriezka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>The grid: <code>row</code> and <code>col</code></h2>
+      <p>Columns are always inside a <code>.row</code> and the row inside a container. A row has 12 shares: <code>col-6</code> takes half, <code>col-4</code> a third. A plain <code>col</code> shares the space equally. Classes with breakpoints can be combined: <code>col-12 col-md-6 col-lg-3</code> = full width on a phone, half from a tablet up, a quarter from a computer up. Choose a layout and change the window width:</p>
+      <div class="d-flex flex-wrap gap-2 mb-3 preset-btns" id="gridPresets"></div>
+      <div class="row g-4">
+        <div class="col-xl-5"><pre class="code-inspector" id="gridCode"></pre><p class="small text-secondary mt-2 mb-0" id="gridNote"></p></div>
+        <div class="col-xl-7"><div id="gridResizer"></div></div>
+      </div>
+      <h3 class="h6 mt-4">Try it yourself</h3>
+      <p class="small">An editor with Bootstrap included – change the column classes or add another row.</p>
+      <div class="live" data-bootstrap="css" data-height="260">
+<textarea data-part="html" data-label="HTML">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-8"><div class="p-3 bg-primary text-white">col-8</div></div>
+    <div class="col-4"><div class="p-3 bg-info">col-4</div></div>
+  </div>
+  <div class="row g-2 mt-1">
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+  </div>
+</div>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="zarovnanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Alignment and spacing</h2>
+      <p>Inside, the <code>.row</code> is a flexbox (lesson 4), so the alignment classes work the same way: on the row we use <code>justify-content-*</code> (horizontally) and <code>align-items-*</code> (vertically), on a single column <code>align-self-*</code>. The spacing between columns (<em>gutters</em>) is set by <code>g-*</code>, horizontal only <code>gx-*</code>, vertical only <code>gy-*</code>.</p>
+      <div class="row g-4" id="alignPg">
+        <div class="col-lg-5">
+          <div class="pg-row mb-2"><label for="alJustify">justify-content-</label><select class="form-select form-select-sm" id="alJustify"><option>start</option><option>center</option><option>end</option><option>between</option><option>around</option><option>evenly</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alItems">align-items-</label><select class="form-select form-select-sm" id="alItems"><option>start</option><option>center</option><option>end</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alGx">gx-</label><input type="range" class="form-range" id="alGx" min="0" max="5" value="3"><span class="pg-val" id="alGxV"></span></div>
+          <div class="pg-row mb-2"><label for="alSelf">2nd column align-self-</label><select class="form-select form-select-sm" id="alSelf"><option value="">(none)</option><option>start</option><option>center</option><option>end</option></select><span></span></div>
+        </div>
+        <div class="col-lg-7">
+          <iframe id="alFrame" title="alignment" style="width:100%;height:220px;border:1px solid #d6dbe6;border-radius:.6rem;background:#fff"></iframe>
+          <pre class="code-inspector mt-2" id="alCode"></pre>
+        </div>
+      </div>
+      <h3 class="h6 mt-4">Margin and padding: <code>{m|p}{side}-{size}</code></h3>
+      <div class="row g-3 small">
+        <div class="col-md-6">
+          <ul class="mb-0">
+            <li><code>m</code> = margin, <code>p</code> = padding</li>
+            <li>side: <code>t</code> top, <code>b</code> bottom, <code>s</code> start (left), <code>e</code> end (right), <code>x</code> left and right, <code>y</code> top and bottom, no letter = all sides</li>
+            <li>examples: <code>mt-3</code>, <code>px-4</code>, <code>py-5</code>, <code>mx-auto</code> (centres a block)</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <table class="table table-sm mb-0"><thead><tr><th>size</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody><tr><td>rem</td><td>0</td><td>.25</td><td>.5</td><td>1</td><td>1.5</td><td>3</td></tr><tr><td>px</td><td>0</td><td>4</td><td>8</td><td>16</td><td>24</td><td>48</td></tr></tbody></table>
+        </div>
+      </div>
+      <div class="erratum mt-3">The number after the dash is not a multiplier: <code>px-4</code> and <code>gx-4</code> both mean 1.5 rem (24 px), not 1.5 rem × 4. The default gap between columns is 1.5 rem (<code>g-4</code>).</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="komponenty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Components – ready-made parts of a page</h2>
+      <p>Every component is just HTML with classes from the documentation. The code under each example is exactly what is above it – copy it and adapt it. The ones marked ⚡ need Bootstrap JavaScript.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Buttons and colours</h3><p>btn-* for buttons, bg-* and text-* for background and text.</p>
+            <div class="bs-render">
+<button class="btn btn-primary">Primary</button>
+<button class="btn btn-success">Success</button>
+<button class="btn btn-outline-danger">Outline</button>
+<button class="btn btn-warning btn-sm">Small</button>
+<span class="badge bg-dark">Badge</span>
+<p class="bg-info-subtle text-info-emphasis p-2 mt-2 mb-0">Background bg-info-subtle</p>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>An alert that can be closed ⚡</h3><p>alert-* and the btn-close button.</p>
+            <div class="bs-render">
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Done!</strong> Your order has been sent.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Card</h3><p>card with an image, a heading and a button.</p>
+            <div class="bs-render">
+<div class="card" style="max-width: 18rem;">
+  <img data-img="hory" class="card-img-top" alt="mountains">
+  <div class="card-body">
+    <h5 class="card-title">A trip to the mountains</h5>
+    <p class="card-text">A three-day ridge hike.</p>
+    <a href="#" class="btn btn-primary">More</a>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Images</h3><p>rounded, rounded-circle, img-thumbnail; img-fluid = never wider than its parent.</p>
+            <div class="bs-render">
+<img data-img="more" class="rounded" width="110" alt="sea">
+<img data-img="mesto" class="rounded-circle" width="110" height="110" alt="city">
+<img data-img="slnecnica" class="img-thumbnail" width="110" alt="sunflower">
+<img data-img="hory" class="img-fluid mt-2" alt="mountains">
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Navigation bar ⚡</h3><p>the navbar collapses into a “hamburger” on a narrow screen.</p>
+            <div class="bs-render">
+<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Pizzeria</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoMenu" aria-label="Menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="demoMenu">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Tabs ⚡</h3><p>nav-tabs (or nav-pills) and tab-content.</p>
+            <div class="bs-render">
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabPopis" type="button">Description</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCena" type="button">Price</button></li>
+</ul>
+<div class="tab-content border border-top-0 p-3">
+  <div class="tab-pane fade show active" id="tabPopis">Tomatoes, mozzarella, basil.</div>
+  <div class="tab-pane fade" id="tabCena">Small €6, large €9.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Modal window ⚡</h3><p>A window above the page – a button with data-bs-toggle="modal".</p>
+            <div class="bs-render">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">Log in</button>
+<div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control mb-2" type="email" placeholder="E-mail">
+        <input class="form-control" type="password" placeholder="Password">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Log in</button>
+      </div>
+    </div>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Collapsible content ⚡</h3><p>collapse – shows and hides a longer text.</p>
+            <div class="bs-render">
+<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#demoMore">Show more</button>
+<div class="collapse mt-2" id="demoMore">
+  <div class="card card-body">This was hidden until you clicked.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-12">
+          <div class="bs-demo"><h3>Table</h3><p>table + table-striped, table-hover; table-responsive adds scrolling on phones.</p>
+            <div class="bs-render">
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead><tr><th>Pizza</th><th>Small</th><th>Medium</th><th>Large</th></tr></thead>
+    <tbody>
+      <tr><td>Margherita</td><td>6 €</td><td>8 €</td><td>10 €</td></tr>
+      <tr><td>Quattro formaggi</td><td>7 €</td><td>9 €</td><td>11 €</td></tr>
+    </tbody>
+  </table>
+</div>
+            </div></div>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">More ready-made parts: <a href="https://getbootstrap.com/docs/5.3/examples/">official examples</a>, <a href="https://bootsnipp.com/">Bootsnipp</a> (a community gallery – careful, some are for older versions), colour themes <a href="https://bootswatch.com/">Bootswatch</a>, fonts <a href="https://fonts.google.com/">Google Fonts</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Quiz</h2>
+      <div id="quiz5"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Tasks for the class</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 1 · team.html – company structure</h3>
+            <ol class="small mb-0">
+              <li>Create <code>team.html</code> and include Bootstrap (part 3).</li>
+              <li>Use the grid to build the company structure: a row with the director, a row with 2 managers and a row with 6 programmers (<code>col-2</code> × 6).</li>
+              <li>Programmers 5 and 6 have quit 🙂 – change the last row to 4 programmers (<code>col-3</code> × 4).</li>
+              <li>Put each person’s job title into a <code>&lt;kbd&gt;</code> tag.</li>
+              <li>Try the classes <code>rounded</code>, <code>rounded-circle</code>, <code>img-thumbnail</code>, <code>img-fluid</code> on the photos.</li>
+              <li>Add a “new employee” badge to the first manager and to programmer 3 (<code>badge</code>).</li>
+              <li>On a phone every person should take the full width (<code>col-12 col-md-…</code>).</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card mb-4">
+            <h3 class="h5">Task 2 · Pizzeria Giovanni</h3>
+            <p class="small mb-0">A price list with prices for a small, medium and large pizza: three cards side by side (stacked on a phone), each with the size name, the price in large type, a list of what it includes and an “Order” button. Highlight the middle card (a different border colour, a “Most popular” badge). A navigation bar at the top.</p>
+          </div>
+          <div class="task-card">
+            <h3 class="h5">Task 3 · Login in a modal window</h3>
+            <p class="small mb-0">On the page from task 2 add a “Log in” button to the navigation that opens a modal window with a login form (e-mail, password, “remember me”, a button). <strong>Bonus:</strong> a second modal window with an image; a timeline of your life or a list of holiday places with cards and images.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lesson 5 · Responsive design and Bootstrap · Documentation: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">Bootstrap 5.3</a> · <a href="https://getbootstrap.com/docs/5.3/layout/grid/">Grid</a> · <a href="https://getbootstrap.com/docs/5.3/layout/gutters/">Gutters</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/clamp">MDN – clamp()</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 1 jednotky ----------
+  Lab.resizer(document.getElementById('unitResizer'), {
+    value: 800, max: 1200, height: 260,
+    doc: {
+      css: 'body{margin:0;padding:12px 16px;font-family:system-ui,sans-serif}h2{margin:.2em 0;line-height:1.15}small{display:block;font:12px monospace;color:#6b7280;margin-top:.6em}' +
+        '.px{font-size:32px}.vw{font-size:5vw}.cl{font-size:clamp(1.5rem,5vw,3rem)}.half{width:50vw;background:#ede9fe;font:12px monospace;padding:4px;margin-top:8px}',
+      html: '<small>font-size: 32px</small><h2 class="px">A trip to the mountains</h2><small>font-size: 5vw</small><h2 class="vw">A trip to the mountains</h2>' +
+        '<small>font-size: clamp(1.5rem, 5vw, 3rem)</small><h2 class="cl">A trip to the mountains</h2><div class="half">width: 50vw</div>'
+    }
+  });
+
+  // ---------- 4 breakpointy ----------
+  const bpDoc = {
+    bootstrap: 'css', nobase: true,
+    css: 'body{padding:10px 0}.box{padding:8px;margin-bottom:8px;font:600 12px ui-monospace,monospace;color:#3b0764}',
+    html: '<div class="container"><div class="box" style="background:#ddd6fe">.container</div></div>' +
+      '<div class="container-fluid"><div class="box" style="background:#fde68a">.container-fluid</div></div>' +
+      '<div class="container-md"><div class="box" style="background:#bbf7d0">.container-md</div></div>' +
+      '<div class="container"><span class="badge bg-dark d-sm-none">xs – less than 576px</span><span class="badge bg-dark d-none d-sm-inline d-md-none">sm</span>' +
+      '<span class="badge bg-dark d-none d-md-inline d-lg-none">md</span><span class="badge bg-dark d-none d-lg-inline d-xl-none">lg</span>' +
+      '<span class="badge bg-dark d-none d-xl-inline d-xxl-none">xl</span><span class="badge bg-dark d-none d-xxl-inline">xxl</span></div>'
+  };
+  Lab.resizer(document.getElementById('bpResizer'), {
+    doc: bpDoc, min: 320, max: 1500, value: 800, height: 200,
+    onWidth: w => {
+      const rows = Lab.$$('#bpTable tbody tr');
+      let cur = rows[0];
+      rows.forEach(r => { if (w >= Number(r.dataset.min)) cur = r; });
+      rows.forEach(r => r.classList.toggle('now', r === cur));
+    }
+  });
+
+  // ---------- 5 mriežka ----------
+  const box = (cls, label, color) => '    <div class="' + cls + '"><div class="cell" style="background:' + color + '">' + (label || cls) + '</div></div>\n';
+  const PRESETS = [
+    { name: '3 equal columns', note: 'col without a number – the columns share the space equally, however many there are.',
+      rows: [['col', 'col', 'col']] },
+    { name: '2 unequal', note: '8 + 4 = 12. The sum in a row should be 12; if it is more, a column wraps onto a new line.',
+      rows: [['col-8', 'col-4']] },
+    { name: 'Cards: phone → PC', note: 'Phone: every card full width (col-12). From md (768 px) two side by side, from lg (992 px) four.',
+      rows: [['col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3']] },
+    { name: 'team.html', note: 'The company structure from task 1: director, 2 managers, 6 programmers with 2 shares each.',
+      rows: [['col-12', 'Director'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']], team: true },
+    { name: 'Content + sidebar', note: 'Stacked on a phone; from lg the content takes 9 shares and the sidebar 3.',
+      rows: [['col-lg-9', 'col-lg-3']] }
+  ];
+  const COLORS = ['#c4b5fd', '#a5b4fc', '#93c5fd', '#99f6e4', '#fde68a', '#fecaca'];
+  const gridResizer = Lab.resizer(document.getElementById('gridResizer'), { min: 320, max: 1300, value: 1000, height: 230 });
+  function showPreset(i) {
+    const p = PRESETS[i];
+    let html = '<div class="container">\n';
+    p.rows.forEach((row, r) => {
+      html += '  <div class="row g-2 mb-2">\n';
+      if (p.team) {
+        const names = [['Director'], ['Manager 1', 'Manager 2'], ['Prog. 1', 'Prog. 2', 'Prog. 3', 'Prog. 4', 'Prog. 5', 'Prog. 6']][r];
+        const cls = [['col-12'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']][r];
+        cls.forEach((c, k) => { html += box(c, names[k], COLORS[r]); });
+      } else {
+        row.forEach((c, k) => { html += box(c, c, COLORS[k % COLORS.length]); });
+      }
+      html += '  </div>\n';
+    });
+    html += '</div>';
+    Lab.setCode(document.getElementById('gridCode'), 'html', html.replace(/ style="background:#[0-9a-f]+"/g, ''));
+    document.getElementById('gridNote').textContent = p.note;
+    gridResizer.setDoc({ bootstrap: 'css', nobase: true, html: html, css: 'body{padding:12px 0}.cell{padding:14px 6px;border-radius:6px;font:600 12px ui-monospace,monospace;text-align:center;overflow-wrap:anywhere}' });
+    Lab.$$('#gridPresets .btn').forEach((b, k) => b.classList.toggle('active', k === i));
+  }
+  PRESETS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-sm btn-outline-secondary'; b.textContent = p.name;
+    b.addEventListener('click', () => showPreset(i));
+    document.getElementById('gridPresets').appendChild(b);
+  });
+  showPreset(2);
+
+  // ---------- 6 zarovnanie ----------
+  const al = { j: document.getElementById('alJustify'), i: document.getElementById('alItems'), g: document.getElementById('alGx'), s: document.getElementById('alSelf') };
+  function drawAlign() {
+    const rowCls = 'row justify-content-' + al.j.value + ' align-items-' + al.i.value + ' gx-' + al.g.value;
+    const self = al.s.value ? ' align-self-' + al.s.value : '';
+    document.getElementById('alGxV').textContent = ['0', '.25rem', '.5rem', '1rem', '1.5rem', '3rem'][al.g.value];
+    const html = '<div class="container">\n  <div class="' + rowCls + '">\n    <div class="col-3"><div class="cell">1</div></div>\n    <div class="col-3' + self + '"><div class="cell">2</div></div>\n    <div class="col-3"><div class="cell tall">3</div></div>\n  </div>\n</div>';
+    document.getElementById('alFrame').srcdoc = Lab.buildDoc({ bootstrap: 'css', nobase: true, html: html,
+      css: 'body{padding:10px 0}.row{min-height:190px;background:repeating-linear-gradient(90deg,#f5f3ff 0 8px,#fff 8px 16px);border:1px dashed #a78bfa}.cell{background:#7952b3;color:#fff;padding:10px;font:700 14px monospace;text-align:center;border-radius:6px}.tall{padding:40px 10px}' });
+    Lab.setCode(document.getElementById('alCode'), 'html', html);
+  }
+  Object.values(al).forEach(el => el.addEventListener('input', drawAlign));
+  drawAlign();
+
+  // ---------- 7 komponenty: kód z ukážky ----------
+  Lab.$$('.bs-render').forEach(render => {
+    // obrázky majú v ukážke data-img (súbory img/… na webe nie sú) – do kódu vrátime src="img/…"
+    const code = render.innerHTML.replace(/^\s*\n/, '').replace(/\s+$/, '').replace(/data-img="(\w+)"/g, 'src="img/$1.jpg"');
+    const pre = document.createElement('pre');
+    pre.className = 'code-inspector';
+    pre.setAttribute('data-copy', '');
+    Lab.setCode(pre, 'html', code);
+    render.parentNode.appendChild(pre);
+    Lab.$$('img[data-img]', render).forEach(img => { img.src = Lab.svgScene(img.dataset.img); });
+  });
+  // tlačidlá Kopírovať pre vygenerovaný kód
+  Lab.$$('.bs-demo pre[data-copy]').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'copy-wrap';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'copy-btn'; btn.textContent = Lab.ui.copy;
+    btn.addEventListener('click', () => navigator.clipboard.writeText(pre.textContent).then(() => {
+      btn.textContent = Lab.ui.copied; setTimeout(() => { btn.textContent = Lab.ui.copy; }, 1500);
+    }));
+    wrap.appendChild(btn);
+  });
+
+  // ---------- 8 kvíz ----------
+  Lab.quiz('#quiz5', [
+    { q: 'How many columns does the Bootstrap grid have?', o: ['10', '12', '16'], a: 1, e: '12 can be divided by 2, 3, 4 and 6 – that is why it is so practical.', mono: false },
+    { q: 'Where do you put <script src="…bootstrap.bundle.min.js">?', o: ['into <head> before the CSS', 'at the end of <body>', 'into the style.css file'], a: 1, e: 'JavaScript goes at the end of body; CSS (link) into the head.' },
+    { q: 'What does col-12 col-md-6 mean?', o: ['full width on a phone, half from 768 px', 'always half', 'half on a phone, full width on a PC'], a: 0, e: 'Mobile-first: col-12 applies from the smallest width, col-md-6 from md (768 px) upwards.', mono: false },
+    { q: 'Which container is always 100 % wide?', o: ['.container', '.container-fluid', '.container-md'], a: 1, e: '.container has a maximum width at each breakpoint, .container-fluid doesn’t.' },
+    { q: 'Which class gives a padding of 1.5rem on the left and right?', o: ['px-4', 'px-6', 'p-1.5'], a: 0, e: 'Scale: 1 = .25rem, 2 = .5rem, 3 = 1rem, 4 = 1.5rem, 5 = 3rem.' },
+    { q: 'An old tutorial says data-toggle="modal". What will it be in Bootstrap 5?', o: ['data-toggle="modal"', 'data-bs-toggle="modal"', 'onclick="modal()"'], a: 1, e: 'Bootstrap 5 added the prefix bs to all data attributes.' },
+    { q: 'Why do we link our own style.css only after Bootstrap?', o: ['so that it loads faster', 'so that my rules can override Bootstrap', 'otherwise it doesn’t load'], a: 1, e: 'With equally strong selectors the rule that comes later wins.', mono: false },
+    { q: 'What does font-size: clamp(1rem, 4vw, 2rem) do?', o: ['always 4vw', '4vw, but at least 1rem and at most 2rem', 'a random size between 1 and 2 rem'], a: 1, e: 'clamp(min, ideal, max) – the ideal value within limits.' }
+  ]);
+</script>
+</body>
+</html>

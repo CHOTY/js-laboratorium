@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5 · Unidades responsive y Bootstrap – instalación paso a paso</title>
+  <meta name="description" content="Lección 5 – unidades responsive rem, em, %, vw, vh y clamp(), el framework Bootstrap 5: instalación por CDN o descargando los archivos, breakpoints, contenedores, la cuadrícula, el espaciado y los componentes. Tareas: team.html, una pizzería, una ventana modal.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #7952b3; --accent-bg: #ede9fe; }
+    .install-tabs .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bp-table td, .bp-table th { white-space: nowrap; }
+    .bp-table tr.now td { background: var(--accent-bg); font-weight: 600; }
+    .preset-btns .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bs-demo { border: 1px solid #e3e7f0; border-radius: .9rem; background: #fff; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+    .bs-demo > h3 { font-size: .95rem; font-weight: 700; padding: .7rem 1rem .2rem; margin: 0; }
+    .bs-demo > p { font-size: .82rem; color: #6b7280; padding: 0 1rem; margin: 0 0 .5rem; }
+    .bs-render { padding: .5rem 1rem 1rem; }
+    .bs-demo .code-inspector { border-radius: 0; margin-top: auto; font-size: .76rem; max-height: 260px; overflow: auto; }
+    .bs-demo .copy-wrap { margin-top: auto; }
+    .unit-table td { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82rem; }
+    .err-list li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lección 5</span>
+  <h1 class="display-5 fw-bold">Unidades responsive y Bootstrap</h1>
+  <p class="lead col-lg-8">Primero las unidades con las que la página se adapta a la pantalla y al tamaño de letra configurado en el navegador. Después <strong>Bootstrap</strong>: CSS y JavaScript ya hechos con los que montas una página responsive en pocos minutos. Veremos la instalación paso a paso desde el principio.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#jednotky">1 · Unidades responsive</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bootstrap">2 · Qué es Bootstrap</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#instalacia">3 · Instalación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#breakpointy">4 · Breakpoints y contenedores</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#mriezka">5 · La cuadrícula</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#zarovnanie">6 · Alineación y espaciado</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#komponenty">7 · Componentes</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">8 · Cuestionario</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">9 · Tareas</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="jednotky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Unidades responsive</h2>
+      <div class="table-responsive">
+        <table class="table table-sm small align-middle unit-table">
+          <thead><tr><th>Unidad</th><th>Respecto a qué</th><th>Cuándo usarla</th></tr></thead>
+          <tbody>
+            <tr><td>rem</td><td style="font-family:inherit">el tamaño de letra de la raíz <code>&lt;html&gt;</code> (rem = <em>root em</em>, 16 px por defecto)</td><td style="font-family:inherit">letra y espacios: cuando una persona con baja visión agranda la letra en el navegador, la página crece con ella</td></tr>
+            <tr><td>em</td><td style="font-family:inherit">el tamaño de letra del padre (body 5 px → párrafo 2em = 10 px)</td><td style="font-family:inherit">cosas que deben crecer con el texto que las rodea (el padding de un botón)</td></tr>
+            <tr><td>%</td><td style="font-family:inherit">el ancho del padre</td><td style="font-family:inherit">columnas fluidas: así define sus anchos también la cuadrícula de Bootstrap</td></tr>
+            <tr><td>vw / vh</td><td style="font-family:inherit">1 % del ancho / alto de la ventana del navegador (viewport)</td><td style="font-family:inherit">una sección a toda la altura de la pantalla (<code>100vh</code>), letra según el ancho de la ventana</td></tr>
+            <tr><td>clamp(mín, ideal, máx)</td><td style="font-family:inherit">el valor ideal, pero nunca menos que el mínimo ni más que el máximo</td><td style="font-family:inherit">letra responsive sin media queries: <code>clamp(1.5rem, 5vw, 3rem)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">Cambia el ancho de la ventana y compara tres títulos: uno en <code>px</code>, uno en <code>vw</code> y uno con <code>clamp()</code>:</p>
+      <div id="unitResizer"></div>
+      <p class="small text-secondary mt-2 mb-0">El título en <code>vw</code> es diminuto en el móvil y enorme en un monitor grande. <code>clamp()</code> crece con la ventana, pero solo dentro de unos límites razonables. La otra opción, tamaños distintos para dispositivos distintos, ya la conoces de la lección 4: media queries.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="bootstrap">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Qué es Bootstrap</h2>
+      <p><strong>Bootstrap</strong> es el <em>framework</em> CSS más conocido: un paquete de CSS y JavaScript ya preparados para crear páginas responsive. Nació en 2011 en la empresa Twitter. En lugar de escribir tu propio CSS, añades a los elementos clases ya hechas: <code>class="btn btn-primary"</code> crea un bonito botón azul, <code>class="row"</code> y <code>class="col"</code> dividen la página en columnas. Su base es una <strong>cuadrícula de 12 columnas</strong>.</p>
+      <div class="row g-3 small">
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-success">Ventajas</strong><ul class="mb-0 mt-1"><li>acelera el desarrollo: la cuadrícula, los botones, los formularios y los menús ya están hechos</li><li>funciona igual en todos los navegadores</li><li>diseños limpios y simétricos y buenos hábitos (mobile-first)</li><li>una documentación enorme y muchos ejemplos</li></ul></div></div>
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-danger">Inconvenientes</strong><ul class="mb-0 mt-1"><li>las páginas se parecen entre sí (“aspecto Bootstrap”)</li><li>añade mucho código que no usarás</li><li>tienes que aprender sus clases y reglas</li><li>si quieres algo totalmente distinto, sobrescribir los estilos lleva tiempo</li></ul></div></div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Usamos la versión <strong>5.3</strong>. Documentación: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">getbootstrap.com/docs/5.3</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="instalacia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Instalación paso a paso</h2>
+      <p>Bootstrap son básicamente dos archivos: <code>bootstrap.min.css</code> (los estilos, van en la cabecera) y <code>bootstrap.bundle.min.js</code> (las partes interactivas, como menús desplegables o ventanas modales, va al final de <code>&lt;body&gt;</code>). Puedes cargarlos desde internet (CDN) o descargarlos en tu proyecto. El sufijo <code>.min</code> significa archivo <em>minificado</em>: sin espacios ni comentarios, más pequeño y rápido; adecuado para una web publicada.</p>
+      <div class="d-flex flex-wrap gap-2 mb-4 install-tabs" data-tabs>
+        <button type="button" class="btn btn-outline-secondary active" data-tab="instCdn">A · Por CDN (recomendado)</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instDownload">B · Descargando los archivos al proyecto</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instNpm">C · Con npm (avanzado)</button>
+      </div>
+
+      <div id="instCdn">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Prepara el proyecto</h3><p class="small mb-0">Una carpeta nueva con <code>index.html</code> y <code>css/style.css</code>, abierta en el editor con Live Server en marcha, exactamente como en la <a href="0-setup.html">lección 0</a>.</p></li>
+          <li><h3 class="h6 mb-1">Busca los enlaces del CDN</h3><p class="small mb-0">Un CDN (Content Delivery Network) es un servidor del que el navegador descarga los archivos. En <a href="https://getbootstrap.com/">getbootstrap.com</a> haz clic en <strong>Docs</strong> → <strong>Get started</strong> → la parte <em>Quick start</em> / <em>Include via CDN</em>. Ahí hay dos líneas: <code>&lt;link&gt;</code> y <code>&lt;script&gt;</code>.</p></li>
+          <li><h3 class="h6 mb-1">El CSS en la cabecera</h3><p class="small mb-0">Pon la línea con <code>&lt;link … bootstrap.min.css&gt;</code> dentro de <code>&lt;head&gt;</code>, después del meta viewport. Enlaza <strong>tu</strong> <code>style.css</code> solo <strong>después</strong> de Bootstrap: así podrás sobrescribir sus estilos.</p></li>
+          <li><h3 class="h6 mb-1">El JavaScript al final de body</h3><p class="small mb-0">Pon la línea con <code>&lt;script … bootstrap.bundle.min.js&gt;</code> justo antes de <code>&lt;/body&gt;</code>. Sin ella la página se ve, pero no funcionarán los menús desplegables, las ventanas modales ni el cierre de los avisos.</p></li>
+          <li><h3 class="h6 mb-1">Comprueba que funciona</h3><p class="small mb-0">Guarda y mira el navegador: el botón es azul violáceo y redondeado (el CSS funciona) y al hacer clic en “Prueba JavaScript” se despliega el texto (el JS funciona). Si no, abre <kbd>F12</kbd> → <em>Console</em> y mira los errores.</p></li>
+        </ol>
+        <p class="small fw-semibold mb-1">El esqueleto completo: cópialo en <code>index.html</code>:</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Mi página con Bootstrap&lt;/title&gt;
+  &lt;!-- 1. Bootstrap CSS --&gt;
+  &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;!-- 2. mi CSS justo después --&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container py-5"&gt;
+    &lt;h1&gt;¡Hola, Bootstrap!&lt;/h1&gt;
+    &lt;button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#test"&gt;
+      Prueba JavaScript
+    &lt;/button&gt;
+    &lt;div class="collapse mt-3" id="test"&gt;
+      &lt;div class="alert alert-success"&gt;Funcionan el CSS y el JavaScript.&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 3. Bootstrap JS al final de body --&gt;
+  &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p class="small text-secondary mt-2 mb-0">Un CDN necesita internet. En getbootstrap.com los enlaces llevan además los atributos <code>integrity</code> y <code>crossorigin</code>: comprueban que nadie ha manipulado el archivo; puedes dejarlos.</p>
+      </div>
+
+      <div id="instDownload" class="d-none">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Descarga los archivos compilados</h3><p class="small mb-0">En <a href="https://getbootstrap.com/docs/5.3/getting-started/download/">getbootstrap.com → Download</a> haz clic en <strong>Download</strong> en la parte <strong>Compiled CSS and JS</strong>. Se descarga el archivo <code>bootstrap-5.3.x-dist.zip</code>.</p></li>
+          <li><h3 class="h6 mb-1">Descomprime y elige lo necesario</h3><p class="small mb-0">El archivo contiene las carpetas <code>css</code> y <code>js</code> con muchos archivos. Bastan dos: <code>css/bootstrap.min.css</code> y <code>js/bootstrap.bundle.min.js</code>. (<em>bundle</em> = incluye la biblioteca Popper para desplegables y tooltips; los archivos <code>.map</code> no los necesitas.)</p></li>
+          <li><h3 class="h6 mb-1">Cópialos en tu proyecto</h3>
+<div class="tree small mt-1" style="background:#111827;color:#e5e7eb;border-radius:.6rem;padding:.7rem 1rem;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto">my-website/
+├── index.html
+├── css/
+│   ├── bootstrap.min.css   ← del archivo descargado
+│   └── style.css           ← tus estilos
+└── js/
+    └── bootstrap.bundle.min.js</div></li>
+          <li><h3 class="h6 mb-1">Enlázalos con una ruta relativa</h3>
+<pre class="code-inspector mt-1" data-lang="html" data-copy>
+&lt;head&gt;
+  …
+  &lt;link href="css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  …
+  &lt;script src="js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+</pre></li>
+          <li><h3 class="h6 mb-1">Comprueba que funciona</h3><p class="small mb-0">Igual que con el CDN: pon en body el botón y el texto desplegable del esqueleto de al lado. La ventaja: la página funciona también sin internet. Si los estilos no se cargaron, revisa la ruta (<kbd>F12</kbd> → <em>Network</em>: un error 404 significa una ruta incorrecta).</p></li>
+        </ol>
+      </div>
+
+      <div id="instNpm" class="d-none">
+        <p class="small">Los proyectos profesionales gestionan las bibliotecas con <strong>npm</strong> (el gestor de paquetes de Node.js). En clase no lo necesitas, pero conviene saber que existe:</p>
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Instala Node.js</h3><p class="small mb-0">La versión LTS de <a href="https://nodejs.org/">nodejs.org</a>. Compruébalo en la terminal con el comando <code>node -v</code>.</p></li>
+          <li><h3 class="h6 mb-1">Instala Bootstrap en el proyecto</h3>
+<pre class="code-inspector mt-1" data-lang="text" data-copy>npm init -y
+npm install bootstrap@5.3.3</pre></li>
+          <li><h3 class="h6 mb-1">Enlaza los archivos de <code>node_modules</code></h3>
+<pre class="code-inspector mt-1" data-lang="html">&lt;link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</pre>
+          <p class="small text-secondary mt-1 mb-0">En la práctica los archivos los procesa después una herramienta (p. ej. Vite) que los empaqueta con tu código.</p></li>
+        </ol>
+      </div>
+
+      <h3 class="h6 mt-4">Errores frecuentes</h3>
+      <ul class="small err-list mb-0">
+        <li><strong>Falta el meta viewport</strong>: en el móvil la cuadrícula no se reorganiza y la página se ve diminuta.</li>
+        <li><strong>Tu CSS va antes de Bootstrap</strong>: Bootstrap sobrescribe tus estilos. Pon tu <code>&lt;link&gt;</code> después.</li>
+        <li><strong>Un tutorial para una versión antigua</strong>: en Bootstrap 3 y 4 (y en materiales antiguos) se escribía <code>data-toggle</code>, <code>col-xs-6</code>, <code>glyphicon</code> y hacía falta jQuery. En Bootstrap 5 es <code>data-bs-toggle</code>, <code>col-6</code>, los iconos son una biblioteca aparte, <a href="https://icons.getbootstrap.com/">Bootstrap Icons</a>, y no hace falta jQuery.</li>
+        <li><strong>Las partes interactivas no responden</strong>: falta <code>bootstrap.bundle.min.js</code>, o enlazaste <code>bootstrap.min.js</code> sin Popper.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="breakpointy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Breakpoints y contenedores</h2>
+      <p>Un <strong>breakpoint</strong> es un ancho de pantalla a partir del cual la distribución puede cambiar. Bootstrap tiene seis y verás sus abreviaturas en los nombres de las clases (<code>col-md-6</code>, <code>d-lg-none</code>…). Es <strong>mobile-first</strong>: una clase con abreviatura se aplica desde ese ancho <em>hacia arriba</em>.</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="table-responsive">
+            <table class="table table-sm small bp-table mb-2" id="bpTable">
+              <thead><tr><th>Breakpoint</th><th>Abreviatura</th><th>Ancho de la ventana</th><th>.container</th></tr></thead>
+              <tbody>
+                <tr data-min="0"><td>Extra small</td><td><em>sin abreviatura</em></td><td>&lt; 576 px</td><td>100 %</td></tr>
+                <tr data-min="576"><td>Small</td><td><code>sm</code></td><td>≥ 576 px</td><td>540 px</td></tr>
+                <tr data-min="768"><td>Medium</td><td><code>md</code></td><td>≥ 768 px</td><td>720 px</td></tr>
+                <tr data-min="992"><td>Large</td><td><code>lg</code></td><td>≥ 992 px</td><td>960 px</td></tr>
+                <tr data-min="1200"><td>Extra large</td><td><code>xl</code></td><td>≥ 1200 px</td><td>1140 px</td></tr>
+                <tr data-min="1400"><td>Extra extra large</td><td><code>xxl</code></td><td>≥ 1400 px</td><td>1320 px</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="small mb-0">
+            <li><code>.container</code> envuelve el contenido, lo centra y le da un ancho máximo en cada breakpoint.</li>
+            <li><code>.container-fluid</code> mide siempre el 100 % del ancho.</li>
+            <li><code>.container-md</code> mide el 100 % hasta md y después se comporta como <code>.container</code>.</li>
+            <li>Los contenedores se pueden anidar, pero normalmente no hace falta: con uno alrededor del contenido basta.</li>
+          </ul>
+        </div>
+        <div class="col-lg-7"><div id="bpResizer"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="mriezka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>La cuadrícula: <code>row</code> y <code>col</code></h2>
+      <p>Las columnas siempre van dentro de una fila <code>.row</code> y la fila dentro de un contenedor. Una fila tiene 12 partes: <code>col-6</code> ocupa la mitad, <code>col-4</code> un tercio. Un <code>col</code> sin número reparte el espacio a partes iguales. Las clases con breakpoint se pueden combinar: <code>col-12 col-md-6 col-lg-3</code> = todo el ancho en el móvil, la mitad desde tableta, un cuarto desde ordenador. Elige una distribución y cambia el ancho de la ventana:</p>
+      <div class="d-flex flex-wrap gap-2 mb-3 preset-btns" id="gridPresets"></div>
+      <div class="row g-4">
+        <div class="col-xl-5"><pre class="code-inspector" id="gridCode"></pre><p class="small text-secondary mt-2 mb-0" id="gridNote"></p></div>
+        <div class="col-xl-7"><div id="gridResizer"></div></div>
+      </div>
+      <h3 class="h6 mt-4">Pruébalo tú</h3>
+      <p class="small">Un editor con Bootstrap incluido: cambia las clases de las columnas o añade otra fila.</p>
+      <div class="live" data-bootstrap="css" data-height="260">
+<textarea data-part="html" data-label="HTML">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-8"><div class="p-3 bg-primary text-white">col-8</div></div>
+    <div class="col-4"><div class="p-3 bg-info">col-4</div></div>
+  </div>
+  <div class="row g-2 mt-1">
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+  </div>
+</div>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="zarovnanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Alineación y espaciado</h2>
+      <p>Por dentro, la fila <code>.row</code> es un flexbox (lección 4), así que las clases de alineación funcionan igual: en la fila ponemos <code>justify-content-*</code> (en horizontal) y <code>align-items-*</code> (en vertical), y en una sola columna <code>align-self-*</code>. El espacio entre columnas (<em>gutters</em>) lo define <code>g-*</code>, solo el horizontal <code>gx-*</code> y solo el vertical <code>gy-*</code>.</p>
+      <div class="row g-4" id="alignPg">
+        <div class="col-lg-5">
+          <div class="pg-row mb-2"><label for="alJustify">justify-content-</label><select class="form-select form-select-sm" id="alJustify"><option>start</option><option>center</option><option>end</option><option>between</option><option>around</option><option>evenly</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alItems">align-items-</label><select class="form-select form-select-sm" id="alItems"><option>start</option><option>center</option><option>end</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alGx">gx-</label><input type="range" class="form-range" id="alGx" min="0" max="5" value="3"><span class="pg-val" id="alGxV"></span></div>
+          <div class="pg-row mb-2"><label for="alSelf">2.ª columna align-self-</label><select class="form-select form-select-sm" id="alSelf"><option value="">(nada)</option><option>start</option><option>center</option><option>end</option></select><span></span></div>
+        </div>
+        <div class="col-lg-7">
+          <iframe id="alFrame" title="alineación" style="width:100%;height:220px;border:1px solid #d6dbe6;border-radius:.6rem;background:#fff"></iframe>
+          <pre class="code-inspector mt-2" id="alCode"></pre>
+        </div>
+      </div>
+      <h3 class="h6 mt-4">Margin y padding: <code>{m|p}{lado}-{tamaño}</code></h3>
+      <div class="row g-3 small">
+        <div class="col-md-6">
+          <ul class="mb-0">
+            <li><code>m</code> = margin, <code>p</code> = padding</li>
+            <li>lado: <code>t</code> arriba, <code>b</code> abajo, <code>s</code> inicio (izquierda), <code>e</code> final (derecha), <code>x</code> izquierda y derecha, <code>y</code> arriba y abajo, sin letra = todos los lados</li>
+            <li>ejemplos: <code>mt-3</code>, <code>px-4</code>, <code>py-5</code>, <code>mx-auto</code> (centra un bloque)</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <table class="table table-sm mb-0"><thead><tr><th>tamaño</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody><tr><td>rem</td><td>0</td><td>.25</td><td>.5</td><td>1</td><td>1.5</td><td>3</td></tr><tr><td>px</td><td>0</td><td>4</td><td>8</td><td>16</td><td>24</td><td>48</td></tr></tbody></table>
+        </div>
+      </div>
+      <div class="erratum mt-3">El número tras el guion no es un multiplicador: <code>px-4</code> y <code>gx-4</code> significan 1,5 rem (24 px), no 1,5 rem × 4. El espacio predeterminado entre columnas es 1,5 rem (<code>g-4</code>).</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="komponenty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Componentes: partes de página ya hechas</h2>
+      <p>Cada componente es solo HTML con clases de la documentación. El código bajo cada ejemplo es exactamente lo que hay encima: cópialo y adáptalo. Los marcados con ⚡ necesitan el JavaScript de Bootstrap.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Botones y colores</h3><p>btn-* para botones, bg-* y text-* para el fondo y el texto.</p>
+            <div class="bs-render">
+<button class="btn btn-primary">Primary</button>
+<button class="btn btn-success">Success</button>
+<button class="btn btn-outline-danger">Outline</button>
+<button class="btn btn-warning btn-sm">Pequeño</button>
+<span class="badge bg-dark">Insignia</span>
+<p class="bg-info-subtle text-info-emphasis p-2 mt-2 mb-0">Fondo bg-info-subtle</p>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Un aviso que se puede cerrar ⚡</h3><p>alert-* y el botón btn-close.</p>
+            <div class="bs-render">
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>¡Listo!</strong> El pedido se ha enviado.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Tarjeta</h3><p>card con una imagen, un título y un botón.</p>
+            <div class="bs-render">
+<div class="card" style="max-width: 18rem;">
+  <img data-img="hory" class="card-img-top" alt="montañas">
+  <div class="card-body">
+    <h5 class="card-title">Excursión a la montaña</h5>
+    <p class="card-text">Una travesía de tres días por la cresta.</p>
+    <a href="#" class="btn btn-primary">Más</a>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Imágenes</h3><p>rounded, rounded-circle, img-thumbnail; img-fluid = nunca más ancha que su padre.</p>
+            <div class="bs-render">
+<img data-img="more" class="rounded" width="110" alt="mar">
+<img data-img="mesto" class="rounded-circle" width="110" height="110" alt="ciudad">
+<img data-img="slnecnica" class="img-thumbnail" width="110" alt="girasol">
+<img data-img="hory" class="img-fluid mt-2" alt="montañas">
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Barra de navegación ⚡</h3><p>la navbar se pliega en un “menú hamburguesa” en pantallas estrechas.</p>
+            <div class="bs-render">
+<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Pizzeria</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoMenu" aria-label="Menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="demoMenu">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Pestañas ⚡</h3><p>nav-tabs (o nav-pills) y tab-content.</p>
+            <div class="bs-render">
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabPopis" type="button">Descripción</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCena" type="button">Precio</button></li>
+</ul>
+<div class="tab-content border border-top-0 p-3">
+  <div class="tab-pane fade show active" id="tabPopis">Tomate, mozzarella, albahaca.</div>
+  <div class="tab-pane fade" id="tabCena">Pequeña 6 €, grande 9 €.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Ventana modal ⚡</h3><p>Una ventana sobre la página: un botón con data-bs-toggle="modal".</p>
+            <div class="bs-render">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">Iniciar sesión</button>
+<div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Inicio de sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control mb-2" type="email" placeholder="Correo electrónico">
+        <input class="form-control" type="password" placeholder="Contraseña">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Contenido desplegable ⚡</h3><p>collapse: muestra y oculta un texto más largo.</p>
+            <div class="bs-render">
+<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#demoMore">Mostrar más</button>
+<div class="collapse mt-2" id="demoMore">
+  <div class="card card-body">Esto estaba oculto hasta que hiciste clic.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-12">
+          <div class="bs-demo"><h3>Tabla</h3><p>table + table-striped, table-hover; table-responsive añade desplazamiento en el móvil.</p>
+            <div class="bs-render">
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead><tr><th>Pizza</th><th>Pequeña</th><th>Mediana</th><th>Grande</th></tr></thead>
+    <tbody>
+      <tr><td>Margherita</td><td>6 €</td><td>8 €</td><td>10 €</td></tr>
+      <tr><td>Quattro formaggi</td><td>7 €</td><td>9 €</td><td>11 €</td></tr>
+    </tbody>
+  </table>
+</div>
+            </div></div>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Más partes ya hechas: <a href="https://getbootstrap.com/docs/5.3/examples/">ejemplos oficiales</a>, <a href="https://bootsnipp.com/">Bootsnipp</a> (una galería de la comunidad; ojo, parte es para versiones antiguas), temas de color <a href="https://bootswatch.com/">Bootswatch</a>, fuentes <a href="https://fonts.google.com/">Google Fonts</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Cuestionario</h2>
+      <div id="quiz5"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Tareas para la clase</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 1 · team.html – estructura de la empresa</h3>
+            <ol class="small mb-0">
+              <li>Crea <code>team.html</code> e incluye Bootstrap (parte 3).</li>
+              <li>Con la cuadrícula crea la estructura de la empresa: una fila con el director, una fila con 2 gerentes y una fila con 6 programadores (<code>col-2</code> × 6).</li>
+              <li>Los programadores 5 y 6 se han ido 🙂: cambia la última fila a 4 programadores (<code>col-3</code> × 4).</li>
+              <li>Pon el puesto de trabajo de cada persona en una etiqueta <code>&lt;kbd&gt;</code>.</li>
+              <li>Prueba en las fotos las clases <code>rounded</code>, <code>rounded-circle</code>, <code>img-thumbnail</code>, <code>img-fluid</code>.</li>
+              <li>Añade al primer gerente y al programador 3 una insignia “nuevo empleado” (<code>badge</code>).</li>
+              <li>En el móvil cada persona debe ocupar todo el ancho (<code>col-12 col-md-…</code>).</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card mb-4">
+            <h3 class="h5">Tarea 2 · Pizzería Giovanni</h3>
+            <p class="small mb-0">Una carta de precios con el precio de la pizza pequeña, mediana y grande: tres tarjetas una al lado de otra (una debajo de otra en el móvil), cada una con el nombre del tamaño, el precio en letra grande, una lista de lo que incluye y un botón “Pedir”. Destaca la tarjeta del medio (otro color de borde, una insignia “La favorita”). Arriba, una barra de navegación.</p>
+          </div>
+          <div class="task-card">
+            <h3 class="h5">Tarea 3 · Inicio de sesión en una ventana modal</h3>
+            <p class="small mb-0">En la página de la tarea 2 añade a la navegación un botón “Entrar” que abra una ventana modal con un formulario de acceso (correo, contraseña, “recordarme”, un botón). <strong>Extra:</strong> una segunda ventana modal con una imagen; una línea del tiempo de tu vida o una lista de lugares de vacaciones con tarjetas e imágenes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lección 5 · Diseño responsive y Bootstrap · Documentación: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">Bootstrap 5.3</a> · <a href="https://getbootstrap.com/docs/5.3/layout/grid/">Grid</a> · <a href="https://getbootstrap.com/docs/5.3/layout/gutters/">Gutters</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/clamp">MDN – clamp()</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 1 jednotky ----------
+  Lab.resizer(document.getElementById('unitResizer'), {
+    value: 800, max: 1200, height: 260,
+    doc: {
+      css: 'body{margin:0;padding:12px 16px;font-family:system-ui,sans-serif}h2{margin:.2em 0;line-height:1.15}small{display:block;font:12px monospace;color:#6b7280;margin-top:.6em}' +
+        '.px{font-size:32px}.vw{font-size:5vw}.cl{font-size:clamp(1.5rem,5vw,3rem)}.half{width:50vw;background:#ede9fe;font:12px monospace;padding:4px;margin-top:8px}',
+      html: '<small>font-size: 32px</small><h2 class="px">Excursión a la montaña</h2><small>font-size: 5vw</small><h2 class="vw">Excursión a la montaña</h2>' +
+        '<small>font-size: clamp(1.5rem, 5vw, 3rem)</small><h2 class="cl">Excursión a la montaña</h2><div class="half">width: 50vw</div>'
+    }
+  });
+
+  // ---------- 4 breakpointy ----------
+  const bpDoc = {
+    bootstrap: 'css', nobase: true,
+    css: 'body{padding:10px 0}.box{padding:8px;margin-bottom:8px;font:600 12px ui-monospace,monospace;color:#3b0764}',
+    html: '<div class="container"><div class="box" style="background:#ddd6fe">.container</div></div>' +
+      '<div class="container-fluid"><div class="box" style="background:#fde68a">.container-fluid</div></div>' +
+      '<div class="container-md"><div class="box" style="background:#bbf7d0">.container-md</div></div>' +
+      '<div class="container"><span class="badge bg-dark d-sm-none">xs – menos de 576px</span><span class="badge bg-dark d-none d-sm-inline d-md-none">sm</span>' +
+      '<span class="badge bg-dark d-none d-md-inline d-lg-none">md</span><span class="badge bg-dark d-none d-lg-inline d-xl-none">lg</span>' +
+      '<span class="badge bg-dark d-none d-xl-inline d-xxl-none">xl</span><span class="badge bg-dark d-none d-xxl-inline">xxl</span></div>'
+  };
+  Lab.resizer(document.getElementById('bpResizer'), {
+    doc: bpDoc, min: 320, max: 1500, value: 800, height: 200,
+    onWidth: w => {
+      const rows = Lab.$$('#bpTable tbody tr');
+      let cur = rows[0];
+      rows.forEach(r => { if (w >= Number(r.dataset.min)) cur = r; });
+      rows.forEach(r => r.classList.toggle('now', r === cur));
+    }
+  });
+
+  // ---------- 5 mriežka ----------
+  const box = (cls, label, color) => '    <div class="' + cls + '"><div class="cell" style="background:' + color + '">' + (label || cls) + '</div></div>\n';
+  const PRESETS = [
+    { name: '3 columnas iguales', note: 'col sin número: las columnas se reparten el espacio por igual, sean cuantas sean.',
+      rows: [['col', 'col', 'col']] },
+    { name: '2 desiguales', note: '8 + 4 = 12. La suma de una fila debería ser 12; si es mayor, una columna pasa a una línea nueva.',
+      rows: [['col-8', 'col-4']] },
+    { name: 'Tarjetas: móvil → PC', note: 'Móvil: cada tarjeta a todo el ancho (col-12). Desde md (768 px), dos una al lado de otra; desde lg (992 px), cuatro.',
+      rows: [['col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3']] },
+    { name: 'team.html', note: 'La estructura de la empresa de la tarea 1: director, 2 gerentes, 6 programadores con 2 partes cada uno.',
+      rows: [['col-12', 'Director'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']], team: true },
+    { name: 'Contenido + barra lateral', note: 'En el móvil uno debajo de otro; desde lg el contenido ocupa 9 partes y la barra lateral 3.',
+      rows: [['col-lg-9', 'col-lg-3']] }
+  ];
+  const COLORS = ['#c4b5fd', '#a5b4fc', '#93c5fd', '#99f6e4', '#fde68a', '#fecaca'];
+  const gridResizer = Lab.resizer(document.getElementById('gridResizer'), { min: 320, max: 1300, value: 1000, height: 230 });
+  function showPreset(i) {
+    const p = PRESETS[i];
+    let html = '<div class="container">\n';
+    p.rows.forEach((row, r) => {
+      html += '  <div class="row g-2 mb-2">\n';
+      if (p.team) {
+        const names = [['Director'], ['Gerente 1', 'Gerente 2'], ['Prog. 1', 'Prog. 2', 'Prog. 3', 'Prog. 4', 'Prog. 5', 'Prog. 6']][r];
+        const cls = [['col-12'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']][r];
+        cls.forEach((c, k) => { html += box(c, names[k], COLORS[r]); });
+      } else {
+        row.forEach((c, k) => { html += box(c, c, COLORS[k % COLORS.length]); });
+      }
+      html += '  </div>\n';
+    });
+    html += '</div>';
+    Lab.setCode(document.getElementById('gridCode'), 'html', html.replace(/ style="background:#[0-9a-f]+"/g, ''));
+    document.getElementById('gridNote').textContent = p.note;
+    gridResizer.setDoc({ bootstrap: 'css', nobase: true, html: html, css: 'body{padding:12px 0}.cell{padding:14px 6px;border-radius:6px;font:600 12px ui-monospace,monospace;text-align:center;overflow-wrap:anywhere}' });
+    Lab.$$('#gridPresets .btn').forEach((b, k) => b.classList.toggle('active', k === i));
+  }
+  PRESETS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-sm btn-outline-secondary'; b.textContent = p.name;
+    b.addEventListener('click', () => showPreset(i));
+    document.getElementById('gridPresets').appendChild(b);
+  });
+  showPreset(2);
+
+  // ---------- 6 zarovnanie ----------
+  const al = { j: document.getElementById('alJustify'), i: document.getElementById('alItems'), g: document.getElementById('alGx'), s: document.getElementById('alSelf') };
+  function drawAlign() {
+    const rowCls = 'row justify-content-' + al.j.value + ' align-items-' + al.i.value + ' gx-' + al.g.value;
+    const self = al.s.value ? ' align-self-' + al.s.value : '';
+    document.getElementById('alGxV').textContent = ['0', '.25rem', '.5rem', '1rem', '1.5rem', '3rem'][al.g.value];
+    const html = '<div class="container">\n  <div class="' + rowCls + '">\n    <div class="col-3"><div class="cell">1</div></div>\n    <div class="col-3' + self + '"><div class="cell">2</div></div>\n    <div class="col-3"><div class="cell tall">3</div></div>\n  </div>\n</div>';
+    document.getElementById('alFrame').srcdoc = Lab.buildDoc({ bootstrap: 'css', nobase: true, html: html,
+      css: 'body{padding:10px 0}.row{min-height:190px;background:repeating-linear-gradient(90deg,#f5f3ff 0 8px,#fff 8px 16px);border:1px dashed #a78bfa}.cell{background:#7952b3;color:#fff;padding:10px;font:700 14px monospace;text-align:center;border-radius:6px}.tall{padding:40px 10px}' });
+    Lab.setCode(document.getElementById('alCode'), 'html', html);
+  }
+  Object.values(al).forEach(el => el.addEventListener('input', drawAlign));
+  drawAlign();
+
+  // ---------- 7 komponenty: kód z ukážky ----------
+  Lab.$$('.bs-render').forEach(render => {
+    // obrázky majú v ukážke data-img (súbory img/… na webe nie sú) – do kódu vrátime src="img/…"
+    const code = render.innerHTML.replace(/^\s*\n/, '').replace(/\s+$/, '').replace(/data-img="(\w+)"/g, 'src="img/$1.jpg"');
+    const pre = document.createElement('pre');
+    pre.className = 'code-inspector';
+    pre.setAttribute('data-copy', '');
+    Lab.setCode(pre, 'html', code);
+    render.parentNode.appendChild(pre);
+    Lab.$$('img[data-img]', render).forEach(img => { img.src = Lab.svgScene(img.dataset.img); });
+  });
+  // tlačidlá Kopírovať pre vygenerovaný kód
+  Lab.$$('.bs-demo pre[data-copy]').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'copy-wrap';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'copy-btn'; btn.textContent = Lab.ui.copy;
+    btn.addEventListener('click', () => navigator.clipboard.writeText(pre.textContent).then(() => {
+      btn.textContent = Lab.ui.copied; setTimeout(() => { btn.textContent = Lab.ui.copy; }, 1500);
+    }));
+    wrap.appendChild(btn);
+  });
+
+  // ---------- 8 kvíz ----------
+  Lab.quiz('#quiz5', [
+    { q: '¿Cuántas columnas tiene la cuadrícula de Bootstrap?', o: ['10', '12', '16'], a: 1, e: '12 se puede dividir entre 2, 3, 4 y 6: por eso es tan práctica.', mono: false },
+    { q: '¿Dónde pones <script src="…bootstrap.bundle.min.js">?', o: ['dentro de <head> antes del CSS', 'al final de <body>', 'en el archivo style.css'], a: 1, e: 'El JavaScript va al final de body; el CSS (link), en la cabecera.' },
+    { q: '¿Qué significa col-12 col-md-6?', o: ['todo el ancho en el móvil, la mitad desde 768 px', 'siempre la mitad', 'la mitad en el móvil, todo el ancho en el PC'], a: 0, e: 'Mobile-first: col-12 se aplica desde el ancho más pequeño, col-md-6 desde md (768 px) hacia arriba.', mono: false },
+    { q: '¿Qué contenedor mide siempre el 100 % del ancho?', o: ['.container', '.container-fluid', '.container-md'], a: 1, e: '.container tiene un ancho máximo en cada breakpoint; .container-fluid no.' },
+    { q: '¿Qué clase da un padding de 1.5rem a izquierda y derecha?', o: ['px-4', 'px-6', 'p-1.5'], a: 0, e: 'Escala: 1 = .25rem, 2 = .5rem, 3 = 1rem, 4 = 1.5rem, 5 = 3rem.' },
+    { q: 'Un tutorial antiguo dice data-toggle="modal". ¿Cómo será en Bootstrap 5?', o: ['data-toggle="modal"', 'data-bs-toggle="modal"', 'onclick="modal()"'], a: 1, e: 'Bootstrap 5 añadió el prefijo bs a todos los atributos data.' },
+    { q: '¿Por qué enlazamos nuestro style.css después de Bootstrap?', o: ['para que cargue más rápido', 'para que mis reglas puedan sobrescribir Bootstrap', 'si no, no se carga'], a: 1, e: 'Con selectores igual de fuertes gana la regla que aparece después.', mono: false },
+    { q: '¿Qué hace font-size: clamp(1rem, 4vw, 2rem)?', o: ['siempre 4vw', '4vw, pero como mínimo 1rem y como máximo 2rem', 'un tamaño aleatorio entre 1 y 2 rem'], a: 1, e: 'clamp(mín, ideal, máx): el valor ideal dentro de unos límites.' }
+  ]);
+</script>
+</body>
+</html>
