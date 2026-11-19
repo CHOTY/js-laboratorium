@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XML · syntax, DTD, CSS, XPath and XSLT</title>
+  <meta name="description" content="XML – syntax and rules (well-formed), the declaration, attributes, CDATA, entities, namespaces, the DOM, display with CSS, DTD with a validator, an XPath tester and XSLT transformation right in the browser.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #b45309; --accent-bg: #fef3c7; }
+    .xml-area { font: .84rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #111827; color: #e5e7eb; border: 0; border-radius: .75rem; padding: .8rem 1rem; width: 100%; min-height: 260px; resize: vertical; tab-size: 2; }
+    .xml-area:focus { outline: 2px solid #f59e0b; }
+    .status { border-radius: .6rem; padding: .55rem .8rem; font-size: .88rem; }
+    .status.ok { background: #dcfce7; color: #166534; }
+    .status.bad { background: #fee2e2; color: #991b1b; white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .8rem; }
+    .tree-view { background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: .6rem .8rem; font: .8rem/1.6 ui-monospace, Menlo, Consolas, monospace; max-height: 340px; overflow: auto; }
+    .tree-view ul { list-style: none; padding-left: 1.1rem; margin: 0; border-left: 1px dashed #d1d5db; }
+    .tree-view > ul { border-left: 0; padding-left: 0; }
+    .tree-view .t-el { color: #1d4ed8; font-weight: 700; }
+    .tree-view .t-at { color: #b45309; }
+    .tree-view .t-tx { color: #047857; }
+    .tree-view .t-cm { color: #6b7280; font-style: italic; }
+    .rule-list li { margin-bottom: .3rem; }
+    .xp-chips .btn, .break-btns .btn { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .75rem; }
+    .result-list { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3rem; max-height: 300px; overflow: auto; font: .8rem/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .result-list .r { padding: .2rem 0; border-bottom: 1px solid #ffffff12; }
+    .result-list .r::before { content: "› "; color: #f59e0b; }
+    .xml-frame { width: 100%; height: 300px; border: 1px solid #d6dbe6; border-radius: .75rem; background: #fff; }
+    .ns-table td { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .8rem; vertical-align: top; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">XML</span>
+  <h1 class="display-5 fw-bold">XML – data in tags</h1>
+  <p class="lead col-lg-8">XML (eXtensible Markup Language) looks like HTML, but you invent the tags yourself. It is not for displaying a page but for <strong>storing and exchanging data</strong>. On this page you will write XML, check it, display it with CSS, validate it against a DTD, search it with XPath and transform it with XSLT – all right in the browser.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#co-je">1 · What XML is</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#syntax">2 · Syntax and checking</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#obsah">3 · Attributes, CDATA, entities</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#dom">4 · DOM</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#css">5 · XML a CSS</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#dtd">6 · DTD</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#xpath">7 · XPath</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#xslt">8 · XSLT</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Quiz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Tasks</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="co-je">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>What XML is and what it is used for</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <p class="small">XML is a W3C recommendation from 1998. It is not a replacement for HTML – the two languages have different goals:</p>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <thead><tr><th></th><th>HTML</th><th>XML</th></tr></thead>
+              <tbody>
+                <tr><td>purpose</td><td>display data – <em>how it looks</em></td><td>carry data – <em>what it is</em></td></tr>
+                <tr><td>tags</td><td>fixed (<code>p</code>, <code>h1</code>…)</td><td>invented by the author (<code>&lt;phone&gt;</code>)</td></tr>
+                <tr><td>errors</td><td>the browser silently fixes them</td><td>a single error = the document is invalid</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small mb-0">Where you meet it: data exchange between different systems, RSS news feeds, Office formats (<code>.docx</code> and <code>.xlsx</code> are ZIP files full of XML), SVG images, configuration files, web services. For very large data or for JavaScript, JSON is more common today; XML doesn’t store images and other binary data well – it is just text.</p>
+        </div>
+        <div class="col-lg-6">
+          <p class="small mb-2">A business card written in XML – the tags describe what each piece of data means:</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;BusinessCard&gt;
+  &lt;name&gt;Jane Novak&lt;/name&gt;
+  &lt;phone type="mobile"&gt;(+421) 900 123 456&lt;/phone&gt;
+  &lt;email&gt;jana@example.com&lt;/email&gt;
+&lt;/BusinessCard&gt;
+</pre>
+          <p class="small mt-3 mb-1 fw-semibold">Technologies around XML:</p>
+          <ul class="small mb-0">
+            <li><strong>DTD</strong> and <strong>XML Schema</strong> – rules for which tags a document may contain</li>
+            <li><strong>XPath</strong> – a “path” to data in the document</li>
+            <li><strong>XSLT</strong> – turning XML into something else (HTML, text, other XML)</li>
+            <li><strong>XQuery</strong> – a query language for XML (like SQL for a database)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="syntax">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Syntax and the “well-formed” check</h2>
+      <p>A document that follows all the writing rules is <strong>well-formed</strong>. Only such a document can be read by a program (a parser). Type into the editor – the check runs immediately. Or break the document on purpose with the buttons:</p>
+      <div class="d-flex flex-wrap gap-1 break-btns mb-2" id="breakBtns">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="close">missing &lt;/email&gt;</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="case">&lt;Name&gt;…&lt;/name&gt;</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="quote">type=mobile without quotes</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="root">two root elements</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="amp">an &amp; character in text</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="decl">a space before &lt;?xml</button>
+        <button type="button" class="btn btn-sm btn-outline-success" data-break="reset">reset</button>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <textarea class="xml-area" id="wfArea" spellcheck="false" aria-label="XML document"></textarea>
+          <div class="status mt-2" id="wfStatus"></div>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Rules</h3>
+          <ul class="small rule-list">
+            <li>A document has <strong>exactly one root element</strong> that wraps everything else.</li>
+            <li>Every tag must be closed. You can write an empty element in short form: <code>&lt;photo /&gt;</code> instead of <code>&lt;photo&gt;&lt;/photo&gt;</code>.</li>
+            <li><strong>Letter case</strong> matters: <code>&lt;Name&gt;</code> and <code>&lt;name&gt;</code> are two different tags.</li>
+            <li>Tags must not overlap: <code>&lt;b&gt;&lt;i&gt;…&lt;/i&gt;&lt;/b&gt;</code>, not <code>&lt;b&gt;&lt;i&gt;…&lt;/b&gt;&lt;/i&gt;</code>.</li>
+            <li>An attribute value is always in quotes and can’t be shortened: <code>selected="selected"</code>, not just <code>selected</code>.</li>
+            <li>A tag name starts with a letter or <code>_</code>, followed by letters, digits, <code>-</code>, <code>_</code>, <code>.</code>. It must not start with the word <code>xml</code> (in any letter case) and must not contain a space.</li>
+            <li>The declaration <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code> is optional, but if it is there it must be <strong>at the very beginning</strong> – not even a space before it. Without <code>encoding</code> UTF-8 is assumed; <code>standalone="yes"</code> says that the document doesn’t depend on external files (e.g. a DTD).</li>
+            <li>Comment: <code>&lt;!-- note --&gt;</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="obsah">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Attributes, CDATA, instructions, entities and namespaces</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">Attribute or element?</h3>
+          <p class="small">Attributes are in the opening tag and are named by the same rules as elements. They suit extra information about a piece of data (the type of phone); put the data itself into elements – they can repeat and nest.</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;phone type="mobile" primary="primary"&gt;(+421) 900 123 456&lt;/phone&gt;
+&lt;phone type="home"&gt;(+421) 37 765 4321&lt;/phone&gt;
+&lt;phone type="work"&gt;(+421) 37 641 2000&lt;/phone&gt;
+</pre>
+          <h3 class="h6 mt-3">CDATA – text the parser doesn’t read</h3>
+          <p class="small">The parser skips the content between <code>&lt;![CDATA[</code> and <code>]]&gt;</code> – you don’t have to replace the characters <code>&lt;</code> and <code>&amp;</code> in it. Handy for code samples.</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;example&gt;&lt;![CDATA[
+  if (a &lt; b &amp;&amp; c &gt; d) { alert("&lt;b&gt;OK&lt;/b&gt;"); }
+]]&gt;&lt;/example&gt;
+</pre>
+          <h3 class="h6 mt-3">Processing instruction</h3>
+          <p class="small mb-1">An instruction for the program that processes the XML: <code>&lt;?target instruction?&gt;</code>. The best known one attaches a stylesheet: <code>&lt;?xml-stylesheet type="text/css" href="card.css"?&gt;</code>.</p>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Entities</h3>
+          <p class="small">Characters that have a meaning in XML are replaced by an entity in text. A numeric entity writes any character by its code. Custom entities (shortcuts for longer text) are defined in a DTD.</p>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <thead><tr><th>Character</th><th>Entity</th><th>Numeric</th></tr></thead>
+              <tbody>
+                <tr><td>&lt;</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td></tr>
+                <tr><td>&gt;</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td></tr>
+                <tr><td>&amp;</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td></tr>
+                <tr><td>"</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td></tr>
+                <tr><td>'</td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td></tr>
+                <tr><td>®</td><td>– (only in HTML <code>&amp;reg;</code>)</td><td><code>&amp;#174;</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+<pre class="code-inspector" data-lang="xml">
+&lt;!DOCTYPE card [
+  &lt;!ENTITY company "Stann &amp;amp; White &amp;#174;"&gt;
+]&gt;
+&lt;card&gt;&lt;company&gt;&amp;company;&lt;/company&gt;&lt;/card&gt;
+</pre>
+          <h3 class="h6 mt-3">Namespaces</h3>
+          <p class="small mb-2">When we combine XML from two sources, the same names with different meanings can meet – <code>&lt;table&gt;</code> as an HTML table and <code>&lt;table&gt;</code> as a piece of furniture. We resolve the conflict with a prefix that we bind to a unique address (URI) with an <code>xmlns:</code> attribute:</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;root xmlns:h="http://www.w3.org/TR/html4/"
+      xmlns:f="https://example.com/furniture"&gt;
+  &lt;h:table&gt;&lt;h:tr&gt;&lt;h:td&gt;Apples&lt;/h:td&gt;&lt;/h:tr&gt;&lt;/h:table&gt;
+  &lt;f:table&gt;&lt;f:name&gt;Coffee table&lt;/f:name&gt;&lt;/f:table&gt;
+&lt;/root&gt;
+</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="dom">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>XML and the DOM</h2>
+      <p>When you rent a car you have never driven, you don’t panic – you have a <em>model</em> in your head of how a car is driven. In the same way the browser builds a model of every document (HTML and XML) – the <strong>DOM</strong> (Document Object Model): a tree of nodes that JavaScript can reach too. It is a W3C standard, independent of language and platform. The tree on the right is drawn from the editor in part 2:</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="legend small mb-2"><span class="t-el" style="color:#1d4ed8;font-weight:700">element</span> · <span style="color:#b45309">attribute</span> · <span style="color:#047857">text</span> · <span style="color:#6b7280;font-style:italic">comment</span></div>
+          <div class="tree-view" id="domTree"></div>
+        </div>
+        <div class="col-lg-6">
+          <p class="small mb-2">JavaScript works with an XML tree the same way as with HTML (JS 2). First we take the text apart with a parser:</p>
+<pre class="code-inspector" data-lang="js" data-copy>
+const xmlText = document.getElementById("wfArea").value;
+const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+
+const name = doc.querySelector("name").textContent;
+console.log("Name: " + name);
+
+doc.querySelectorAll("phone").forEach(phone =&gt; {
+  console.log(phone.getAttribute("type") + ": " + phone.textContent);
+});
+</pre>
+          <button type="button" class="btn btn-sm btn-primary mt-2" id="domRun">Run on the XML from the editor</button>
+          <div class="console-out mt-2" id="domOut"><div class="line muted">The output will appear here.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="css">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Displaying XML with CSS</h2>
+      <p>XML contains no information about appearance; without a stylesheet the browser shows it as a tree or as one long text. CSS works the same as with HTML, but we have to set everything ourselves – even whether an element is <code>block</code>, <code>inline</code> or <code>none</code> (hidden). We attach a stylesheet to XML with the instruction <code>&lt;?xml-stylesheet type="text/css" href="card.css"?&gt;</code>.</p>
+      <div class="row g-3">
+        <div class="col-lg-4"><div class="tiny-label mb-1">card.xml</div><textarea class="xml-area" id="cssXml" spellcheck="false" aria-label="XML" style="min-height:300px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">card.css</div><textarea class="xml-area" id="cssCss" spellcheck="false" aria-label="CSS" style="min-height:300px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">result in the browser</div><iframe class="xml-frame" id="cssFrame" title="XML with a stylesheet"></iframe></div>
+      </div>
+      <div class="row g-3 small mt-1">
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><code>::before</code> and <code>::after</code> insert text from the <code>content</code> property before/after the content. <code>attr(type)</code> prints the value of an attribute – <code>phone::before { content: attr(type) ": "; }</code>.</div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Counters</strong>: <code>counter-reset: n;</code> on the parent, <code>counter-increment: n;</code> on the item, and <code>content: counter(n) ". ";</code> prints them.</div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Tables</strong>: <code>display: table</code>, <code>table-row</code>, <code>table-cell</code> turn any elements into a table. Attribute selector: <code>phone[primary]</code>.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="dtd">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>DTD – rules for a document</h2>
+      <p>If you want other people (or programs) to send XML in your structure, you have to tell them which elements and attributes it may contain and in what order. A simple way is a <strong>DTD</strong> (Document Type Definition); more powerful but more complex is <strong>XML Schema</strong>. A document that is well-formed and also meets the rules of the DTD is <strong>valid</strong>.</p>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-6">
+          <h3 class="h6">Elements: <code>&lt;!ELEMENT name content&gt;</code></h3>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <tbody>
+                <tr><td><code>(#PCDATA)</code></td><td>text only (Parsed Character Data – the text between the tags)</td></tr>
+                <tr><td><code>EMPTY</code></td><td>an empty element, e.g. <code>&lt;photo /&gt;</code></td></tr>
+                <tr><td><code>ANY</code></td><td>anything</td></tr>
+                <tr><td><code>(to, from, body)</code></td><td>exactly these elements in this order</td></tr>
+                <tr><td><code>(house | flat)</code></td><td>one of them</td></tr>
+                <tr><td><code>(#PCDATA | b)*</code></td><td>mixed content – text and elements</td></tr>
+                <tr><td><code>a?</code> <code>b*</code> <code>c+</code></td><td><code>?</code> 0 or 1×, <code>*</code> 0 or more×, <code>+</code> 1 or more×</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Attributes: <code>&lt;!ATTLIST element attribute type default&gt;</code></h3>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <tbody>
+                <tr><td><code>CDATA</code></td><td>any text</td></tr>
+                <tr><td><code>(mobile|home|work)</code></td><td>one of the listed values</td></tr>
+                <tr><td><code>ID</code></td><td>a unique identifier</td></tr>
+                <tr><td><code>#REQUIRED</code></td><td>required</td></tr>
+                <tr><td><code>#IMPLIED</code></td><td>optional</td></tr>
+                <tr><td><code>#FIXED "1.0"</code></td><td>if present, it must have exactly this value</td></tr>
+                <tr><td><code>"OK"</code></td><td>default value when the attribute is missing</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small mb-0">A DTD can be right inside the document (<code>&lt;!DOCTYPE root [ … ]&gt;</code>) or in a separate file that several documents use: <code>&lt;!DOCTYPE pets SYSTEM "pets.dtd"&gt;</code>.</p>
+        </div>
+      </div>
+      <h3 class="h6">Validator</h3>
+      <p class="small">The browser doesn’t check DTDs, so we wrote a small validator for it (it handles <code>ELEMENT</code> and <code>ATTLIST</code> from the internal DTD). Break the document – delete <code>&lt;age&gt;</code>, swap the order of elements, change <code>type="mobile"</code> to <code>"fax"</code>…</p>
+      <div class="d-flex flex-wrap gap-2 mb-2" id="dtdSamples">
+        <button type="button" class="btn btn-sm btn-outline-secondary active" data-sample="pets">pets.xml</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-sample="card">businesscard.xml</button>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-7"><textarea class="xml-area" id="dtdArea" spellcheck="false" aria-label="XML with a DTD" style="min-height:380px"></textarea></div>
+        <div class="col-lg-5"><div id="dtdStatus"></div><p class="small text-secondary mt-2 mb-0">For real projects: online validators, e.g. <a href="https://www.xmlvalidation.com/">xmlvalidation.com</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="xpath">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>XPath – a path to the data</h2>
+      <p>XPath writes a path to elements much like a path to a file in folders: <code>/BusinessCard/name</code>. It is the basis of XSLT and XQuery. <code>/</code> at the start = from the root, <code>//</code> = anywhere in the document, <code>[1]</code> = the first one (counting from 1!), <code>@type</code> = an attribute, <code>[…]</code> = a condition (predicate). Click an expression or write your own:</p>
+      <div class="d-flex flex-wrap gap-1 xp-chips mb-2" id="xpChips"></div>
+      <div class="input-group mb-3">
+        <span class="input-group-text font-monospace">XPath</span>
+        <input class="form-control font-monospace" id="xpInput" spellcheck="false" autocomplete="off" aria-label="XPath expression">
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6"><textarea class="xml-area" id="xpXml" spellcheck="false" aria-label="XML for XPath" style="min-height:330px"></textarea></div>
+        <div class="col-lg-6"><div class="small fw-semibold mb-1" id="xpCount"></div><div class="result-list" id="xpOut"></div><p class="small text-secondary mt-2 mb-0" id="xpNote"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="xslt">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>XSLT – turning XML into HTML</h2>
+      <p>Unlike CSS, <strong>XSLT</strong> (eXtensible Stylesheet Language Transformations) is a whole language: it contains <strong>templates</strong> (<code>&lt;xsl:template match="…"&gt;</code>) that are matched to elements by XPath and replaced by their output. It is itself written in XML. From one XML it can produce an HTML page, text, other XML (and with further tools even PDF). The process: <em>XML document + XSLT document → XSLT processor → result document</em>.</p>
+      <div class="row g-3">
+        <div class="col-lg-4"><div class="tiny-label mb-1">pets.xml</div><textarea class="xml-area" id="xsXml" spellcheck="false" aria-label="XML" style="min-height:340px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">pets.xslt</div><textarea class="xml-area" id="xsXsl" spellcheck="false" aria-label="XSLT" style="min-height:340px"></textarea></div>
+        <div class="col-lg-4">
+          <div class="d-flex align-items-center gap-2 mb-1"><button type="button" class="btn btn-sm btn-primary" id="xsRun">Transform</button><span class="tiny-label" id="xsEngine"></span></div>
+          <iframe class="xml-frame" id="xsFrame" title="XSLT result" style="height:300px"></iframe>
+        </div>
+      </div>
+      <div class="status bad mt-2 d-none" id="xsErr"></div>
+      <div class="erratum mt-3">Note: from version 158 (November 2026) Chrome has switched off its built-in XSLT, and other browsers plan to do the same. An XML file with <code>&lt;?xml-stylesheet type="text/xsl" …?&gt;</code> opened directly in the browser may no longer be transformed. That is why this page loads a replacement library in that case (the <a href="https://github.com/mfreed7/xslt_polyfill">xslt-polyfill</a>, ~1.5 MB). Outside the browser XSLT keeps working as usual (Python, Java, PHP, online testers).</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Quiz</h2>
+      <div id="quizXml"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Tasks</h2>
+      <p>You can check all tasks as you go in the editors on this page – just paste in your code.</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 1 · Business card</h3>
+            <ol class="small mb-0">
+              <li>Write <code>businesscard.xml</code> for a business card: name, position (<em>HR manager</em>), company <em>Stann &amp; White ®</em> (watch out for the &amp; and ® characters!), three phones with a <code>type</code> attribute (mobile, home, work), e-mail.</li>
+              <li>Design your own address structure: street <em>Oravská 458/7</em>, postcode <em>949 74</em>, town <em>Nitra</em>, country <em>Slovakia</em>.</li>
+              <li>Check in part 2 that the document is well-formed.</li>
+              <li>Create <code>card.css</code>: the card as a box 300 px wide, the name blue and bold, put the text “e-mail: ” before the e-mail and its type before each phone (<code>attr(type)</code>). Mark the main phone (<code>primary</code>) after its number.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 2 · Pets</h3>
+            <p class="small mb-2">Write this data in XML (<code>pets</code> → <code>pet</code> → <code>name</code>, <code>age</code>, <code>type</code>, <code>color</code>):</p>
+            <div class="table-responsive"><table class="table table-sm small mb-2"><tbody>
+              <tr><td>Tilly</td><td>14</td><td>cat</td><td>silver</td></tr><tr><td>Amanda</td><td>10</td><td>dog</td><td>brown</td></tr>
+              <tr><td>Jack</td><td>3</td><td>cat</td><td>black</td></tr><tr><td>Blake</td><td>12</td><td>dog</td><td>blue</td></tr>
+              <tr><td>Loosey</td><td>1</td><td>cat</td><td>brown</td></tr><tr><td>Stop</td><td>5</td><td>pig</td><td>brown</td></tr>
+            </tbody></table></div>
+            <ol class="small mb-0">
+              <li>Write a DTD for it and check it with the validator in part 6.</li>
+              <li>XPath: the names of all dogs, pets older than 10 years, the number of brown pets, the last pet.</li>
+              <li>A DTD for the business card from task 1: <code>BusinessCard (name, phone+, email?)</code>, <code>type</code> required with the values mobile, fax, work, home; <code>primary</code> optional.</li>
+              <li>Bonus: change the XSLT in part 8 so that it lists only dogs and sorts them by age (<code>&lt;xsl:sort&gt;</code>).</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  XML · Documentation: <a href="https://www.w3.org/TR/xml/">W3C – XML 1.0</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction">MDN – introduction to XML</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/XPath">MDN – XPath</a> · <a href="https://www.w3.org/TR/xslt-10/">W3C – XSLT 1.0</a> · <a href="https://developer.chrome.com/docs/web-platform/deprecating-xslt">Chrome – removing XSLT</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  const $id = id => document.getElementById(id);
+  const parseXML = text => new DOMParser().parseFromString(text, 'application/xml');
+  const parseError = doc => { const e = doc.getElementsByTagName('parsererror')[0]; return e ? e.textContent.replace(/\s+/g, ' ').replace(/^This page contains the following errors:\s*/, '').replace(/Below is a rendering.*$/, '').trim() : null; };
+
+  // ---------- spoločné ukážkové dáta ----------
+  const CARD = `<?xml version="1.0" encoding="UTF-8"?>
+<BusinessCard>
+  <!-- contact details -->
+  <name>Jane Novak</name>
+  <position>HR manager</position>
+  <phone type="mobile" primary="primary">(+421) 900 123 456</phone>
+  <phone type="home">(+421) 37 765 4321</phone>
+  <phone type="work">(+421) 37 641 2000</phone>
+  <email>jana@example.com</email>
+</BusinessCard>`;
+
+  const PETS = [['Tilly', 14, 'cat', 'silver'], ['Amanda', 10, 'dog', 'brown'], ['Jack', 3, 'cat', 'black'], ['Blake', 12, 'dog', 'blue'], ['Loosey', 1, 'cat', 'brown'], ['Stop', 5, 'pig', 'brown']];
+  const petsXml = (rows, indent) => rows.map(p => indent + '<pet>\n' + indent + '  <name>' + p[0] + '</name>\n' + indent + '  <age>' + p[1] + '</age>\n' + indent + '  <type>' + p[2] + '</type>\n' + indent + '  <color>' + p[3] + '</color>\n' + indent + '</pet>').join('\n');
+
+  // ---------- 2 well-formed + 4 DOM strom ----------
+  const wfArea = $id('wfArea');
+  wfArea.value = CARD;
+  function renderTree(node) {
+    if (node.nodeType === 1) {
+      const attrs = Array.from(node.attributes).map(a => ' <span class="t-at">' + Lab.esc(a.name) + '="' + Lab.esc(a.value) + '"</span>').join('');
+      const kids = Array.from(node.childNodes).map(renderTree).filter(Boolean).join('');
+      return '<li><span class="t-el">&lt;' + Lab.esc(node.nodeName) + '&gt;</span>' + attrs + (kids ? '<ul>' + kids + '</ul>' : '') + '</li>';
+    }
+    if (node.nodeType === 3 || node.nodeType === 4) {
+      const t = node.nodeValue.trim();
+      return t ? '<li><span class="t-tx">"' + Lab.esc(t) + '"</span></li>' : '';
+    }
+    if (node.nodeType === 8) return '<li><span class="t-cm">&lt;!-- ' + Lab.esc(node.nodeValue.trim()) + ' --&gt;</span></li>';
+    return '';
+  }
+  function checkWF() {
+    const doc = parseXML(wfArea.value);
+    const err = parseError(doc);
+    const st = $id('wfStatus');
+    if (err) {
+      st.className = 'status bad mt-2';
+      st.textContent = '✖ The document is not well-formed.\n' + err;
+      $id('domTree').innerHTML = '<span class="text-danger">A tree can’t be built from a broken document.</span>';
+    } else {
+      st.className = 'status ok mt-2';
+      st.textContent = '✔ The document is well-formed. Root element: <' + doc.documentElement.nodeName + '>';
+      $id('domTree').innerHTML = '<ul><li><span class="t-el">document</span><ul>' + renderTree(doc.documentElement) + '</ul></li></ul>';
+    }
+  }
+  const BREAKS = {
+    close: s => s.replace('</email>', ''),
+    case: s => s.replace('<name>', '<Name>'),
+    quote: s => s.replace('type="mobile"', 'type=mobile'),
+    root: s => s + '\n<BusinessCard>\n  <name>Second card</name>\n</BusinessCard>',
+    amp: s => s.replace('<position>HR manager</position>', '<position>HR & PR manager</position>'),
+    decl: s => ' ' + s,
+    reset: () => CARD
+  };
+  Lab.$$('#breakBtns [data-break]').forEach(b => b.addEventListener('click', () => {
+    wfArea.value = BREAKS[b.dataset.break](b.dataset.break === 'reset' ? '' : CARD);
+    checkWF();
+  }));
+  wfArea.addEventListener('input', checkWF);
+  checkWF();
+
+  // DOM ukážka
+  $id('domRun').addEventListener('click', () => {
+    const out = $id('domOut');
+    Lab.clearConsole(out);
+    const doc = parseXML(wfArea.value);
+    if (parseError(doc)) { Lab.logTo(out, 'The XML in the editor is not well-formed – fix it first.', 'err'); return; }
+    const name = doc.querySelector('name');
+    Lab.logTo(out, 'Name: ' + (name ? name.textContent : '(element name is missing)'));
+    doc.querySelectorAll('phone').forEach(phone => Lab.logTo(out, phone.getAttribute('type') + ': ' + phone.textContent));
+  });
+
+  // ---------- 5 XML + CSS ----------
+  $id('cssXml').value = CARD.replace('?>\n', '?>\n<?xml-stylesheet type="text/css" href="card.css"?>\n');
+  $id('cssCss').value = `BusinessCard {
+  display: block;
+  width: 260px;
+  margin: 10px;
+  padding: 12px;
+  border: 2px solid #b45309;
+  border-radius: 8px;
+  background: #fef3c7;
+  font-family: Arial, sans-serif;
+}
+name {
+  display: block;
+  color: blue;
+  font-weight: bold;
+  font-size: 20px;
+}
+position { display: block; font-style: italic; margin-bottom: 8px; }
+phone, email { display: block; }
+phone::before { content: attr(type) ": "; color: gray; }
+phone[primary]::after { content: " ★"; }
+email::before { content: "e-mail: "; color: gray; }`;
+  let cssUrls = [];
+  function renderXmlCss() {
+    cssUrls.forEach(u => URL.revokeObjectURL(u));
+    const cssUrl = URL.createObjectURL(new Blob([$id('cssCss').value], { type: 'text/css' }));
+    const xml = $id('cssXml').value.replace(/href="card\.css"/, 'href="' + cssUrl + '"');
+    const xmlUrl = URL.createObjectURL(new Blob([xml], { type: 'application/xml' }));
+    cssUrls = [cssUrl, xmlUrl];
+    $id('cssFrame').src = xmlUrl;
+  }
+  let cssTimer;
+  ['cssXml', 'cssCss'].forEach(id => $id(id).addEventListener('input', () => { clearTimeout(cssTimer); cssTimer = setTimeout(renderXmlCss, 400); }));
+  renderXmlCss();
+
+  // ---------- 6 DTD validátor ----------
+  const DTD_SAMPLES = {
+    pets: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pets [
+  <!ELEMENT pets (pet+)>
+  <!ELEMENT pet (name, age, type, color)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT age (#PCDATA)>
+  <!ELEMENT type (#PCDATA)>
+  <!ELEMENT color (#PCDATA)>
+]>
+<pets>
+` + petsXml(PETS.slice(0, 3), '  ') + `
+</pets>`,
+    card: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE BusinessCards [
+  <!ELEMENT BusinessCards (BusinessCard+)>
+  <!ELEMENT BusinessCard (name, phone+, email?)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT phone (#PCDATA)>
+  <!ATTLIST phone type (mobile|fax|work|home) #REQUIRED>
+  <!ATTLIST phone primary (primary) #IMPLIED>
+  <!ELEMENT email (#PCDATA)>
+]>
+<BusinessCards>
+  <BusinessCard>
+    <name>Jane Novak</name>
+    <phone type="mobile" primary="primary">(+421) 900 123 456</phone>
+    <phone type="work">(+421) 37 641 2000</phone>
+    <email>jana@example.com</email>
+  </BusinessCard>
+  <BusinessCard>
+    <name>Peter Brown</name>
+    <phone type="home">(+421) 37 765 4321</phone>
+  </BusinessCard>
+</BusinessCards>`
+  };
+  function parseDTD(src) {
+    const m = /<!DOCTYPE\s+([\w:.-]+)\s*\[([\s\S]*?)\]\s*>/.exec(src);
+    if (!m) return null;
+    const dtd = { root: m[1], elements: {}, attrs: {} };
+    const body = m[2].replace(/<!--[\s\S]*?-->/g, '');
+    body.replace(/<!ELEMENT\s+([\w:.-]+)\s+([^>]+)>/g, (_, name, model) => { dtd.elements[name] = model.trim(); });
+    body.replace(/<!ATTLIST\s+([\w:.-]+)\s+([^>]+)>/g, (_, el, rest) => {
+      const re = /([\w:.-]+)\s+(CDATA|ID|IDREFS?|NMTOKENS?|\([^)]*\))\s+(#REQUIRED|#IMPLIED|#FIXED\s+(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*')/g;
+      let a;
+      dtd.attrs[el] = dtd.attrs[el] || {};
+      while ((a = re.exec(rest))) {
+        const fixed = /^#FIXED\s+["'](.*)["']$/.exec(a[3]);
+        dtd.attrs[el][a[1]] = {
+          type: a[2],
+          values: a[2][0] === '(' ? a[2].slice(1, -1).split('|').map(v => v.trim()) : null,
+          required: a[3] === '#REQUIRED',
+          fixed: fixed ? fixed[1] : null
+        };
+      }
+    });
+    return dtd;
+  }
+  function modelRegex(model) {
+    const tokens = model.match(/[\w:.-]+|[(),|?*+]/g) || [];
+    const re = tokens.map(t => {
+      if (t === '(') return '(?:';
+      if (t === ',') return '';
+      if ('|)?*+'.includes(t)) return t;
+      return '(?:<' + t.replace(/\./g, '\\.') + '>)';
+    }).join('');
+    return new RegExp('^' + re + '$');
+  }
+  function validateDTD(src) {
+    const msgs = [];
+    const doc = parseXML(src);
+    const err = parseError(doc);
+    if (err) return { wf: false, msgs: [err] };
+    const dtd = parseDTD(src);
+    if (!dtd) return { wf: true, noDtd: true, msgs: [] };
+    if (doc.documentElement.nodeName !== dtd.root) msgs.push('The root element is <' + doc.documentElement.nodeName + '>, but the DOCTYPE says <' + dtd.root + '>.');
+    const ids = new Set();
+    (function walk(el) {
+      const name = el.nodeName;
+      const model = dtd.elements[name];
+      const kids = Array.from(el.children).map(c => c.nodeName);
+      const text = Array.from(el.childNodes).some(n => (n.nodeType === 3 || n.nodeType === 4) && n.nodeValue.trim());
+      if (model === undefined) msgs.push('Element <' + name + '> is not declared in the DTD.');
+      else if (model === 'EMPTY') { if (el.childNodes.length) msgs.push('Element <' + name + '> must be empty (EMPTY).'); }
+      else if (model !== 'ANY') {
+        if (/#PCDATA/.test(model)) {
+          const allowed = (model.match(/[\w:.-]+/g) || []).filter(n => n !== 'PCDATA');
+          kids.filter(k => !allowed.includes(k)).forEach(k => msgs.push('Element <' + name + '> must not contain <' + k + '> – according to the DTD it contains ' + model + '.'));
+        } else {
+          if (text) msgs.push('Element <' + name + '> must not contain text, only the elements ' + model + '.');
+          let ok = false;
+          try { ok = modelRegex(model).test(kids.map(k => '<' + k + '>').join('')); } catch (e) { msgs.push('I don’t understand the content model ' + model + '.'); ok = true; }
+          if (!ok) msgs.push('Element <' + name + '> contains ' + (kids.length ? kids.join(', ') : '(nothing)') + ', but the DTD requires ' + model + '.');
+        }
+      }
+      const decl = dtd.attrs[name] || {};
+      Array.from(el.attributes).forEach(a => {
+        if (/^xmlns/.test(a.name)) return;
+        const d = decl[a.name];
+        if (!d) { msgs.push('Attribute ' + a.name + ' of element <' + name + '> is not declared in the DTD.'); return; }
+        if (d.values && !d.values.includes(a.value)) msgs.push(name + '/@' + a.name + '="' + a.value + '" – the allowed values are ' + d.values.join(', ') + '.');
+        if (d.fixed !== null && a.value !== d.fixed) msgs.push(name + '/@' + a.name + ' must have the fixed value "' + d.fixed + '".');
+        if (d.type === 'ID') { if (ids.has(a.value)) msgs.push('ID "' + a.value + '" is used more than once.'); ids.add(a.value); }
+      });
+      Object.entries(decl).forEach(([an, d]) => { if (d.required && !el.hasAttribute(an)) msgs.push('Element <' + name + '> is missing the required attribute ' + an + '.'); });
+      Array.from(el.children).forEach(walk);
+    })(doc.documentElement);
+    return { wf: true, msgs };
+  }
+  const dtdArea = $id('dtdArea');
+  function runDTD() {
+    const r = validateDTD(dtdArea.value);
+    const st = $id('dtdStatus');
+    if (!r.wf) { st.innerHTML = '<div class="status bad">✖ The document is not even well-formed:\n' + Lab.esc(r.msgs[0]) + '</div>'; return; }
+    if (r.noDtd) { st.innerHTML = '<div class="status bad">I couldn’t find an internal DTD (&lt;!DOCTYPE root [ … ]&gt;).</div>'; return; }
+    st.innerHTML = r.msgs.length
+      ? '<div class="status bad">✖ Well-formed yes, valid no (' + r.msgs.length + '):\n' + r.msgs.map(m => '• ' + Lab.esc(m)).join('\n') + '</div>'
+      : '<div class="status ok">✔ The document is well-formed and valid – it meets all the rules of the DTD.</div>';
+  }
+  Lab.$$('#dtdSamples [data-sample]').forEach(b => b.addEventListener('click', () => {
+    dtdArea.value = DTD_SAMPLES[b.dataset.sample];
+    Lab.$$('#dtdSamples [data-sample]').forEach(x => x.classList.toggle('active', x === b));
+    runDTD();
+  }));
+  dtdArea.addEventListener('input', runDTD);
+  dtdArea.value = DTD_SAMPLES.pets;
+  runDTD();
+
+  // ---------- 7 XPath ----------
+  $id('xpXml').value = CARD;
+  const XP = [
+    ['/', 'the whole document'], ['/BusinessCard', 'the root element'], ['/BusinessCard/name', 'the name element in the root'],
+    ['/BusinessCard/name/text()', 'only the text of the element'], ['/BusinessCard/phone', 'all phones'], ['/BusinessCard/phone[3]', 'the third phone (counting from 1)'],
+    ['/BusinessCard/phone[last()]', 'the last phone'], ['//phone', 'phones anywhere in the document'], ['//phone[@type="work"]', 'the phone with the attribute type="work"'],
+    ['//phone/@type', 'the values of the type attributes'], ['//phone[@primary]', 'the phone that has a primary attribute'], ['//name[contains(text(), "Jane")]', 'a name containing “Jane”'],
+    ['count(//phone)', 'a function – the number of phones']
+  ];
+  XP.forEach(([expr, note]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-sm btn-outline-secondary'; b.textContent = expr; b.title = note;
+    b.addEventListener('click', () => { $id('xpInput').value = expr; runXPath(); });
+    $id('xpChips').appendChild(b);
+  });
+  const serializer = new XMLSerializer();
+  function runXPath() {
+    const out = $id('xpOut'), expr = $id('xpInput').value.trim();
+    const hit = XP.find(x => x[0] === expr);
+    $id('xpNote').textContent = hit ? hit[1] : '';
+    out.innerHTML = '';
+    const doc = parseXML($id('xpXml').value);
+    if (parseError(doc)) { $id('xpCount').textContent = 'The XML is not well-formed.'; return; }
+    if (!expr) { $id('xpCount').textContent = ''; return; }
+    let res;
+    try { res = doc.evaluate(expr, doc, null, XPathResult.ANY_TYPE, null); }
+    catch (e) { $id('xpCount').innerHTML = '<span class="text-danger">Invalid XPath expression.</span>'; return; }
+    const add = t => { const d = document.createElement('div'); d.className = 'r'; d.textContent = t; out.appendChild(d); };
+    if (res.resultType === XPathResult.NUMBER_TYPE) { $id('xpCount').textContent = 'The result is a number:'; add(res.numberValue); return; }
+    if (res.resultType === XPathResult.STRING_TYPE) { $id('xpCount').textContent = 'The result is text:'; add(res.stringValue); return; }
+    if (res.resultType === XPathResult.BOOLEAN_TYPE) { $id('xpCount').textContent = 'The result is a boolean:'; add(res.booleanValue); return; }
+    let n, count = 0;
+    while ((n = res.iterateNext())) {
+      count++;
+      if (n.nodeType === 2) add(n.name + '="' + n.value + '"');
+      else if (n.nodeType === 3) add('"' + n.nodeValue + '"');
+      else if (n.nodeType === 9) add(serializer.serializeToString(n.documentElement));
+      else add(serializer.serializeToString(n));
+    }
+    $id('xpCount').textContent = 'Nodes found: ' + count;
+  }
+  $id('xpInput').addEventListener('input', runXPath);
+  $id('xpXml').addEventListener('input', runXPath);
+  $id('xpInput').value = '/BusinessCard/phone';
+  runXPath();
+
+  // ---------- 8 XSLT ----------
+  $id('xsXml').value = '<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="pets.xslt"?>\n<pets>\n' + petsXml(PETS, '  ') + '\n</pets>';
+  $id('xsXsl').value = `<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="html"/>
+
+  <!-- template for the root element pets -->
+  <xsl:template match="/pets">
+    <html>
+      <body style="font-family: Arial, sans-serif">
+        <h2>My pets</h2>
+        <table border="1" cellpadding="6">
+          <tr><th>Name</th><th>Age</th><th>Kind</th></tr>
+          <xsl:for-each select="pet">
+            <tr>
+              <td><xsl:value-of select="name"/></td>
+              <td><xsl:value-of select="age"/></td>
+              <td><xsl:value-of select="type"/></td>
+            </tr>
+          </xsl:for-each>
+        </table>
+        <p>Total: <xsl:value-of select="count(pet)"/></p>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>`;
+  const POLYFILL = 'https://cdn.jsdelivr.net/npm/xslt-polyfill@1.0.34/xslt-polyfill.min.js';
+  let polyfillPromise = null;
+  function hasNativeXSLT() {
+    if (typeof XSLTProcessor === 'undefined') return false;
+    try {
+      const p = new XSLTProcessor();
+      p.importStylesheet(parseXML('<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:template match="/"><r/></xsl:template></xsl:stylesheet>'));
+      return !!p.transformToDocument(parseXML('<a/>'));
+    } catch (e) { return false; }
+  }
+  function ensureXSLT() {
+    if (hasNativeXSLT()) return Promise.resolve('native');
+    if (!polyfillPromise) polyfillPromise = new Promise((resolve, reject) => {
+      $id('xsEngine').textContent = 'loading the polyfill…';
+      const s = document.createElement('script');
+      s.src = POLYFILL;
+      s.onload = () => resolve('polyfill');
+      s.onerror = () => reject(new Error('The polyfill couldn’t be loaded (are you offline?).'));
+      document.head.appendChild(s);
+    });
+    return polyfillPromise;
+  }
+  async function runXSLT() {
+    const errBox = $id('xsErr');
+    errBox.classList.add('d-none');
+    const xml = parseXML($id('xsXml').value), xsl = parseXML($id('xsXsl').value);
+    const bad = parseError(xml) ? 'pets.xml: ' + parseError(xml) : parseError(xsl) ? 'pets.xslt: ' + parseError(xsl) : null;
+    if (bad) { errBox.textContent = '✖ ' + bad; errBox.classList.remove('d-none'); return; }
+    try {
+      const engine = await ensureXSLT();
+      $id('xsEngine').textContent = engine === 'native' ? 'the browser’s XSLT processor' : 'XSLT via the polyfill';
+      const proc = new XSLTProcessor();
+      proc.importStylesheet(xsl);
+      const result = proc.transformToDocument(xml);
+      if (!result || !result.documentElement) throw new Error('The transformation returned no result.');
+      $id('xsFrame').srcdoc = '<!doctype html>' + (result.documentElement.outerHTML || serializer.serializeToString(result));
+    } catch (e) {
+      errBox.textContent = '✖ ' + e.message;
+      errBox.classList.remove('d-none');
+    }
+  }
+  $id('xsRun').addEventListener('click', runXSLT);
+  runXSLT();
+
+  // ---------- 9 kvíz ----------
+  Lab.quiz('#quizXml', [
+    { q: 'What is XML mainly intended for?', o: ['displaying a page', 'storing and exchanging data', 'programming animations'], a: 1, e: 'HTML shows how data looks; XML says what the data is.', mono: false },
+    { q: 'Which document is well-formed?', o: ['<a><b></a></b>', '<a><b/></a>', '<a></a><b></b>'], a: 1, e: 'The first has crossed tags, the third two root elements. <b/> is a short empty element.' },
+    { q: 'Which element name is allowed in XML?', o: ['<1st-place>', '<xmlData>', '<first_place>', '<first place>'], a: 2, e: 'It must not start with a digit or with the word xml and must not contain a space.' },
+    { q: 'How do you write the & character in XML text?', o: ['&', '&amp;', '\\&'], a: 1, e: 'A bare & starts an entity, so we write it as &amp;.' },
+    { q: 'What does this mean in a DTD: <!ELEMENT BusinessCard (name, phone+, email?)>?', o: ['name 1×, phone at least 1×, email 0 or 1×, in this order', 'any order of elements', 'phone is optional'], a: 0, e: '+ = 1 or more, ? = 0 or 1, the comma sets the order.', mono: false },
+    { q: 'What does the XPath //phone[1] return for our business card?', o: ['all phones', 'the first phone', 'the last phone'], a: 1, e: 'XPath counts from 1. The last one would be //phone[last()].' },
+    { q: 'Which XPath selects the phones with the attribute type="work"?', o: ['//phone.work', '//phone[@type="work"]', '//phone/type=work'], a: 1, e: '@ marks an attribute, square brackets a condition.' },
+    { q: 'What is the main difference between CSS and XSLT for XML?', o: ['none', 'CSS only styles, XSLT can reshape the document (sort, select, produce HTML)', 'XSLT only works in Excel'], a: 1, e: 'XSLT is a language with templates and XPath; CSS only sets the look of existing elements.', mono: false }
+  ]);
+</script>
+</body>
+</html>
