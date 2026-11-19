@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1 · HTML – estructura de la página, textos, enlaces, tablas y formularios</title>
+  <meta name="description" content="Lección 1 – HTML: etiquetas de apertura y cierre y etiquetas vacías, la cabecera, títulos y textos, enlaces, imágenes, listas, tablas, formularios y etiquetas semánticas. Ejemplos interactivos y tareas.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #c2410c; --accent-bg: #ffedd5; }
+    .anatomy { font: 1.05rem/2.2 ui-monospace, Menlo, Consolas, monospace; background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; overflow-wrap: anywhere; }
+    .anatomy [data-part] { cursor: pointer; border-radius: .3rem; padding: .1rem .15rem; transition: background .15s; }
+    .anatomy [data-part]:hover, .anatomy [data-part].on { background: #f59e0b55; }
+    .anatomy .p-tag { color: #93c5fd; } .anatomy .p-attr { color: #fcd34d; } .anatomy .p-val { color: #86efac; } .anatomy .p-text { color: #fff; }
+    .explain { min-height: 4.5rem; }
+    .tab-preview { background: #dee1e6; border-radius: .6rem .6rem 0 0; padding: .4rem .5rem 0; }
+    .tab-preview .tab { display: inline-flex; align-items: center; gap: .45rem; max-width: 100%; background: #fff; border-radius: .5rem .5rem 0 0; padding: .35rem .8rem; font-size: .8rem; }
+    .tab-preview .tab span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .serp { border: 1px solid #e3e7f0; border-top: 0; border-radius: 0 0 .6rem .6rem; padding: 1rem; background: #fff; }
+    .serp .s-url { color: #202124; font-size: .8rem; }
+    .serp .s-title { color: #1a0dab; font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .serp .s-desc { color: #4d5156; font-size: .85rem; }
+    .tag-table code { white-space: nowrap; }
+    .layout-map { display: grid; gap: .4rem; grid-template-columns: 1fr 1fr 1fr; grid-template-areas: "h h h" "n n n" "m m a" "m m a" "f f f"; }
+    .layout-map button { border: 2px dashed #cbd2dd; background: #fff; border-radius: .5rem; padding: .7rem .4rem; font: 600 .85rem ui-monospace, Menlo, Consolas, monospace; color: #374151; }
+    .layout-map button.on { border-style: solid; border-color: var(--accent); background: var(--accent-bg); }
+    .layout-map .lm-main { display: grid; gap: .4rem; align-content: start; padding: .4rem; }
+    .layout-map .lm-main button { width: 100%; }
+    .check-list li { list-style: none; padding: .15rem 0; }
+    .check-list li.ok::before { content: "✔ "; color: #047857; font-weight: 700; }
+    .check-list li.no::before { content: "✖ "; color: #b91c1c; font-weight: 700; }
+    .check-list li.ok { color: #047857; }
+    .sent-data { font: .82rem/1.5 ui-monospace, Menlo, Consolas, monospace; background: #0b1220; color: #86efac; border-radius: .6rem; padding: .7rem 1rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .img-demo img { max-width: 220px; border-radius: .5rem; }
+    .img-demo .broken { display: inline-flex; align-items: center; gap: .4rem; border: 1px dashed #9ca3af; padding: .4rem .6rem; border-radius: .4rem; font-size: .85rem; color: #374151; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lección 1</span>
+  <h1 class="display-5 fw-bold">HTML – el esqueleto de cada página</h1>
+  <p class="lead col-lg-8">HTML es un lenguaje de marcado: le dice al navegador <em>qué</em> hay en la página: un título, un párrafo, una imagen, un enlace, una tabla, un formulario. Cómo se ve lo resuelve CSS (lección 2) y qué pasa al hacer clic, JavaScript.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#znacky">1 · Etiquetas y atributos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hlavicka">2 · La cabecera</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#texty">3 · Títulos y textos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#odkazy">4 · Enlaces e imágenes</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#zoznamy">5 · Listas</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#tabulky">6 · Tablas</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#formulare">7 · Formularios</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#semantika">8 · Comentarios, DevTools, semántica</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Cuestionario</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Tareas</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="znacky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Etiquetas, atributos y el esqueleto del documento</h2>
+      <p>Una página se compone de <strong>etiquetas</strong> (tags). La mayoría van <strong>en pareja</strong>: una etiqueta de apertura y otra de cierre con el contenido en medio: <code>&lt;p&gt;…&lt;/p&gt;</code>. Las etiquetas <strong>vacías</strong> no tienen contenido: <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>. La información adicional se escribe en <strong>atributos</strong> dentro de la etiqueta de apertura: <code>nombre="valor"</code>.</p>
+      <p class="small text-secondary mb-2">Haz clic en cualquier parte de la línea:</p>
+      <div class="anatomy" id="anatomy"><span data-part="open" class="p-tag">&lt;a</span> <span data-part="attr" class="p-attr">href</span>=<span data-part="value" class="p-val">"https://www.ukf.sk"</span> <span data-part="attr2" class="p-attr">target</span>=<span data-part="value2" class="p-val">"_blank"</span><span data-part="open" class="p-tag">&gt;</span><span data-part="text" class="p-text">Web de la UKF</span><span data-part="close" class="p-tag">&lt;/a&gt;</span></div>
+      <div class="explain alert alert-light border mt-2 mb-4 small" id="anatomyText">Elige una parte del código de arriba.</div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">El esqueleto de cada página</h3>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+  &lt;head&gt;
+    &lt;!-- información sobre la página – no se ve --&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Título en la pestaña del navegador&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- todo lo que se ve en la página --&gt;
+    &lt;h1&gt;¡Hola, mundo!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Archivos del proyecto</h3>
+          <ul class="small">
+            <li>La página de inicio siempre se llama <code>index.html</code>: el navegador la abre cuando la dirección no indica un archivo concreto.</li>
+            <li>Nombra las demás páginas según su contenido (<code>contacto.html</code>): el nombre del archivo también formará parte de la dirección.</li>
+            <li>Guarda las imágenes en una carpeta <code>img</code>.</li>
+            <li>Las etiquetas se anidan como cajas: lo que se abre en último lugar se cierra primero – <code>&lt;p&gt;&lt;strong&gt;…&lt;/strong&gt;&lt;/p&gt;</code>.</li>
+            <li>El navegador ignora la sangría, pero a ti te ayuda a ver el anidamiento.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="hlavicka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>La cabecera <code>&lt;head&gt;</code>: etiquetas meta, título, enlaces</h2>
+      <p>El contenido de la cabecera no se ve en la página, pero lo leen el navegador y los buscadores. Aquí van las <strong>etiquetas meta</strong> (codificación, descripción, autor, viewport), el <strong>título</strong> de la pestaña del navegador y los <strong>enlaces</strong> a estilos, scripts y al icono <em>favicon</em>. Prueba cómo se muestran el título y la descripción:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <label class="form-label small fw-semibold" for="headTitle">&lt;title&gt;</label>
+          <input class="form-control mb-3" id="headTitle" value="Panadería La Esquina – pan recién hecho en Nitra">
+          <label class="form-label small fw-semibold" for="headDesc">&lt;meta name="description"&gt;</label>
+          <textarea class="form-control mb-3" id="headDesc" rows="3">Horneamos cada día desde las 5:00. Pan de masa madre, panecillos y pasteles con ingredientes de la zona. También pedidos por teléfono.</textarea>
+          <label class="form-label small fw-semibold" for="headAuthor">&lt;meta name="author"&gt;</label>
+          <input class="form-control" id="headAuthor" value="Juana Novak">
+        </div>
+        <div class="col-lg-7">
+          <div class="tiny-label mb-1">Pestaña del navegador</div>
+          <div class="tab-preview"><div class="tab"><span>🥖</span><span id="tabTitle"></span></div></div>
+          <div class="serp mb-3">
+            <div class="tiny-label mb-1">Resultado en el buscador</div>
+            <div class="s-url">www.panaderialaesquina.example</div>
+            <div class="s-title" id="serpTitle"></div>
+            <div class="s-desc" id="serpDesc"></div>
+          </div>
+          <pre class="code-inspector" id="headCode"></pre>
+        </div>
+      </div>
+      <ul class="small mt-3 mb-0">
+        <li><code>viewport</code> le dice al móvil que no reduzca la página al ancho de un ordenador; sin él, el diseño responsive (lección 4) no funcionará bien.</li>
+        <li>El favicon es el pequeño icono de la pestaña, normalmente un archivo <code>.ico</code> o <code>.png</code>.</li>
+        <li>La descripción aparece en los resultados de búsqueda cuando el buscador la considera adecuada; un texto largo se corta (a unos 155 caracteres).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="texty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Títulos, párrafos y formato del texto</h2>
+      <p>Los títulos tienen 6 niveles; <code>&lt;h1&gt;</code> es el más importante. Cada página debería tener <strong>exactamente uno</strong> <code>&lt;h1&gt;</code>: con él los buscadores y los lectores de pantalla saben de qué trata la página. El texto se escribe en párrafos <code>&lt;p&gt;</code>. Edita el código de la izquierda y mira el resultado:</p>
+      <div class="live mb-3" data-height="300">
+<textarea data-part="html" data-label="HTML">
+<h1>Título de primer nivel</h1>
+<h2>Título de segundo nivel</h2>
+<h3>Título de tercer nivel</h3>
+<p>Esto es un párrafo. Puede contener varias frases.<br>La etiqueta br hace un salto de línea.</p>
+<p><b>Negrita</b> y <strong>importante</strong>, <i>cursiva</i> y <em>énfasis</em>.</p>
+<p><mark>Resaltado</mark>, <u>subrayado</u>, <del>tachado</del>, <small>pequeño</small>.</p>
+<p>Fórmula H<sub>2</sub>O y una superficie de 25 m<sup>2</sup>.</p>
+</textarea>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm small tag-table align-middle">
+          <thead><tr><th>Etiqueta</th><th>Resultado</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td><code>&lt;b&gt;</code> / <code>&lt;strong&gt;</code></td><td><b>negrita</b></td><td><code>b</code> es solo aspecto; <code>strong</code> dice “esto es importante” y un lector de pantalla lo enfatiza (etiqueta semántica).</td></tr>
+            <tr><td><code>&lt;i&gt;</code> / <code>&lt;em&gt;</code></td><td><i>cursiva</i></td><td><code>i</code> es solo aspecto; <code>em</code> significa énfasis.</td></tr>
+            <tr><td><code>&lt;mark&gt;</code></td><td><mark>resaltado</mark></td><td>efecto de rotulador</td></tr>
+            <tr><td><code>&lt;sub&gt;</code> / <code>&lt;sup&gt;</code></td><td>H<sub>2</sub>O, m<sup>2</sup></td><td>subíndice y superíndice</td></tr>
+            <tr><td><code>&lt;u&gt;</code> / <code>&lt;ins&gt;</code></td><td><u>subrayado</u></td><td><code>ins</code> marca texto insertado</td></tr>
+            <tr><td><code>&lt;del&gt;</code></td><td><del>tachado</del></td><td>texto eliminado, p. ej. un precio antiguo</td></tr>
+            <tr><td><code>&lt;small&gt;</code></td><td><small>pequeño</small></td><td>una nota, “letra pequeña”</td></tr>
+            <tr><td><code>&lt;br&gt;</code></td><td>salto de línea</td><td>etiqueta vacía: una línea nueva dentro del mismo párrafo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="erratum">Cuidado con la escritura: el salto de línea es <code>&lt;br&gt;</code> (no <code>&lt;/br&gt;</code>) y cada título se cierra con barra – <code>&lt;h6&gt;…&lt;/h6&gt;</code>. La etiqueta <code>&lt;big&gt;</code> está obsoleta; el tamaño de letra se define en CSS (<code>font-size</code>).</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="odkazy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Enlaces e imágenes</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">Enlace <code>&lt;a&gt;</code></h3>
+          <ul class="small">
+            <li><code>href</code> – adónde lleva el enlace (obligatorio). Una dirección completa <code>https://www.ukf.sk</code>, otro archivo del proyecto <code>contacto.html</code> o un lugar de la página <code>#formulario</code>.</li>
+            <li><code>target="_blank"</code> – abre el enlace en una pestaña nueva.</li>
+            <li><code>href="tel:+421900123456"</code> – en el móvil marca el número directamente.</li>
+            <li><code>href="mailto:info@firma.sk"</code> – abre un correo nuevo.</li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Imagen <code>&lt;img&gt;</code> (etiqueta vacía)</h3>
+          <ul class="small">
+            <li><code>src</code> – ruta al archivo con su extensión (<code>.jpg</code>, <code>.png</code>, <code>.gif</code>, <code>.svg</code>). Obligatorio.</li>
+            <li><strong>Ruta relativa</strong> <code>img/slnecnica.jpg</code> – un archivo de tu proyecto. Es la forma recomendada.</li>
+            <li><strong>Dirección externa</strong> <code>https://…/obrazok.jpg</code> – carga un servidor ajeno y la imagen puede desaparecer en cualquier momento.</li>
+            <li><code>alt</code> – una descripción en texto. La lee el lector de pantalla y se muestra cuando la imagen no se carga.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row g-3 align-items-center img-demo mb-3">
+        <div class="col-auto"><img id="altImg" alt="foto de un girasol en un prado" width="220" height="143"></div>
+        <div class="col">
+          <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="breakImg">Romper la ruta de la imagen</button>
+          <pre class="code-inspector" id="altCode"></pre>
+        </div>
+      </div>
+      <div class="live" data-height="240">
+<textarea data-part="html" data-label="HTML">
+<p>Visita <a href="https://www.ukf.sk" target="_blank">la web de la UKF</a>.</p>
+<p>Llámanos: <a href="tel:+421900123456">0900 123 456</a></p>
+<p>Escríbenos: <a href="mailto:info@firma.sk">info@firma.sk</a></p>
+<img src="img/slnecnica.jpg" alt="foto de un girasol" width="200">
+</textarea>
+      </div>
+      <div class="erratum mt-3">Una dirección externa siempre empieza por el protocolo: <code>https://www.pagina.com/imagen.jpg</code> (no <code>http:www…</code>). El atributo <code>alt</code> también puede llevar tildes: gracias a <code>&lt;meta charset="UTF-8"&gt;</code> el lector de pantalla las lee bien.</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="zoznamy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Listas</h2>
+      <p>Lista ordenada <code>&lt;ol&gt;</code> (ordered list), lista sin orden <code>&lt;ul&gt;</code> (unordered list): los elementos siempre son <code>&lt;li&gt;</code>. Una lista de definiciones <code>&lt;dl&gt;</code> tiene términos <code>&lt;dt&gt;</code> y sus explicaciones <code>&lt;dd&gt;</code>. Prueba a cambiar <code>ol</code> por <code>ul</code>:</p>
+      <div class="live" data-height="320">
+<textarea data-part="html" data-label="HTML">
+<ol>
+  <li>Primer elemento</li>
+  <li>Segundo elemento</li>
+  <li>Tercer elemento</li>
+</ol>
+
+<ul>
+  <li>Harina</li>
+  <li>Agua</li>
+  <li>Sal</li>
+</ul>
+
+<dl>
+  <dt>HCl</dt>
+  <dd>ácido clorhídrico</dd>
+  <dt>HF</dt>
+  <dd>ácido fluorhídrico</dd>
+</dl>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="tabulky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Tablas</h2>
+      <p>Una tabla <code>&lt;table&gt;</code> se compone de filas <code>&lt;tr&gt;</code> (table row). Las celdas de cabecera son <code>&lt;th&gt;</code> (table header) y las demás <code>&lt;td&gt;</code> (table data). El atributo <code>colspan="2"</code> une dos celdas contiguas. Añade una fila con otro valor:</p>
+      <div class="live" data-height="330">
+<textarea data-part="html" data-label="HTML">
+<table>
+  <tr>
+    <th>Información nutricional</th>
+    <th>por 100 g</th>
+  </tr>
+  <tr>
+    <td>Energía</td>
+    <td>250 kcal</td>
+  </tr>
+  <tr>
+    <td>Proteínas</td>
+    <td>9 g</td>
+  </tr>
+  <tr>
+    <td colspan="2">Fuente: el fabricante</td>
+  </tr>
+</table>
+</textarea>
+<textarea data-part="css" data-label="CSS">
+/* sin CSS la tabla no tendría ninguna línea */
+table { border-collapse: collapse; }
+th, td { border: 1px solid #999; padding: 6px 12px; }
+th { background: #ffedd5; }
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="formulare">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Formularios</h2>
+      <p>Un formulario <code>&lt;form&gt;</code> recoge datos y, al enviarlo, los manda a la dirección del atributo <code>action</code>. El atributo <code>method</code> define cómo: <code>GET</code> añade los datos a la dirección (p. ej. una búsqueda), <code>POST</code> los envía ocultos (registro, pedido). <code>target="_blank"</code> abriría la respuesta en una pestaña nueva.</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <form class="demo-area" id="orderForm" action="order.php" method="get" novalidate>
+            <div class="mb-2"><label class="form-label small" for="fName">Nombre y apellidos</label><input class="form-control form-control-sm" type="text" id="fName" name="name" required></div>
+            <div class="mb-2"><label class="form-label small" for="fEmail">Correo electrónico</label><input class="form-control form-control-sm" type="email" id="fEmail" name="email" required></div>
+            <div class="mb-2"><label class="form-label small" for="fCount">Cantidad</label><input class="form-control form-control-sm" type="number" id="fCount" name="count" min="1" max="10" value="1"></div>
+            <div class="mb-2"><label class="form-label small" for="fCountry">País</label>
+              <select class="form-select form-select-sm" id="fCountry" name="country"><option value="sk">Eslovaquia</option><option value="cz">Chequia</option><option value="at">Austria</option></select></div>
+            <div class="mb-2 small"><span class="d-block mb-1">Envío</span>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="delivery" id="dPost" value="post" checked><label class="form-check-label" for="dPost">Correo postal</label></div>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="delivery" id="dCourier" value="courier"><label class="form-check-label" for="dCourier">Mensajería</label></div>
+            </div>
+            <div class="mb-2"><label class="form-label small" for="fNote">Nota</label><textarea class="form-control form-control-sm" id="fNote" name="note" rows="2"></textarea></div>
+            <div class="form-check mb-3 small"><input class="form-check-input" type="checkbox" id="fAgree" name="agree" value="yes" required><label class="form-check-label" for="fAgree">Acepto el tratamiento de mis datos</label></div>
+            <input class="btn btn-primary btn-sm" type="submit" value="Enviar">
+          </form>
+        </div>
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">Lo que se enviaría:</p>
+          <div class="sent-data mb-3" id="sentData">Rellena el formulario y haz clic en Enviar.</div>
+          <ul class="small mb-0">
+            <li><code>&lt;label for="fEmail"&gt;</code> pertenece al campo con <code>id="fEmail"</code>: haz clic en la etiqueta y el cursor salta al campo.</li>
+            <li>Se envían parejas <code>name=valor</code>. ¡Un campo sin atributo <code>name</code> no se envía!</li>
+            <li><code>type="email"</code> comprueba el formato de la dirección, <code>type="number"</code> solo deja pasar números y <code>required</code> no permite dejar el campo vacío.</li>
+            <li>Los botones de opción (radio) con el <strong>mismo</strong> <code>name</code> forman un grupo: solo se puede elegir uno. Las casillas (checkbox) puedes marcar las que quieras.</li>
+            <li><code>&lt;select&gt;</code> con el atributo <code>multiple</code> permite elegir varias opciones; <code>size</code> define cuántas filas se ven.</li>
+          </ul>
+        </div>
+      </div>
+<pre class="code-inspector mt-3" data-lang="html" data-copy>
+&lt;form action="order.php" method="post"&gt;
+  &lt;label for="email"&gt;Correo electrónico&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" required&gt;
+
+  &lt;input type="radio" id="post" name="delivery" value="post"&gt;
+  &lt;label for="post"&gt;Correo postal&lt;/label&gt;
+  &lt;input type="radio" id="courier" name="delivery" value="courier"&gt;
+  &lt;label for="courier"&gt;Mensajería&lt;/label&gt;
+
+  &lt;textarea id="note" name="note"&gt;&lt;/textarea&gt;
+  &lt;input type="submit" value="Enviar"&gt;
+&lt;/form&gt;
+</pre>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="semantika">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Comentarios, herramientas de desarrollo y etiquetas semánticas</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-6">
+          <h3 class="h6">Comentario</h3>
+          <p class="small">Una nota para el programador: el navegador no la muestra, ni siquiera dentro de <code>&lt;body&gt;</code>.</p>
+<pre class="code-inspector" data-lang="html">&lt;!-- Esto es un comentario. Empieza con &lt;!-- y termina con --&gt;</pre>
+          <p class="small text-secondary mt-1 mb-0">Al principio hay dos guiones normales <code>&lt;!--</code>, no una raya larga.</p>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Herramientas de desarrollo (DevTools)</h3>
+          <p class="small mb-0">En cualquier página haz clic derecho → <strong>Inspeccionar</strong> o pulsa <kbd>F12</kbd>. En la pestaña <em>Elements</em> ves el HTML de toda la página, puedes editarlo temporalmente y debajo ves también el CSS. Con los tres puntos ⋮ eliges en qué lado de la ventana aparece el panel. ¡Pruébalo en esta página!</p>
+        </div>
+      </div>
+      <h3 class="h6">Agrupar: etiquetas semánticas</h3>
+      <p class="small">Agrupamos el contenido en bloques para poder darles colores distintos o dividirlos en columnas. Las etiquetas <strong>semánticas</strong> además dicen <em>qué</em> hay dentro. Haz clic en una parte de la página:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="layout-map" id="layoutMap">
+            <button type="button" style="grid-area:h" data-tag="header">&lt;header&gt;</button>
+            <button type="button" style="grid-area:n" data-tag="nav">&lt;nav&gt;</button>
+            <div class="lm-main" style="grid-area:m;border:2px dashed #cbd2dd;border-radius:.5rem" >
+              <button type="button" data-tag="main">&lt;main&gt;</button>
+              <button type="button" data-tag="section">&lt;section&gt;</button>
+              <button type="button" data-tag="article">&lt;article&gt;</button>
+            </div>
+            <button type="button" style="grid-area:a" data-tag="aside">&lt;aside&gt;</button>
+            <button type="button" style="grid-area:f" data-tag="footer">&lt;footer&gt;</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-tag="div" id="divBtn">¿y &lt;div&gt;?</button>
+        </div>
+        <div class="col-lg-7">
+          <div class="alert alert-light border small explain" id="tagText">Elige una parte de la página a la izquierda.</div>
+          <pre class="code-inspector" id="tagCode"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Cuestionario</h2>
+      <div id="quiz1"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Tareas para la clase</h2>
+      <p>Haz cada tarea en un archivo nuevo dentro de la carpeta del proyecto (<code>uloha1.html</code>, <code>uloha2.html</code>, <code>uloha3.html</code>). Cuando termines, pega todo el código en el comprobador bajo el enunciado: verificará que tienes todos los elementos pedidos.</p>
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 1 · Primera página</h3>
+            <p class="small">Una página sobre un tema que te guste. Debe contener:</p>
+            <ul class="small mb-2"><li>1× título <code>h1</code>, 2× <code>h2</code>, 1× <code>h3</code></li><li>3 párrafos</li><li>2 enlaces</li><li>una lista</li><li>una imagen con el atributo <code>alt</code></li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="1" aria-label="Código de la tarea 1" placeholder="Pega aquí tu código HTML…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check1"></ul>
+          </div>
+        </div>
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 2 · Receta</h3>
+            <p class="small">Una página con una receta. Debe contener:</p>
+            <ul class="small mb-2"><li>el nombre de la receta como título</li><li>una foto del plato</li><li>al menos un subtítulo</li><li>los ingredientes en una lista</li><li>una tabla de información nutricional (con cabecera <code>th</code>)</li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="2" aria-label="Código de la tarea 2" placeholder="Pega aquí tu código HTML…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check2"></ul>
+          </div>
+        </div>
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 3 · Pedido</h3>
+            <p class="small">Un formulario con estos campos:</p>
+            <ul class="small mb-2"><li>nombre y apellidos, ciudad, dirección (<code>text</code>)</li><li>país (<code>select</code>)</li><li>correo (<code>email</code>)</li><li>nota (<code>textarea</code>)</li><li>envío (<code>radio</code>), consentimiento (<code>checkbox</code>)</li><li>enviar (<code>submit</code>), cada campo con su <code>label</code></li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="3" aria-label="Código de la tarea 3" placeholder="Pega aquí tu código HTML…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check3"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lección 1 · HTML · Documentación: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">MDN – lista de elementos HTML</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input">MDN – tipos de input</a> · <a href="https://www.w3schools.com/html/">W3Schools – HTML</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 1 anatómia značky ----------
+  const PARTS = {
+    open: 'Etiqueta de apertura <a> – “aquí empieza un enlace”. El nombre de la etiqueta va justo después de <.',
+    attr: 'Nombre del atributo href: la dirección a la que lleva el enlace.',
+    value: 'Valor del atributo: siempre entre comillas, después del signo =.',
+    attr2: 'Un segundo atributo, target: dónde se abre el enlace. Los atributos se separan con un espacio.',
+    value2: 'El valor _blank = abrir en una pestaña nueva.',
+    text: 'Contenido entre las etiquetas: el texto en el que se hace clic.',
+    close: 'Etiqueta de cierre: el mismo nombre con una barra /.'
+  };
+  Lab.$$('#anatomy [data-part]').forEach(el => el.addEventListener('click', () => {
+    Lab.$$('#anatomy [data-part]').forEach(x => x.classList.toggle('on', x.dataset.part === el.dataset.part));
+    document.getElementById('anatomyText').textContent = PARTS[el.dataset.part];
+  }));
+
+  // ---------- 2 hlavička ----------
+  const headTitle = document.getElementById('headTitle');
+  const headDesc = document.getElementById('headDesc');
+  const headAuthor = document.getElementById('headAuthor');
+  function updateHead() {
+    const desc = headDesc.value.trim();
+    document.getElementById('tabTitle').textContent = headTitle.value;
+    document.getElementById('serpTitle').textContent = headTitle.value;
+    document.getElementById('serpDesc').textContent = desc.length > 155 ? desc.slice(0, 152) + '…' : desc;
+    Lab.setCode(document.getElementById('headCode'), 'html',
+      '<head>\n  <meta charset="UTF-8">\n  <meta name="description" content="' + desc + '">\n  <meta name="author" content="' + headAuthor.value + '">\n' +
+      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + headTitle.value + '</title>\n' +
+      '  <link rel="icon" type="image/x-icon" href="img/favicon.ico">\n  <link rel="stylesheet" href="css/style.css">\n</head>');
+  }
+  [headTitle, headDesc, headAuthor].forEach(el => el.addEventListener('input', updateHead));
+  updateHead();
+
+  // ---------- 4 alt ----------
+  const altImg = document.getElementById('altImg');
+  let broken = false;
+  function updateAlt() {
+    const src = broken ? 'img/slnecnicaa.jpg' : 'img/slnecnica.jpg';
+    altImg.src = broken ? 'img/slnecnicaa.jpg' : Lab.svgScene('slnecnica');
+    Lab.setCode(document.getElementById('altCode'), 'html', '<img src="' + src + '" alt="' + altImg.alt + '">');
+    document.getElementById('breakImg').textContent = broken ? 'Arreglar la ruta de la imagen' : 'Romper la ruta de la imagen';
+  }
+  document.getElementById('breakImg').addEventListener('click', () => { broken = !broken; updateAlt(); });
+  updateAlt();
+
+  // ---------- 7 formulár ----------
+  const form = document.getElementById('orderForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const out = document.getElementById('sentData');
+    if (!form.checkValidity()) {
+      const bad = form.querySelector(':invalid');
+      out.style.color = '#fca5a5';
+      out.textContent = 'El navegador no enviará el formulario: campo “' + form.querySelector('label[for="' + bad.id + '"]').textContent + '“ – ' + bad.validationMessage;
+      bad.focus();
+      return;
+    }
+    const params = new URLSearchParams(new FormData(form));
+    out.style.color = '';
+    out.textContent = 'GET ' + form.getAttribute('action') + '?' + params.toString() + '\n\n' +
+      Array.from(params.entries()).map(([k, v]) => k + ' = ' + v).join('\n');
+  });
+
+  // ---------- 8 sémantické značky ----------
+  const TAGS = {
+    header: ['Cabecera de la página: normalmente el logo, el nombre y el menú.', '<header>\n  <img src="img/logo.png" alt="logo">\n  <h1>Panadería La Esquina</h1>\n</header>'],
+    nav: ['Navegación principal: una lista de enlaces a otras páginas.', '<nav>\n  <a href="index.html">Inicio</a>\n  <a href="kontakt.html">Contacto</a>\n</nav>'],
+    main: ['El contenido principal de la página. Solo hay uno por página.', '<main>\n  <section>…</section>\n  <article>…</article>\n</main>'],
+    section: ['Una parte de la página sobre un tema; normalmente tiene su propio título.', '<section>\n  <h2>Nuestros productos</h2>\n  <p>…</p>\n</section>'],
+    article: ['Un artículo independiente: tendría sentido aunque lo sacaras de la página (una entrada de blog, una noticia).', '<article>\n  <h2>Abrimos una tienda nueva</h2>\n  <p>A partir del lunes…</p>\n</article>'],
+    aside: ['Contenido adicional junto al principal: una barra lateral, un anuncio, enlaces relacionados.', '<aside>\n  <h3>Horario</h3>\n  <p>Lu – Vi 6:00 – 18:00</p>\n</aside>'],
+    footer: ['Pie de página: contacto, autor, derechos de autor.', '<footer>\n  <p>&copy; 2026 Panadería La Esquina</p>\n</footer>'],
+    div: ['<div> es un bloque sin significado: lo usamos cuando hay que agrupar algo solo por el aspecto (p. ej. una columna). Si el contenido trata de un tema, es mejor la etiqueta <section>.', '<div class="column">\n  …\n</div>']
+  };
+  Lab.$$('[data-tag]').forEach(btn => btn.addEventListener('click', () => {
+    Lab.$$('[data-tag]').forEach(b => b.classList.toggle('on', b === btn));
+    const t = TAGS[btn.dataset.tag];
+    document.getElementById('tagText').textContent = t[0];
+    Lab.setCode(document.getElementById('tagCode'), 'html', t[1]);
+  }));
+  document.querySelector('#layoutMap [data-tag="header"]').click();
+
+  // ---------- 9 kvíz ----------
+  Lab.quiz('#quiz1', [
+    { q: '¿Qué etiqueta es vacía?', o: ['<p>', '<img>', '<h1>', '<a>'], a: 1, e: '<img> no tiene contenido ni etiqueta de cierre: todo lo que necesita está en los atributos src y alt.' },
+    { q: '¿Cuántos títulos <h1> debería tener una página?', o: ['ninguno', 'exactamente uno', 'los que queramos'], a: 1, e: 'h1 dice de qué trata toda la página. Los demás títulos son h2, h3…' },
+    { q: '¿Cuál es la diferencia entre <b> y <strong>?', o: ['ninguno', '<strong> además dice que el texto es importante', '<b> es más gruesa'], a: 1, e: 'Se ven igual, pero strong es una etiqueta semántica: el lector de pantalla enfatiza el texto.', mono: false },
+    { q: '¿Cómo abres un enlace en una pestaña nueva?', o: ['<a href="…" new>', '<a href="…" target="_blank">', '<a href="…" open="tab">'], a: 1, e: 'El atributo target con el valor _blank.' },
+    { q: '¿Qué celda de la tabla pertenece a la cabecera?', o: ['<td>', '<tr>', '<th>'], a: 2, e: 'th = table header, td = table data, tr = table row.' },
+    { q: '¿Cómo consigues que de un grupo de botones de opción solo se pueda elegir uno?', o: ['el mismo atributo id', 'el mismo atributo name', 'un atributo single'], a: 1, e: 'Los radios con el mismo name forman un grupo. Un id siempre debe ser único en la página.', mono: false },
+    { q: '¿Qué forma de escribir un comentario es correcta?', o: ['// comentario', '<!-- comentario -->', '/* comentario */'], a: 1, e: '// y /* */ son comentarios de JavaScript (/* */ también en CSS). En HTML es <!-- … -->.' }
+  ]);
+
+  // ---------- 10 kontrola úloh ----------
+  const RULES = {
+    1: [
+      ['exactamente 1× h1', d => d.querySelectorAll('h1').length === 1],
+      ['al menos 2× h2', d => d.querySelectorAll('h2').length >= 2],
+      ['al menos 1× h3', d => d.querySelectorAll('h3').length >= 1],
+      ['al menos 3 párrafos p', d => d.querySelectorAll('p').length >= 3],
+      ['al menos 2 enlaces con href', d => d.querySelectorAll('a[href]').length >= 2],
+      ['una lista ul u ol con elementos li', d => d.querySelectorAll('ul li, ol li').length >= 1],
+      ['una imagen con alt no vacío', d => Array.from(d.querySelectorAll('img')).some(i => (i.getAttribute('alt') || '').trim() && i.getAttribute('src'))]
+    ],
+    2: [
+      ['nadpis h1', d => d.querySelectorAll('h1').length >= 1],
+      ['una imagen con alt', d => Array.from(d.querySelectorAll('img')).some(i => (i.getAttribute('alt') || '').trim())],
+      ['podnadpis h2 alebo h3', d => d.querySelectorAll('h2, h3').length >= 1],
+      ['ingredientes en una lista', d => d.querySelectorAll('ul li, ol li').length >= 2],
+      ['una tabla con celdas th y td', d => d.querySelectorAll('table th').length >= 1 && d.querySelectorAll('table td').length >= 2]
+    ],
+    3: [
+      ['un elemento form', d => !!d.querySelector('form')],
+      ['al menos 3 campos de texto', d => d.querySelectorAll('input[type="text"]').length >= 3],
+      ['un select con elementos option', d => d.querySelectorAll('select option').length >= 2],
+      ['un campo de correo (type="email")', d => !!d.querySelector('input[type="email"]')],
+      ['textarea', d => !!d.querySelector('textarea')],
+      ['al menos 2 radios con el mismo name', d => { const r = Array.from(d.querySelectorAll('input[type="radio"]')).map(x => x.name); return r.some((n, i) => n && r.indexOf(n) !== i); }],
+      ['checkbox', d => !!d.querySelector('input[type="checkbox"]')],
+      ['un botón submit', d => !!d.querySelector('input[type="submit"], button[type="submit"], form button:not([type])')],
+      ['cada campo tiene un label for', d => { const f = Array.from(d.querySelectorAll('input:not([type="submit"]), select, textarea')); return f.length > 0 && f.every(x => x.id && d.querySelector('label[for="' + x.id + '"]')); }]
+    ]
+  };
+  Lab.$$('[data-check]').forEach(area => {
+    const list = document.getElementById('check' + area.dataset.check);
+    function run() {
+      list.innerHTML = '';
+      if (!area.value.trim()) return;
+      const doc = new DOMParser().parseFromString(area.value, 'text/html');
+      RULES[area.dataset.check].forEach(([label, test]) => {
+        const li = document.createElement('li');
+        const ok = test(doc);
+        li.className = ok ? 'ok' : 'no';
+        li.textContent = label;
+        list.appendChild(li);
+      });
+    }
+    area.addEventListener('input', run);
+  });
+</script>
+</body>
+</html>

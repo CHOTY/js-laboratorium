@@ -536,7 +536,7 @@ th { background: #ffedd5; }
       ['formulár form', d => !!d.querySelector('form')],
       ['aspoň 3 textové polia', d => d.querySelectorAll('input[type="text"]').length >= 3],
       ['select s možnosťami option', d => d.querySelectorAll('select option').length >= 2],
-      ['pole type="email"', d => !!d.querySelector('input[type="email"]')],
+      ['e-mailové pole (type="email")', d => !!d.querySelector('input[type="email"]')],
       ['textarea', d => !!d.querySelector('textarea')],
       ['aspoň 2 rádiá s rovnakým name', d => { const r = Array.from(d.querySelectorAll('input[type="radio"]')).map(x => x.name); return r.some((n, i) => n && r.indexOf(n) !== i); }],
       ['checkbox', d => !!d.querySelector('input[type="checkbox"]')],

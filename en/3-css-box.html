@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3 · CSS – id and class, the box model, block and inline</title>
+  <meta name="description" content="Lesson 3 – id and class selectors, the box model (margin, border, padding), width and height, box-sizing, block, inline and inline-block elements. Interactive examples and tasks.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #4338ca; --accent-bg: #e0e7ff; }
+    /* tester selektorov */
+    .sel-demo { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; font-size: .9rem; }
+    .sel-demo .el { position: relative; border: 2px solid transparent; border-radius: .4rem; padding: .3rem .5rem; margin-bottom: .4rem; transition: all .15s; }
+    .sel-demo .el::after { content: attr(data-src); position: absolute; right: .4rem; top: .3rem; font: .7rem ui-monospace, Menlo, Consolas, monospace; color: #6b7280; }
+    .sel-demo .el.hit { border-color: var(--accent); background: var(--accent-bg); }
+    .sel-demo .el .el { margin: .3rem 0 0; }
+    .sel-chips .btn { font-family: ui-monospace, Menlo, Consolas, monospace; }
+    /* box model */
+    .bm-wrap { overflow-x: auto; padding: .5rem 0; }
+    .bm-stage { display: inline-block; background: #fbbf2433; outline: 1px dashed #f59e0b; position: relative; }
+    .bm-el { border-style: solid; border-color: #f59e0b; background: #86efac; background-clip: padding-box; }
+    .bm-content { background: #93c5fd; height: 70px; display: flex; align-items: center; justify-content: center; font: 600 .8rem ui-monospace, Menlo, Consolas, monospace; color: #1e3a8a; }
+    .legend span { display: inline-flex; align-items: center; gap: .35rem; margin-right: 1rem; font-size: .8rem; }
+    .legend i { width: .9rem; height: .9rem; border-radius: .2rem; display: inline-block; }
+    .sum { font: .85rem/1.6 ui-monospace, Menlo, Consolas, monospace; background: #f3f4f6; border-radius: .5rem; padding: .6rem .8rem; overflow-wrap: anywhere; }
+    /* skrátený zápis */
+    .sh-box { position: relative; margin: 2.2rem auto; width: min(320px, 70%); height: 110px; background: #93c5fd; border-radius: .3rem; display: flex; align-items: center; justify-content: center; font: 600 .8rem ui-monospace, Menlo, Consolas, monospace; color: #1e3a8a; outline: 28px solid #fbbf2455; }
+    .sh-box b { position: absolute; font: 700 .8rem ui-monospace, Menlo, Consolas, monospace; color: #92400e; }
+    .sh-box .t { top: -1.75rem; left: 50%; transform: translateX(-50%); }
+    .sh-box .r { right: -1.65rem; top: 50%; transform: translate(50%, -50%); }
+    .sh-box .b { bottom: -1.75rem; left: 50%; transform: translateX(-50%); }
+    .sh-box .l { left: -1.65rem; top: 50%; transform: translate(-50%, -50%); }
+    /* šírka */
+    .w-parent { background: #e0e7ff; border: 2px solid #6366f1; border-radius: .4rem; padding: .4rem 0; }
+    .w-child { background: #6366f1; color: #fff; font: 600 .75rem ui-monospace, Menlo, Consolas, monospace; padding: .3rem .4rem; margin: .3rem 0; white-space: nowrap; overflow: hidden; }
+    /* display */
+    .disp-stage { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: .75rem; font-size: .9rem; line-height: 1.6; min-height: 190px; }
+    .disp-stage .item { background: #c7d2fe; border: 2px solid #4338ca; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lesson 3</span>
+  <h1 class="display-5 fw-bold">id, class and the box model</h1>
+  <p class="lead col-lg-8">How to select only some elements in CSS, what every “box” on a page is made of, and why some elements stack below each other while others sit side by side.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#idclass">1 · id and class</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#boxmodel">2 · Box model</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#skratky">3 · margin and padding</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#rozmery">4 · Width and height</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#display">5 · block, inline, inline-block</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">6 · Quiz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">7 · Tasks</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="idclass">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>id and class – what is the difference?</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-md-6">
+          <h3 class="h6"><code>id</code> – a unique name</h3>
+          <p class="small mb-2">Only <strong>one</strong> element on a page may have a given id. In CSS you select it with a hash <code>#</code>. It is used less for styling – more for links within the page (<code>&lt;a href="#contact"&gt;</code>) and in JavaScript.</p>
+<pre class="code-inspector" data-lang="css">#green {
+  color: green;
+}</pre>
+        </div>
+        <div class="col-md-6">
+          <h3 class="h6"><code>class</code> – a group of elements</h3>
+          <p class="small mb-2">Any number of elements can share the same class, and one element can have several classes at once (<code>class="card green"</code>). In CSS you select it with a dot <code>.</code> – <strong>this is what you will use most often</strong>.</p>
+<pre class="code-inspector" data-lang="css">.green {
+  color: green;
+}</pre>
+        </div>
+      </div>
+      <h3 class="h6">Try out selectors</h3>
+      <p class="small">Type a selector (or click a suggestion) – the elements the rule would apply to get highlighted.</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <input class="form-control font-monospace mb-2" id="selInput" value=".green" aria-label="Selector" spellcheck="false" autocomplete="off">
+          <div class="d-flex flex-wrap gap-1 sel-chips mb-2" id="selChips">
+            <button type="button" class="btn btn-sm btn-outline-secondary">p</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">.green</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">#intro</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">p.green</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">.card .green</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">h2, .note</button>
+          </div>
+          <div class="small" id="selInfo"></div>
+        </div>
+        <div class="col-lg-7">
+          <div class="sel-demo" id="selDemo">
+            <div class="el" data-tag="h2" data-src="&lt;h2&gt;">Section heading</div>
+            <div class="el" data-tag="p" data-id="intro" data-src="&lt;p id=&quot;intro&quot;&gt;">Intro paragraph</div>
+            <div class="el" data-class="green" data-tag="p" data-src="&lt;p class=&quot;green&quot;&gt;">Green paragraph</div>
+            <div class="el" data-class="card" data-tag="div" data-src="&lt;div class=&quot;card&quot;&gt;">Card
+              <div class="el" data-class="green" data-tag="span" data-src="&lt;span class=&quot;green&quot;&gt;">green text in the card</div>
+              <div class="el" data-class="note" data-tag="p" data-src="&lt;p class=&quot;note&quot;&gt;">note in the card</div>
+            </div>
+            <div class="el" data-class="green note" data-tag="p" data-src="&lt;p class=&quot;green note&quot;&gt;">Paragraph with two classes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="boxmodel">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>The box model – what every element is made of</h2>
+      <p>Around every HTML element there is a “box” made of four layers: the <strong>content</strong>, the inner spacing <strong>padding</strong>, the <strong>border</strong> and the outer spacing <strong>margin</strong>. You will see the same picture in DevTools (<kbd>F12</kbd> → Elements → Computed).</p>
+      <div class="legend mb-2"><span><i style="background:#fbbf2466;outline:1px dashed #f59e0b"></i>margin – space outside</span><span><i style="background:#f59e0b"></i>border – the frame</span><span><i style="background:#86efac"></i>padding – space inside</span><span><i style="background:#93c5fd"></i>content – the content</span></div>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="pg-controls" id="bmControls"></div>
+          <div class="btn-group btn-group-sm mt-3" role="group" id="bmSizing">
+            <button type="button" class="btn btn-outline-secondary active" data-sizing="content-box">box-sizing: content-box</button>
+            <button type="button" class="btn btn-outline-secondary" data-sizing="border-box">border-box</button>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="bm-wrap"><div class="bm-stage"><div class="bm-el" id="bmEl"><div class="bm-content" id="bmContent"></div></div></div></div>
+          <div class="sum mt-2" id="bmSum"></div>
+          <pre class="code-inspector mt-2" id="bmCode"></pre>
+        </div>
+      </div>
+      <div class="alert alert-light border small mt-3 mb-0"><strong>box-sizing:</strong> by default (<code>content-box</code>) <code>width</code> applies only to the content – padding and border are added on top and the element is bigger than what you wrote. With <code>border-box</code>, <code>width</code> is the total width including padding and border. That is why many sites start with the rule <code>* { box-sizing: border-box; }</code>.</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="skratky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>border, margin and padding – shorthand notation</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">border = width, style, colour</h3>
+<pre class="code-inspector" data-lang="css">article {
+  border: 3px solid white;
+  /* styles: solid, dashed, dotted, double, groove, none */
+  border-radius: 10px; /* rounded corners */
+}</pre>
+          <h3 class="h6 mt-3">margin and padding</h3>
+          <p class="small">Each side can be set separately (<code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, <code>margin-left</code>), or in one line as a shorthand. With four values we go <strong>clockwise</strong> from the top: top, right, bottom, left. Padding is written exactly the same way.</p>
+          <div class="d-flex flex-wrap gap-1 sel-chips mb-2" id="shChips">
+            <button type="button" class="btn btn-sm btn-outline-secondary">50px</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">10px 30px</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">10px 30px 20px</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">10px 20px 30px 40px</button>
+          </div>
+          <div class="input-group">
+            <span class="input-group-text font-monospace">margin:</span>
+            <input class="form-control font-monospace" id="shInput" value="10px 20px 30px 40px" aria-label="Margin value" spellcheck="false">
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sh-box" id="shBox"><b class="t"></b><b class="r"></b><b class="b"></b><b class="l"></b>element</div>
+          <pre class="code-inspector" id="shCode"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="rozmery">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Width and height: <code>width</code>, <code>height</code></h2>
+      <p>Width is given in <code>px</code> (fixed) or in <code>%</code> – percentages are taken from the width of the <strong>parent</strong>. Height is set the same way with <code>height</code> (with percentages the parent must have a height too). Change the width of the parent:</p>
+      <label class="form-label small fw-semibold" for="wRange">parent width: <span id="wVal"></span></label>
+      <input type="range" class="form-range mb-2" id="wRange" min="160" max="900" value="600">
+      <div class="w-parent" id="wParent">
+        <div class="w-child" style="width:250px">width: 250px</div>
+        <div class="w-child" style="width:50%">width: 50%</div>
+        <div class="w-child" style="width:20%">width: 20%</div>
+        <div class="w-child" style="width:100%">width: 100%</div>
+      </div>
+      <p class="small text-secondary mt-2 mb-0">An element with a width in px can be wider than its parent and “overflow” it. Percentages adapt – we will use that in responsive design.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="display">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Block, inline and inline-block</h2>
+      <div class="row g-3 small mb-3">
+        <div class="col-md-4"><div class="border rounded-3 p-3 h-100 bg-white"><strong>block</strong> (<code>div</code>, <code>p</code>, <code>h1</code>–<code>h6</code>, <code>section</code>, <code>ul</code>…)<ul class="mb-0 mt-1"><li>starts on a new line</li><li>takes the full width</li><li><code>width</code>, <code>height</code> and all margins work</li></ul></div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-3 h-100 bg-white"><strong>inline</strong> (<code>a</code>, <code>span</code>, <code>strong</code>, <code>em</code>, <code>b</code>…)<ul class="mb-0 mt-1"><li>flows in the text next to others</li><li>is only as wide as its content</li><li>ignores <code>width</code> and <code>height</code>, margin works only left and right</li><li>top and bottom padding overlaps neighbouring lines</li></ul></div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-3 h-100 bg-white"><strong>inline-block</strong> – a compromise<ul class="mb-0 mt-1"><li>sits side by side like inline</li><li>but accepts <code>width</code>, <code>height</code>, margin and padding on all sides</li><li>a small gap remains between the elements (from the space in the HTML)</li></ul></div></div>
+      </div>
+      <p>You change the display type with the <code>display</code> property. Try how three <code>&lt;span&gt;</code> elements with the same width, height and spacing behave:</p>
+      <div class="row g-4" id="dispPg">
+        <div class="col-lg-5"><div class="pg-controls"></div></div>
+        <div class="col-lg-7">
+          <div class="disp-stage mb-3">Text before the elements <span class="item">span 1</span> <span class="item">span 2</span> <span class="item">span 3</span> and text after them, which goes on so you can see how the elements behave in a line of text.</div>
+          <pre class="code-inspector pg-code"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Quiz</h2>
+      <div id="quiz3"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Tasks for the class</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 1 · Three cards</h3>
+            <p class="small">A warm-up on classes and the box model:</p>
+            <ol class="small">
+              <li>Create three <code>&lt;div class="card"&gt;</code> with a heading, an image and a short text.</li>
+              <li>Give the <code>.card</code> class a width of 250px, <code>padding: 20px</code>, a <code>2px solid</code> border, rounded corners and <code>margin: 10px</code>.</li>
+              <li>Show the cards side by side with <code>display: inline-block</code> (and <code>vertical-align: top</code>).</li>
+              <li>Add a card with two classes <code>class="card featured"</code> and change its background colour in <code>.featured</code>.</li>
+              <li>Give the middle card an <code>id</code> and create a link above the cards that jumps to it (<code>href="#…"</code>).</li>
+              <li>Check in DevTools how wide the card really is. Then add <code>* { box-sizing: border-box; }</code> and compare.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 2 · Adventure</h3>
+            <p class="small">Create a page on the topic <strong>ADVENTURE</strong>. You will find all the requirements in the course on edu.ukf.sk – topic 3, assignment 3. You can start from this skeleton:</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;header id="top"&gt;
+  &lt;h1&gt;Adventure&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;a href="#hory"&gt;Mountains&lt;/a&gt;
+    &lt;a href="#more"&gt;Sea&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id="hory" class="trip"&gt;
+    &lt;h2&gt;Climbing to the summit&lt;/h2&gt;
+    &lt;img src="img/hory.jpg" alt="snow-covered mountain peak"&gt;
+    &lt;p&gt;…&lt;/p&gt;
+  &lt;/section&gt;
+  &lt;section id="more" class="trip"&gt;
+    &lt;h2&gt;Sailing the sea&lt;/h2&gt;
+    &lt;p&gt;…&lt;/p&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;&lt;a href="#top"&gt;Back to top&lt;/a&gt;&lt;/footer&gt;
+</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lesson 3 · CSS – the box model · Documentation: <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/The_box_model">MDN – the box model</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/display">MDN – display</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors">MDN – selectors</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 1 tester selektorov ----------
+  // ukážkové prvky sú <div class="el">; skutočný tag, id a triedy majú v data-tag / data-id / data-class,
+  // preto selektor preložíme na selektor nad týmito atribútmi
+  const selInput = document.getElementById('selInput');
+  function translateSelector(sel) {
+    return sel.split(',').map(part => part.trim().split(/\s+/).map(simple => {
+      const m = /^([a-z][a-z0-9]*)?((?:[.#][\w-]+)*)$/i.exec(simple);
+      if (!m) throw new Error('bad');
+      let out = '.el';
+      if (m[1]) out += '[data-tag="' + m[1].toLowerCase() + '"]';
+      (m[2].match(/[.#][\w-]+/g) || []).forEach(t => {
+        out += t[0] === '#' ? '[data-id="' + t.slice(1) + '"]' : '[data-class~="' + t.slice(1) + '"]';
+      });
+      return out;
+    }).join(' ')).join(', ');
+  }
+  function runSelector() {
+    const info = document.getElementById('selInfo');
+    Lab.$$('#selDemo .el').forEach(e => e.classList.remove('hit'));
+    const sel = selInput.value.trim();
+    if (!sel) { info.textContent = ''; return; }
+    let hits = [];
+    try { hits = Lab.$$(translateSelector(sel), document.getElementById('selDemo')); }
+    catch (e) { info.innerHTML = '<span class="text-danger">Invalid selector.</span>'; return; }
+    hits.forEach(e => e.classList.add('hit'));
+    const NOTES = {
+      'p': 'Type selector – all paragraphs.',
+      '.green': 'Class – all elements with class="green", whatever the tag.',
+      '#intro': 'id – the single element with id="intro".',
+      'p.green': 'Paragraphs that also have the class green (no space!).',
+      '.card .green': 'With a space: elements with the class green INSIDE an element with the class card.',
+      'h2, .note': 'Comma = “or”: h2 headings and also elements with the class note.'
+    };
+    info.innerHTML = '<strong>Selected elements: ' + hits.length + '</strong>' + (NOTES[sel] ? '<br>' + NOTES[sel] : '');
+  }
+  selInput.addEventListener('input', runSelector);
+  Lab.$$('#selChips button').forEach(b => b.addEventListener('click', () => { selInput.value = b.textContent; runSelector(); }));
+  runSelector();
+
+  // ---------- 2 box model ----------
+  const bm = { margin: 20, border: 6, padding: 20, width: 200, sizing: 'content-box' };
+  const bmEl = document.getElementById('bmEl');
+  function drawBox() {
+    bmEl.style.margin = bm.margin + 'px';
+    bmEl.style.borderWidth = bm.border + 'px';
+    bmEl.style.padding = bm.padding + 'px';
+    bmEl.style.width = bm.width + 'px';
+    bmEl.style.boxSizing = bm.sizing;
+    const inner = bm.sizing === 'border-box' ? Math.max(0, bm.width - 2 * bm.padding - 2 * bm.border) : bm.width;
+    const visible = inner + 2 * bm.padding + 2 * bm.border;
+    document.getElementById('bmContent').textContent = inner + ' px';
+    document.getElementById('bmSum').innerHTML = bm.sizing === 'content-box'
+      ? 'width ' + bm.width + ' + padding 2×' + bm.padding + ' + border 2×' + bm.border + ' = <strong>' + visible + ' px</strong> visible width<br>+ margin 2×' + bm.margin + ' = ' + (visible + 2 * bm.margin) + ' px of space on the page'
+      : 'width ' + bm.width + ' = <strong>' + visible + ' px</strong> visible width (the content shrank to ' + inner + ' px)<br>+ margin 2×' + bm.margin + ' = ' + (visible + 2 * bm.margin) + ' px of space on the page';
+    Lab.setCode(document.getElementById('bmCode'), 'css', '.box {\n  box-sizing: ' + bm.sizing + ';\n  width: ' + bm.width + 'px;\n  padding: ' + bm.padding + 'px;\n  border: ' + bm.border + 'px solid orange;\n  margin: ' + bm.margin + 'px;\n}');
+  }
+  [['width', 100, 320], ['padding', 0, 50], ['border', 0, 20], ['margin', 0, 50]].forEach(([prop, min, max]) => {
+    const row = document.createElement('div');
+    row.className = 'pg-row';
+    row.innerHTML = '<label for="bm-' + prop + '">' + prop + '</label><input type="range" class="form-range" id="bm-' + prop + '" min="' + min + '" max="' + max + '" value="' + bm[prop] + '"><span class="pg-val">' + bm[prop] + 'px</span>';
+    const input = row.querySelector('input');
+    input.addEventListener('input', () => { bm[prop] = Number(input.value); row.querySelector('.pg-val').textContent = input.value + 'px'; drawBox(); });
+    document.getElementById('bmControls').appendChild(row);
+  });
+  Lab.$$('#bmSizing button').forEach(b => b.addEventListener('click', () => {
+    bm.sizing = b.dataset.sizing;
+    Lab.$$('#bmSizing button').forEach(x => x.classList.toggle('active', x === b));
+    drawBox();
+  }));
+  drawBox();
+
+  // ---------- 3 skrátený zápis ----------
+  const shInput = document.getElementById('shInput');
+  function drawShorthand() {
+    const v = shInput.value.trim().split(/\s+/).filter(Boolean);
+    const box = document.getElementById('shBox');
+    let t, r, b, l;
+    if (v.length === 1) [t, r, b, l] = [v[0], v[0], v[0], v[0]];
+    else if (v.length === 2) [t, r, b, l] = [v[0], v[1], v[0], v[1]];
+    else if (v.length === 3) [t, r, b, l] = [v[0], v[1], v[2], v[1]];
+    else if (v.length === 4) [t, r, b, l] = v;
+    else { Lab.setCode(document.getElementById('shCode'), 'css', '/* enter 1 to 4 values */'); return; }
+    box.querySelector('.t').textContent = t;
+    box.querySelector('.r').textContent = r;
+    box.querySelector('.b').textContent = b;
+    box.querySelector('.l').textContent = l;
+    const NOTE = ['', '/* 1 value: all sides the same */', '/* 2 values: top and bottom | left and right */', '/* 3 values: top | left and right | bottom */', '/* 4 values: top | right | bottom | left */'][v.length];
+    Lab.setCode(document.getElementById('shCode'), 'css', NOTE + '\nmargin: ' + v.join(' ') + ';\n\n/* the same written out: */\nmargin-top: ' + t + ';\nmargin-right: ' + r + ';\nmargin-bottom: ' + b + ';\nmargin-left: ' + l + ';');
+  }
+  shInput.addEventListener('input', drawShorthand);
+  Lab.$$('#shChips button').forEach(b => b.addEventListener('click', () => { shInput.value = b.textContent; drawShorthand(); }));
+  drawShorthand();
+
+  // ---------- 4 šírka ----------
+  const wRange = document.getElementById('wRange');
+  function drawWidth() {
+    document.getElementById('wParent').style.width = wRange.value + 'px';
+    document.getElementById('wParent').style.maxWidth = '100%';
+    document.getElementById('wVal').textContent = wRange.value + 'px';
+  }
+  wRange.addEventListener('input', drawWidth);
+  drawWidth();
+
+  // ---------- 5 display ----------
+  Lab.playground(document.getElementById('dispPg'), {
+    target: '.disp-stage .item', selector: 'span',
+    props: [
+      { prop: 'display', type: 'select', value: 'inline', options: ['inline', 'block', 'inline-block'] },
+      { prop: 'width', type: 'range', min: 40, max: 200, value: 100, unit: 'px' },
+      { prop: 'height', type: 'range', min: 20, max: 80, value: 40, unit: 'px' },
+      { prop: 'margin', type: 'range', min: 0, max: 30, value: 10, unit: 'px' },
+      { prop: 'padding', type: 'range', min: 0, max: 30, value: 10, unit: 'px' }
+    ]
+  });
+
+  // ---------- 6 kvíz ----------
+  Lab.quiz('#quiz3', [
+    { q: 'How do you select all elements with class="box" in CSS?', o: ['#box', '.box', 'box', '*box'], a: 1, e: 'Class = dot, id = hash #.' },
+    { q: 'How many elements on a page can have id="menu"?', o: ['one', 'two', 'any number'], a: 0, e: 'An id is unique. For several elements use a class.', mono: false },
+    { q: 'margin: 10px 20px; – what is the left margin?', o: ['10px', '20px', '0'], a: 1, e: 'Two values = top and bottom | left and right.' },
+    { q: 'margin: 1px 2px 3px 4px; – which value belongs to the bottom?', o: ['1px', '2px', '3px', '4px'], a: 2, e: 'Clockwise: top 1px, right 2px, bottom 3px, left 4px.' },
+    { q: 'width: 200px; padding: 20px; border: 5px solid; (content-box) – how wide is the element?', o: ['200px', '225px', '250px'], a: 2, e: '200 + 2 × 20 + 2 × 5 = 250px. With box-sizing: border-box it would be 200px.' },
+    { q: 'Why doesn’t <span> react to width: 200px?', o: ['span is an inline element', 'it has no id', 'span can’t have CSS'], a: 0, e: 'Inline elements ignore width and height. display: inline-block or block helps.', mono: false },
+    { q: 'What is padding?', o: ['space outside the element', 'space between the edge of the element and its content', 'the border width'], a: 1, e: 'padding = inside, margin = outside, border = the frame between them.', mono: false }
+  ]);
+</script>
+</body>
+</html>

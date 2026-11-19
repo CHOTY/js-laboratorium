@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2 · CSS – añadir estilos, textos, fuentes y fondos</title>
+  <meta name="description" content="Lección 2 – fundamentos de CSS: estilos en línea, internos y externos, sintaxis, colores, fuentes, unidades px/em/rem y propiedades del fondo. Zonas de pruebas interactivas y tareas con comprobación automática.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #1d4ed8; --accent-bg: #dbeafe; }
+    .ways .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .anatomy { font: 1.05rem/2 ui-monospace, Menlo, Consolas, monospace; background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; white-space: pre; overflow-x: auto; }
+    .anatomy [data-part] { cursor: pointer; border-radius: .3rem; padding: .1rem .15rem; }
+    .anatomy [data-part]:hover, .anatomy [data-part].on { background: #f59e0b55; }
+    .anatomy .p-sel { color: #f9a8d4; } .anatomy .p-prop { color: #93c5fd; } .anatomy .p-val { color: #86efac; }
+    .swatch { width: 100%; height: 90px; border-radius: .6rem; border: 1px solid #0001; }
+    .color-codes code { display: block; padding: .3rem .5rem; background: #f3f4f6; border-radius: .35rem; margin-bottom: .3rem; color: #111827; }
+    .named button { width: 2rem; height: 2rem; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #0002; }
+    .text-sample { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1.25rem; min-height: 230px; }
+    .text-sample h3 { font: inherit; font-size: 1.4em; margin-bottom: .4em; }
+    .nest { border: 1px solid #93c5fd; border-radius: .5rem; padding: .4rem .6rem; margin-top: .4rem; background: #eff6ff80; }
+    .nest .lbl { font: 600 .7rem ui-monospace, Menlo, Consolas, monospace; color: #1d4ed8; display: block; }
+    .bg-box { height: 260px; border-radius: .75rem; border: 1px solid #d6dbe6; display: flex; align-items: flex-end; padding: 1rem; color: #fff; font-weight: 700; text-shadow: 0 1px 3px #0009; }
+    .attach-demo iframe { width: 100%; height: 220px; border: 1px solid #d6dbe6; border-radius: .6rem; background: #fff; }
+    .step-demo .btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .check-list li { list-style: none; padding: .15rem 0; }
+    .check-list li.ok::before { content: "✔ "; color: #047857; font-weight: 700; }
+    .check-list li.no::before { content: "✖ "; color: #b91c1c; font-weight: 700; }
+    .check-list li.ok { color: #047857; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lección 2</span>
+  <h1 class="display-5 fw-bold">CSS – textos, fuentes y fondos</h1>
+  <p class="lead col-lg-8">CSS (Cascading Style Sheets, hojas de estilo en cascada) decide cómo se ve una página: colores, letra, tamaños, espacios y fondos. HTML dice <em>qué</em> hay en la página; CSS, <em>cómo</em> se ve.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#vlozenie">1 · Dónde escribir CSS</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#syntax">2 · Una regla CSS</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#farby">3 · Colores</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#texty">4 · Textos y fuentes</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#jednotky">5 · px, em, rem</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#pozadie">6 · Fondos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">7 · Cuestionario</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">8 · Tareas</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="vlozenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Tres formas de añadir CSS</h2>
+      <div class="d-flex flex-wrap gap-2 mb-3 ways" data-tabs>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-tab="wayInline">En línea – el atributo style</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-tab="wayInternal">Interno – la etiqueta &lt;style&gt;</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary active" data-tab="wayExternal">Externo – un archivo style.css</button>
+      </div>
+      <div id="wayInline" class="d-none">
+        <p class="small">El atributo <code>style</code> directamente en la etiqueta. Solo afecta a ese elemento: en una página grande enseguida se vuelve un lío.</p>
+<pre class="code-inspector" data-lang="html">&lt;h1 style="color: white; text-align: center;"&gt;Mi artículo&lt;/h1&gt;</pre>
+      </div>
+      <div id="wayInternal" class="d-none">
+        <p class="small">CSS en una etiqueta <code>&lt;style&gt;</code> dentro de la cabecera. Solo afecta a esta página: un sitio con muchas páginas tendría que repetir los estilos en cada una.</p>
+<pre class="code-inspector" data-lang="html">
+&lt;head&gt;
+  &lt;style&gt;
+    h1 { color: white; text-align: center; }
+  &lt;/style&gt;
+&lt;/head&gt;
+</pre>
+      </div>
+      <div id="wayExternal">
+        <p class="small">Los estilos en un archivo aparte <code>css/style.css</code>, que enlazamos con la etiqueta <code>&lt;link&gt;</code> en la cabecera. El atributo <code>rel="stylesheet"</code> dice qué relación tiene el archivo con la página (es su hoja de estilos) y <code>href</code>, dónde encontrarlo. Todas las páginas del sitio pueden usar el mismo archivo. <strong>Esta es la forma que usaremos.</strong></p>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="tiny-label mb-1">index.html</div>
+<pre class="code-inspector" data-lang="html">
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Mi artículo&lt;/title&gt;
+  &lt;link rel="stylesheet" href="css/style.css"&gt;
+&lt;/head&gt;
+</pre>
+          </div>
+          <div class="col-md-6">
+            <div class="tiny-label mb-1">css/style.css</div>
+<pre class="code-inspector" data-lang="css">
+h1 {
+  color: white;
+  text-align: center;
+}
+</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="syntax">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Una regla CSS: selector, propiedad, valor</h2>
+      <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+          <div class="anatomy" id="anatomy"><span data-part="sel" class="p-sel">h1</span> <span data-part="brace">{</span>
+  <span data-part="prop" class="p-prop">color</span><span data-part="colon">:</span> <span data-part="val" class="p-val">white</span><span data-part="semi">;</span>
+  <span data-part="prop" class="p-prop">text-align</span><span data-part="colon">:</span> <span data-part="val" class="p-val">center</span><span data-part="semi">;</span>
+<span data-part="brace">}</span></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="alert alert-light border small explain h-100 mb-0" id="anatomyText">Haz clic en una parte de la regla de la izquierda.</div>
+        </div>
+      </div>
+      <h3 class="h6">Empezamos: damos estilo a un artículo paso a paso</h3>
+      <p class="small">Haz clic en los pasos: el CSS se añade al editor y ves el resultado al instante. Después puedes cambiar el código tú mismo.</p>
+      <div class="d-flex flex-wrap gap-2 mb-2 step-demo" id="stepDemo">
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-step="0">0 · sin CSS</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-step="1">1 · fondo rojo en body</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-step="2">2 · borde blanco en el artículo</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-step="3">3 · texto blanco centrado</button>
+      </div>
+      <div class="live" id="stepLive" data-height="280">
+<textarea data-part="css" data-label="CSS">
+</textarea>
+<textarea data-part="html" data-label="HTML">
+<article>
+  <h1>Un parque nuevo en el centro de la ciudad</h1>
+  <h2>Abre ya este sábado</h2>
+  <p>La ciudad ha terminado la reforma del parque junto al río. Hay bancos nuevos, un parque infantil y un carril bici nuevo.</p>
+</article>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="farby">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Colores</h2>
+      <p>El color del texto lo define la propiedad <code>color</code>, el del fondo <code>background-color</code>. Puedes escribir el valor con una palabra (hay más de 140) o con un código: todas las formas de la derecha significan el mismo color.</p>
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <input type="color" class="form-control form-control-color w-100 mb-2" id="colorPick" value="#1e90ff" aria-label="Selector de color">
+          <div class="d-flex flex-wrap gap-2 named" id="named"></div>
+        </div>
+        <div class="col-md-3"><div class="swatch" id="swatch"></div></div>
+        <div class="col-md-5 color-codes small" id="colorCodes"></div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Código hex <code>#rrggbb</code> = rojo, verde y azul en hexadecimal (00 – ff). <code>rgb()</code> es lo mismo en decimal (0 – 255); <code>hsl()</code> = tono (0 – 360°), saturación y luminosidad en porcentaje.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="texty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Dar estilo al texto</h2>
+      <p>Juega con los controles: el CSS se escribe solo. <code>font-family</code> indica una <strong>lista</strong> de fuentes: el navegador usa la primera que encuentra en el ordenador y al final siempre va una familia genérica (<code>sans-serif</code>, <code>serif</code>, <code>monospace</code>) que seguro que encuentra. Conviene definir la familia de fuentes ya en <code>body</code>: toda la página la hereda.</p>
+      <div class="row g-4" id="textPg">
+        <div class="col-lg-5"><div class="pg-controls"></div></div>
+        <div class="col-lg-7">
+          <div class="text-sample mb-3" id="textTarget">
+            <h3>Título del artículo</h3>
+            <p class="mb-0">Este es un párrafo de ejemplo. CSS cambia su letra, tamaño, grosor y el espacio entre letras y líneas. La alineación justificada (justify) se ve mejor en un texto largo de varias líneas.</p>
+          </div>
+          <pre class="code-inspector pg-code"></pre>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm small align-middle mb-0">
+          <thead><tr><th>Propiedad</th><th>Qué hace</th><th>Valores típicos</th></tr></thead>
+          <tbody>
+            <tr><td><code>font-style</code></td><td>letra inclinada</td><td><code>normal</code> (por defecto), <code>italic</code></td></tr>
+            <tr><td><code>font-weight</code></td><td>grosor de la letra</td><td><code>normal</code> = 400, <code>bold</code> = 700, números 100 (Thin) – 900 (Black); la fuente tiene que tener ese grosor</td></tr>
+            <tr><td><code>letter-spacing</code></td><td>espacio entre letras</td><td><code>normal</code>, <code>2px</code>, <code>0.1em</code></td></tr>
+            <tr><td><code>line-height</code></td><td>altura de línea</td><td><code>normal</code>, <code>1.5</code> (múltiplo del tamaño de letra), <code>24px</code></td></tr>
+            <tr><td><code>text-align</code></td><td>alineación</td><td><code>left</code>, <code>right</code>, <code>center</code>, <code>justify</code> (justificado)</td></tr>
+            <tr><td><code>text-transform</code></td><td>mayúsculas / minúsculas</td><td><code>none</code>, <code>uppercase</code>, <code>lowercase</code>, <code>capitalize</code> (cada palabra con mayúscula)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="erratum mt-3">La propiedad se escribe <code>font-family</code> (con una sola l). Si no escribes exactamente una propiedad CSS, el navegador la ignora sin avisar: en DevTools la verás tachada con un triángulo amarillo.</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="jednotky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Tamaño de letra: <code>px</code>, <code>em</code>, <code>rem</code></h2>
+      <div class="row g-4">
+        <div class="col-lg-5 small">
+          <ul>
+            <li><code>px</code> – un tamaño fijo en píxeles.</li>
+            <li><code>em</code> – un múltiplo del tamaño de letra del <strong>padre</strong>. Si anidas <code>1.5em</code> dentro de <code>1.5em</code>, el resultado se multiplica (en cascada).</li>
+            <li><code>rem</code> – un múltiplo del tamaño de letra de la <strong>raíz</strong>, el elemento <code>&lt;html&gt;</code> (16 px por defecto). No importa dónde esté anidado el elemento.</li>
+          </ul>
+          <label class="form-label fw-semibold" for="rootSize">font-size del elemento html: <span id="rootVal"></span></label>
+          <input type="range" class="form-range" id="rootSize" min="10" max="24" value="16">
+          <label class="form-label fw-semibold" for="parentSize">font-size del padre: <span id="parentVal"></span></label>
+          <input type="range" class="form-range" id="parentSize" min="10" max="30" value="20">
+        </div>
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="nest" id="emParent"><span class="lbl"></span>padre
+                <div class="nest" style="font-size:1.5em"><span class="lbl"></span>1.5em
+                  <div class="nest" style="font-size:1.5em"><span class="lbl"></span>1.5em</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="nest" id="remParent"><span class="lbl"></span>padre
+                <div class="nest" style="font-size:1.5rem"><span class="lbl"></span>1.5rem
+                  <div class="nest" style="font-size:1.5rem"><span class="lbl"></span>1.5rem</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="small text-secondary mt-2 mb-0">Cada caja muestra su tamaño calculado en píxeles. A la izquierda la letra crece al anidar; a la derecha se queda igual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="pozadie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Fondos</h2>
+      <p>Una imagen de fondo se indica con una ruta en <code>url()</code>. Cuidado: la ruta es relativa <strong>al archivo CSS</strong>, no al HTML. Desde <code>css/style.css</code> primero hay que salir de la carpeta <code>css</code> con <code>../</code> y solo después entrar en <code>img</code>: <code>url("../img/hory.jpg")</code>.</p>
+      <div class="row g-4" id="bgPg">
+        <div class="col-lg-5"><div class="pg-controls"></div></div>
+        <div class="col-lg-7">
+          <div class="bg-box mb-3" id="bgTarget">Texto sobre el fondo</div>
+          <pre class="code-inspector pg-code"></pre>
+        </div>
+      </div>
+      <div class="row g-3 small mt-2">
+        <div class="col-md-6 col-xl-3"><div class="border rounded-3 p-2 h-100 bg-white"><code>background-size</code><br><code>cover</code> – la imagen cubre todo el elemento (algo puede quedar recortado). <code>contain</code> – la imagen entera cabe dentro (puede quedar espacio libre, que se rellena repitiéndola).</div></div>
+        <div class="col-md-6 col-xl-3"><div class="border rounded-3 p-2 h-100 bg-white"><code>background-repeat</code><br>por defecto la imagen se repite; <code>no-repeat</code> desactiva la repetición, <code>repeat-x</code> / <code>repeat-y</code> solo en una dirección.</div></div>
+        <div class="col-md-6 col-xl-3"><div class="border rounded-3 p-2 h-100 bg-white"><code>background-position</code><br>coordenadas x y desde la esquina superior izquierda: con palabras (<code>right top</code>), en porcentaje (<code>10% 0%</code>) o en px.</div></div>
+        <div class="col-md-6 col-xl-3"><div class="border rounded-3 p-2 h-100 bg-white"><code>linear-gradient()</code><br>una transición de colores en lugar de una imagen. Encontrarás degradados ya hechos en <a href="https://uigradients.com">uigradients.com</a>.</div></div>
+      </div>
+      <h3 class="h6 mt-4"><code>background-attachment</code>: <code>scroll</code> vs. <code>fixed</code></h3>
+      <p class="small">Desplaza el texto en los dos recuadros. Con <code>scroll</code> (por defecto) el fondo se mueve con el contenido; con <code>fixed</code> se queda quieto.</p>
+      <div class="row g-3 attach-demo">
+        <div class="col-md-6"><div class="tiny-label mb-1">background-attachment: scroll</div><iframe id="attScroll" title="scroll"></iframe></div>
+        <div class="col-md-6"><div class="tiny-label mb-1">background-attachment: fixed</div><iframe id="attFixed" title="fixed"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Cuestionario</h2>
+      <div id="quiz2"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Tareas para la clase</h2>
+      <p>Trabaja con un archivo externo <code>css/style.css</code>. Para comprobarlo, pega el HTML y el CSS juntos en el campo bajo el enunciado: pon el CSS dentro de una etiqueta <code>&lt;style&gt;</code> (el comprobador no ve los archivos de tu disco). El comprobador dibuja la página y mide los estilos resultantes.</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 1 · Títulos y textos</h3>
+            <ul class="small">
+              <li>Una página con un título principal (1×), subtítulos (2×) y párrafos (3×).</li>
+              <li>Define una familia de fuentes para todo el <code>body</code>.</li>
+              <li>Los títulos deben tener otro color que el texto, ir en negrita, en MAYÚSCULAS (¡con CSS!) y centrados.</li>
+              <li>Título principal 35 px, subtítulos 25 px.</li>
+              <li>Textos de 16 px con una altura de línea de 1.5em.</li>
+            </ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="6" data-check="1" aria-label="Código de la tarea 1" placeholder="&lt;style&gt; … &lt;/style&gt; y HTML…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check1"></ul>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Tarea 2 · Artículo</h3>
+            <ul class="small">
+              <li>Busca en internet un artículo sobre algún acontecimiento y pon su texto en <code>&lt;article&gt;</code>: un título principal (1×), subtítulos (5×), párrafos (7×).</li>
+              <li>A los títulos dales la fuente <code>serif</code>; al principal 40 px y a los subtítulos 25 px.</li>
+              <li>Párrafos: fuente <code>sans-serif</code>, alineación <code>justify</code>, 18 px, altura de línea 1.6.</li>
+              <li>Pon una línea <code>&lt;hr&gt;</code> entre dos párrafos.</li>
+              <li>El fondo de la página como degradado de <a href="https://uigradients.com">uigradients.com</a> (con fondo oscuro, letra blanca).</li>
+              <li>Dos fotos de 400 px de ancho con borde blanco (<code>border: 3px solid white;</code>).</li>
+              <li>Al final, un párrafo alineado a la derecha con un enlace a la fuente del artículo.</li>
+            </ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="6" data-check="2" aria-label="Código de la tarea 2" placeholder="&lt;style&gt; … &lt;/style&gt; y HTML…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check2"></ul>
+          </div>
+        </div>
+      </div>
+      <iframe id="checkFrame" title="comprobación" style="position:absolute;left:-9999px;width:1000px;height:600px" sandbox="allow-same-origin"></iframe>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lección 2 · CSS – textos y fondos · Documentación: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-family">MDN – font-family</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background">MDN – background</a> · <a href="https://www.w3schools.com/colors/colors_names.asp">W3Schools – nombres de colores</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 2 anatómia pravidla ----------
+  const PARTS = {
+    sel: 'Selector: qué elementos estilizamos. Aquí todos los títulos h1. También puede ser body, p, article…',
+    brace: 'Las llaves encierran las declaraciones que se aplican al selector.',
+    prop: 'Propiedad: qué cambiamos (color, alineación, tamaño…).',
+    colon: 'Los dos puntos separan la propiedad del valor.',
+    val: 'Valor: lo que le asignamos a la propiedad.',
+    semi: 'El punto y coma termina la declaración. Si falta, la línea siguiente se estropea.'
+  };
+  Lab.$$('#anatomy [data-part]').forEach(el => el.addEventListener('click', () => {
+    Lab.$$('#anatomy [data-part]').forEach(x => x.classList.toggle('on', x.dataset.part === el.dataset.part));
+    document.getElementById('anatomyText').textContent = PARTS[el.dataset.part];
+  }));
+
+  // krok za krokom
+  const STEPS = [
+    '/* todavía sin estilos */\n',
+    'body {\n  background-color: red;\n}\n',
+    'body {\n  background-color: red;\n}\n\narticle {\n  border: 3px solid white;\n  padding: 10px;\n}\n',
+    'body {\n  background-color: red;\n}\n\narticle {\n  border: 3px solid white;\n  padding: 10px;\n}\n\nh1, h2, p {\n  color: white;\n  text-align: center;\n}\n'
+  ];
+  const stepLive = document.getElementById('stepLive');
+  function setStep(i) {
+    stepLive.querySelector('textarea[data-part="css"]').value = STEPS[i];
+    stepLive.labRender();
+    Lab.$$('#stepDemo [data-step]').forEach(b => b.classList.toggle('active', Number(b.dataset.step) === i));
+  }
+  Lab.$$('#stepDemo [data-step]').forEach(b => b.addEventListener('click', () => setStep(Number(b.dataset.step))));
+  setStep(3);
+
+  // ---------- 3 farby ----------
+  const NAMED = { tomato: '#ff6347', gold: '#ffd700', seagreen: '#2e8b57', steelblue: '#4682b4', orchid: '#da70d6', slategray: '#708090', black: '#000000', white: '#ffffff' };
+  const picker = document.getElementById('colorPick');
+  Object.entries(NAMED).forEach(([name, hex]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.title = name; b.style.background = hex;
+    b.addEventListener('click', () => { picker.value = hex; showColor(name); });
+    document.getElementById('named').appendChild(b);
+  });
+  function showColor(name) {
+    const hex = picker.value;
+    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255, l = (max + min) / 2;
+    let h = 0, s = 0;
+    if (max !== min) {
+      const d = max - min;
+      s = l > .5 ? d / (2 - max - min) : d / (max + min);
+      const R = r / 255, G = g / 255, B = b / 255;
+      h = max === R ? (G - B) / d + (G < B ? 6 : 0) : max === G ? (B - R) / d + 2 : (R - G) / d + 4;
+      h *= 60;
+    }
+    document.getElementById('swatch').style.background = hex;
+    document.getElementById('colorCodes').innerHTML = (name ? '<code>color: ' + name + ';</code>' : '') +
+      '<code>color: ' + hex + ';</code><code>color: rgb(' + r + ', ' + g + ', ' + b + ');</code>' +
+      '<code>color: hsl(' + Math.round(h) + ', ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%);</code>';
+  }
+  picker.addEventListener('input', () => showColor());
+  showColor();
+
+  // ---------- 4 texty ----------
+  Lab.playground(document.getElementById('textPg'), {
+    target: document.getElementById('textTarget'), selector: 'p',
+    props: [
+      { prop: 'font-family', type: 'select', value: 'Arial, sans-serif', options: ['Arial, sans-serif', 'Georgia, serif', '"Trebuchet MS", sans-serif', '"Courier New", monospace', '"Times New Roman", serif'] },
+      { prop: 'font-size', type: 'range', min: 10, max: 32, value: 16, unit: 'px' },
+      { prop: 'color', type: 'color', value: '#1f2937' },
+      { prop: 'font-style', type: 'select', value: 'normal', options: ['normal', 'italic'] },
+      { prop: 'font-weight', type: 'range', min: 100, max: 900, step: 100, value: 400 },
+      { prop: 'letter-spacing', type: 'range', min: -2, max: 10, step: .5, value: 0, unit: 'px' },
+      { prop: 'line-height', type: 'range', min: 1, max: 3, step: .1, value: 1.5 },
+      { prop: 'text-align', type: 'select', value: 'left', options: ['left', 'center', 'right', 'justify'] },
+      { prop: 'text-transform', type: 'select', value: 'none', options: ['none', 'uppercase', 'lowercase', 'capitalize'] }
+    ]
+  });
+
+  // ---------- 5 em vs rem ----------
+  const rootSize = document.getElementById('rootSize'), parentSize = document.getElementById('parentSize');
+  function updateUnits() {
+    // koreň simulujeme: rem prepočítame ručne, aby sa nezmenila celá stránka
+    const root = Number(rootSize.value), parent = Number(parentSize.value);
+    document.getElementById('rootVal').textContent = root + 'px';
+    document.getElementById('parentVal').textContent = parent + 'px';
+    const em = document.getElementById('emParent'), rem = document.getElementById('remParent');
+    em.style.fontSize = parent + 'px';
+    rem.style.fontSize = parent + 'px';
+    const emBoxes = [em, ...Lab.$$('.nest', em)];
+    emBoxes.forEach((box, i) => { box.querySelector('.lbl').textContent = Math.round(parent * Math.pow(1.5, i) * 10) / 10 + 'px'; });
+    const remBoxes = [rem, ...Lab.$$('.nest', rem)];
+    remBoxes.forEach((box, i) => {
+      if (i > 0) box.style.fontSize = (root * 1.5) + 'px';
+      box.querySelector('.lbl').textContent = (i === 0 ? parent : root * 1.5) + 'px';
+    });
+  }
+  [rootSize, parentSize].forEach(el => el.addEventListener('input', updateUnits));
+  updateUnits();
+
+  // ---------- 6 pozadie ----------
+  const toData = v => v.replace(/url\("\.\.\/img\/(\w+)\.\w+"\)/, (m, n) => 'url("' + Lab.svgScene(n) + '")');
+  Lab.playground(document.getElementById('bgPg'), {
+    target: document.getElementById('bgTarget'), selector: '.hero',
+    props: [
+      { prop: 'background-color', type: 'color', value: '#1e3a8a' },
+      { prop: 'background-image', type: 'select', value: 'url("../img/hory.jpg")', options: ['url("../img/hory.jpg")', 'url("../img/vzor.png")', 'url("../img/logo.png")', 'linear-gradient(to right, #ff7e5f, #feb47b)', 'linear-gradient(135deg, #43cea2, #185a9d)', 'none'],
+        apply: (t, v) => { t.style.backgroundImage = toData(v); } },
+      { prop: 'background-size', type: 'select', value: 'cover', options: ['auto', 'cover', 'contain', '120px', '50%'] },
+      { prop: 'background-repeat', type: 'select', value: 'no-repeat', options: ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'] },
+      { prop: 'background-position', type: 'select', value: 'center', options: ['left top', 'center', 'right top', 'center bottom', '10% 0%'] }
+    ]
+  });
+  const attText = Array.from({ length: 12 }, (_, i) => '<p>Párrafo ' + (i + 1) + ': desplaza el texto y mira el fondo.</p>').join('');
+  ['scroll', 'fixed'].forEach(mode => {
+    document.getElementById(mode === 'scroll' ? 'attScroll' : 'attFixed').srcdoc = Lab.buildDoc({
+      html: attText,
+      css: 'body{background: url("../img/slnecnica.jpg") no-repeat center / 220px; background-attachment:' + mode + '; font-weight:700; color:#1e293b}'
+    });
+  });
+
+  // ---------- 7 kvíz ----------
+  Lab.quiz('#quiz2', [
+    { q: '¿Qué forma de añadir CSS es la mejor para un sitio con varias páginas?', o: ['en línea – el atributo style', 'interno – la etiqueta <style>', 'un archivo externo enlazado con <link>'], a: 2, e: 'Todas las páginas usan un solo archivo style.css: un cambio en un sitio vale para todas.' },
+    { q: 'En la regla p { color: red; }, ¿cuál es la propiedad?', o: ['p', 'color', 'red'], a: 1, e: 'p es el selector, color la propiedad y red el valor.' },
+    { q: 'El padre tiene font-size: 20px. ¿Qué tamaño tendrá la letra de un hijo con font-size: 2em?', o: ['20px', '32px', '40px'], a: 2, e: 'em es un múltiplo del tamaño del padre: 2 × 20px = 40px.' },
+    { q: 'El elemento html tiene 16px por defecto. ¿Cuánto es 1.5rem?', o: ['16px', '24px', 'depende del padre'], a: 1, e: 'rem se calcula desde la raíz: 1.5 × 16px = 24px, sin importar el padre.' },
+    { q: '¿Cómo escribes la ruta a una imagen de fondo en css/style.css si la imagen está en img/hory.jpg?', o: ['url("img/hory.jpg")', 'url("../img/hory.jpg")', 'url("/css/img/hory.jpg")'], a: 1, e: 'La ruta es relativa al archivo CSS: primero ../ para salir de la carpeta css.' },
+    { q: '¿Cómo consigues que una imagen de fondo cubra todo el elemento?', o: ['background-size: cover', 'background-size: contain', 'background-repeat: repeat'], a: 0, e: 'cover cubre todo el elemento (aunque se recorte), contain muestra la imagen entera.' },
+    { q: '¿Cómo escribes un título en mayúsculas con CSS?', o: ['font-size: big', 'text-transform: uppercase', 'font-weight: bold'], a: 1, e: 'text-transform cambia mayúsculas/minúsculas; el texto del HTML no cambia.' }
+  ]);
+
+  // ---------- 8 kontrola úloh (vykreslíme a zmeriame) ----------
+  const frame = document.getElementById('checkFrame');
+  const px = v => Math.round(parseFloat(v));
+  const fam = el => getComputedStyle(el).fontFamily.toLowerCase();
+  const RULES = {
+    1: [
+      ['1× h1, al menos 2× h2, al menos 3× p', d => d.querySelectorAll('h1').length === 1 && d.querySelectorAll('h2').length >= 2 && d.querySelectorAll('p').length >= 3],
+      ['body tiene definida una familia de fuentes', d => !/^(times new roman|"times new roman"|serif)$/.test(fam(d.body))],
+      ['los títulos tienen otro color que el texto', d => getComputedStyle(d.querySelector('h1')).color !== getComputedStyle(d.querySelector('p')).color],
+      ['los títulos van en negrita, en mayúsculas y centrados', d => Array.from(d.querySelectorAll('h1, h2')).every(h => { const s = getComputedStyle(h); return Number(s.fontWeight) >= 600 && s.textTransform === 'uppercase' && s.textAlign === 'center'; })],
+      ['h1 mide 35px', d => px(getComputedStyle(d.querySelector('h1')).fontSize) === 35],
+      ['los h2 miden 25px', d => Array.from(d.querySelectorAll('h2')).every(h => px(getComputedStyle(h).fontSize) === 25)],
+      ['los párrafos miden 16px con altura de línea 1.5em (24px)', d => Array.from(d.querySelectorAll('p')).every(p => { const s = getComputedStyle(p); return px(s.fontSize) === 16 && px(s.lineHeight) === 24; })]
+    ],
+    2: [
+      ['todo está dentro de <article>: 1× h1, 5× h2, 7× p', d => { const a = d.querySelector('article'); return !!a && a.querySelectorAll('h1').length === 1 && a.querySelectorAll('h2').length >= 5 && a.querySelectorAll('p').length >= 7; }],
+      ['los títulos usan una fuente serif', d => Array.from(d.querySelectorAll('h1, h2')).every(h => /serif/.test(fam(h)) && !/sans-serif/.test(fam(h)))],
+      ['h1 40px, h2 25px', d => px(getComputedStyle(d.querySelector('h1')).fontSize) === 40 && Array.from(d.querySelectorAll('h2')).every(h => px(getComputedStyle(h).fontSize) === 25)],
+      ['párrafos: sans-serif, justify, 18px, altura de línea 1.6', d => Array.from(d.querySelectorAll('article p')).slice(0, 7).every(p => { const s = getComputedStyle(p); return /sans-serif/.test(fam(p)) && s.textAlign === 'justify' && px(s.fontSize) === 18 && Math.abs(parseFloat(s.lineHeight) - 28.8) < 1; })],
+      ['una línea <hr>', d => !!d.querySelector('hr')],
+      ['un degradado en el fondo de la página', d => /gradient/.test(getComputedStyle(d.body).backgroundImage + getComputedStyle(d.documentElement).backgroundImage)],
+      ['2 imágenes de 400px de ancho con borde', d => { const im = Array.from(d.querySelectorAll('img')); return im.length >= 2 && im.every(i => px(getComputedStyle(i).width) === 400 && parseFloat(getComputedStyle(i).borderTopWidth) > 0); }],
+      ['el último párrafo a la derecha con un enlace', d => { const ps = d.querySelectorAll('p'); const last = ps[ps.length - 1]; return !!last && getComputedStyle(last).textAlign === 'right' && !!last.querySelector('a[href]'); }]
+    ]
+  };
+  Lab.$$('[data-check]').forEach(area => {
+    const list = document.getElementById('check' + area.dataset.check);
+    let timer;
+    function run() {
+      list.innerHTML = '';
+      if (!area.value.trim()) return;
+      frame.onload = () => {
+        const d = frame.contentDocument;
+        RULES[area.dataset.check].forEach(([label, test]) => {
+          let ok = false;
+          try { ok = test(d); } catch (e) { ok = false; }
+          const li = document.createElement('li');
+          li.className = ok ? 'ok' : 'no';
+          li.textContent = label;
+          list.appendChild(li);
+        });
+      };
+      frame.srcdoc = area.value;
+    }
+    area.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(run, 400); });
+  });
+</script>
+</body>
+</html>

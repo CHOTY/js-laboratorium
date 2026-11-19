@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4 · Positioning, flexbox and media queries</title>
+  <meta name="description" content="Lesson 4 – position static, relative, absolute and fixed, the principles of responsive design, flexbox (display flex, gap, flex-direction, flex-wrap, justify-content, align-items, flex) and media queries.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #7e22ce; --accent-bg: #f3e8ff; }
+    .pos-frame { width: 100%; height: 330px; border: 1px solid #d6dbe6; border-radius: .75rem; background: #fff; }
+    .flex-stage { background: #fff; border: 2px dashed #a855f7; border-radius: .75rem; min-height: 260px; padding: .5rem; transition: all .2s; }
+    .flex-stage .fi { background: #e9d5ff; border: 2px solid #7e22ce; border-radius: .5rem; padding: .6rem .9rem; font: 700 .9rem ui-monospace, Menlo, Consolas, monospace; color: #581c87; min-width: 3rem; text-align: center; }
+    .flex-stage .fi:nth-child(2) { padding: 1.4rem .9rem; }
+    .flex-stage .fi:nth-child(3) { padding: .3rem 1.6rem; }
+    .flex-stage .fi.grow { background: #c084fc; color: #fff; }
+    .axis-note { font-size: .8rem; color: #6b7280; }
+    .mq-status { font: 600 .85rem ui-monospace, Menlo, Consolas, monospace; padding: .35rem .7rem; border-radius: .4rem; display: inline-block; }
+    .mq-status.on { background: #dcfce7; color: #166534; }
+    .mq-status.off { background: #f3f4f6; color: #6b7280; }
+    .rd-cards { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .rd-cards > div { flex: 1 1 200px; background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: .9rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lesson 4</span>
+  <h1 class="display-5 fw-bold">Positioning, flexbox and media queries</h1>
+  <p class="lead col-lg-8">How to place an element exactly, how to lay elements out side by side or below each other, and how to make a page look good on a computer and on a phone.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#pozicia">1 · position</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#responzivny">2 · Responsive design</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#flexbox">3 · Flexbox</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#flexdeti">4 · flex for children</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#media">5 · Media queries</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">6 · Quiz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">7 · Tasks</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="pozicia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>The <code>position</code> property</h2>
+      <p>When positioning, remember that elements are nested inside each other: a <strong>parent</strong> and its <strong>children</strong>. In the example the purple <em>child</em> is inside the grey <em>parent</em>. Choose a position type and move it with <code>top</code> and <code>left</code>:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="btn-group btn-group-sm flex-wrap mb-3" role="group" id="posType">
+            <button type="button" class="btn btn-outline-secondary" data-pos="static">static</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="relative">relative</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="absolute">absolute</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="fixed">fixed</button>
+          </div>
+          <div class="pg-row mb-2"><label for="posTop">top</label><input type="range" class="form-range" id="posTop" min="0" max="120" value="0"><span class="pg-val" id="posTopV"></span></div>
+          <div class="pg-row mb-2"><label for="posLeft">left</label><input type="range" class="form-range" id="posLeft" min="0" max="200" value="30"><span class="pg-val" id="posLeftV"></span></div>
+          <div class="form-check form-switch small mb-3"><input class="form-check-input" type="checkbox" id="posParent"><label class="form-check-label" for="posParent">the parent has <code>position: relative</code></label></div>
+          <div class="alert alert-light border small mb-0" id="posText"></div>
+        </div>
+        <div class="col-lg-7">
+          <iframe class="pos-frame" id="posFrame" title="position example"></iframe>
+          <pre class="code-inspector mt-2" id="posCode"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="responzivny">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>What responsive design is</h2>
+      <p>Most people today come to the web on a phone. <strong>Responsive design</strong> means that the page adapts to the width of the screen by itself – nobody has to scroll sideways or zoom in with their fingers. When designing, we mainly deal with three things:</p>
+      <div class="rd-cards mb-3">
+        <div><strong>Font size</strong><br>A 60 px heading looks fine on a computer but is far too big on a phone.</div>
+        <div><strong>Spacing</strong><br>On a big screen we want bigger <code>margin</code> and <code>padding</code> than on a small one.</div>
+        <div><strong>Layout</strong><br>4 columns side by side on a computer, the same columns stacked on a phone.</div>
+      </div>
+      <p class="small mb-0">The basis is the <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> tag in the head (lesson 1). Without it a phone would show a shrunk “desktop” version and the following tricks wouldn’t work.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="flexbox">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Flexbox – properties of the parent</h2>
+      <p>Flexbox is a whole module for laying out elements. Some properties belong to the <strong>parent</strong> (flex container), others to the <strong>children</strong> (flex items). It all starts by giving the parent <code>display: flex;</code> – its children immediately line up side by side.</p>
+      <div class="row g-4" id="flexPg">
+        <div class="col-lg-5">
+          <div class="pg-controls"></div>
+          <div class="d-flex align-items-center gap-2 mt-3 small">
+            <span>number of children:</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="flexLess">−</button>
+            <span class="fw-bold" id="flexCount">4</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="flexMore">+</button>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="flex-stage mb-1" id="flexStage"></div>
+          <div class="axis-note mb-2" id="axisNote"></div>
+          <pre class="code-inspector pg-code"></pre>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm small align-middle mb-0">
+          <thead><tr><th>Parent property</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>gap</code></td><td>space between the children; <code>row-gap</code> and <code>column-gap</code> can be set separately</td></tr>
+            <tr><td><code>flex-direction</code></td><td><code>row</code> (default) – side by side, <code>column</code> – stacked</td></tr>
+            <tr><td><code>flex-wrap</code></td><td><code>nowrap</code> (default) – everything on one line, <code>wrap</code> – wraps onto the next line, <code>wrap-reverse</code> – wraps from bottom to top</td></tr>
+            <tr><td><code>justify-content</code></td><td>alignment on the <strong>main axis</strong> (horizontal for <code>row</code>): <code>flex-start</code>, <code>center</code>, <code>flex-end</code>, <code>space-between</code>, <code>space-around</code>, <code>space-evenly</code></td></tr>
+            <tr><td><code>align-items</code></td><td>alignment on the <strong>cross axis</strong> (vertical for <code>row</code>): <code>stretch</code> (default), <code>flex-start</code>, <code>center</code>, <code>flex-end</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small text-secondary mt-2 mb-0">With <code>flex-direction: column</code> the axes swap – <code>justify-content</code> then aligns vertically and <code>align-items</code> horizontally. A detailed cheat sheet: <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSS-Tricks – A Complete Guide to Flexbox</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="flexdeti">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>The children’s property: <code>flex</code></h2>
+      <p>The <code>flex</code> property says <strong>how many shares</strong> of the free space a child should take. If all of them have <code>flex: 1</code>, they split it equally; a child with <code>flex: 2</code> gets twice as much as one with <code>flex: 1</code>. Click the numbers:</p>
+      <div class="d-flex gap-2 mb-2" id="flexKids"></div>
+      <div class="d-flex flex-wrap gap-2 small mb-2" id="flexKidsCtl"></div>
+      <pre class="code-inspector" id="flexKidsCode"></pre>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="media">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Media queries – different CSS for different screens</h2>
+      <p>The <code>@media</code> rule wraps a block of CSS that applies <strong>only when a condition is met</strong> – for example when the window is narrower than 600 px. The header below has the logo and the navigation side by side (flex, <code>space-between</code>). On a narrow screen it would break, so below 600 px we stack them with a 15 px gap. Change the width of the “window”:</p>
+      <div class="row g-4">
+        <div class="col-xl-5">
+<pre class="code-inspector" id="mqCode" data-lang="css">
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+</pre>
+          <div class="mt-2"><span class="mq-status" id="mqStatus"></span></div>
+          <p class="small text-secondary mt-2 mb-0"><code>max-width: 600px</code> = “at most 600 px”, i.e. from 0 to 600 px. The opposite is <code>min-width</code> – “at least”. You can try the same in DevTools: <kbd>F12</kbd> → the phone icon (<em>Toggle device toolbar</em>).</p>
+        </div>
+        <div class="col-xl-7"><div id="mqResizer"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Quiz</h2>
+      <div id="quiz4"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Tasks for the class</h2>
+      <p>Work in one project (<code>index.html</code> + <code>css/style.css</code>) and keep checking in DevTools in mobile mode.</p>
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 1 · Header</h3>
+            <ul class="small mb-0">
+              <li>A <code>&lt;header&gt;</code> with a logo (an image or text) and a <code>&lt;nav&gt;</code> with 4 links.</li>
+              <li>Header: <code>display: flex</code>, logo on the left, menu on the right (<code>space-between</code>), vertically centred.</li>
+              <li>The menu links also with flex and a gap <code>gap: 20px</code>.</li>
+              <li>Below 600 px: logo and menu stacked, 15 px gap.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 2 · Cards</h3>
+            <ul class="small mb-0">
+              <li>A section with 3 cards (image, heading, text).</li>
+              <li>On a computer side by side, all equally wide (<code>flex: 1</code>), 20 px gap.</li>
+              <li>Below 768 px stacked (<code>flex-direction: column</code>).</li>
+              <li>Bonus: the middle card is twice as wide (<code>flex: 2</code>).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Task 3 · Position</h3>
+            <ul class="small mb-0">
+              <li>Add a “NEW” label in the top right corner of the first card (<code>position: absolute</code> – what does the card need?).</li>
+              <li>Add a “↑ Top” button (a link to <code>#top</code>) that always stays at the bottom right – even when the page scrolls.</li>
+              <li>Stick the header from task 1 to the top edge (<code>position: fixed</code> or <code>sticky</code>) and check that it doesn’t cover the content.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lesson 4 · Positioning, flexbox, media queries · Documentation: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">MDN – position</a> · <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSS-Tricks – flexbox</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries">MDN – media queries</a> · A game for practice: <a href="https://flexboxfroggy.com/">Flexbox Froggy</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- 1 position ----------
+  const POS_TEXT = {
+    static: 'static – the default value. The element stays in the normal flow of the page and doesn’t react to top, left, bottom, right or z-index. Try moving the sliders – nothing happens.',
+    relative: 'relative – the element moves relative to where it would normally be. Its original place stays reserved (the grey text below it doesn’t move) and it can even leave its parent.',
+    absolute: 'absolute – the element drops out of the page flow (the other elements behave as if it didn’t exist). It is positioned relative to the nearest ancestor whose position is other than static – if there is none, relative to the whole page. Give the parent position: relative!',
+    fixed: 'fixed – the element is positioned relative to the browser window and stays in place when the page scrolls. Scroll the content of the example. This is how a navigation that is always visible is made.'
+  };
+  const pos = { type: 'relative', top: 0, left: 30, parent: false };
+  const posTop = document.getElementById('posTop'), posLeft = document.getElementById('posLeft'), posParent = document.getElementById('posParent');
+  function drawPos() {
+    const childCss = 'position: ' + pos.type + ';' + (pos.type === 'static' ? '' : ' top: ' + pos.top + 'px; left: ' + pos.left + 'px;');
+    const css = 'body{margin:0;padding:16px;font:14px system-ui,sans-serif}' +
+      '.parent{background:#e5e7eb;border:2px solid #6b7280;padding:12px;margin:40px 0 10px 60px;width:60%;' + (pos.parent ? 'position:relative;' : '') + '}' +
+      '.child{background:#c084fc;border:2px solid #7e22ce;color:#fff;font-weight:700;padding:8px 12px;width:140px;' + childCss + '}' +
+      '.label{font:11px monospace;color:#4b5563}' +
+      'p{color:#6b7280;margin:6px 0}';
+    const html = '<span class="label">body</span><div class="parent"><span class="label">parent' + (pos.parent ? ' (relative)' : '') + '</span><div class="child">child</div><p>Text after the child inside the parent.</p></div>' +
+      Array.from({ length: pos.type === 'fixed' ? 10 : 2 }, (_, i) => '<p>More page content ' + (i + 1) + '.</p>').join('');
+    document.getElementById('posFrame').srcdoc = Lab.buildDoc({ html: html, css: css, nobase: true });
+    document.getElementById('posText').textContent = POS_TEXT[pos.type];
+    document.getElementById('posTopV').textContent = pos.top + 'px';
+    document.getElementById('posLeftV').textContent = pos.left + 'px';
+    Lab.$$('#posType [data-pos]').forEach(b => b.classList.toggle('active', b.dataset.pos === pos.type));
+    Lab.setCode(document.getElementById('posCode'), 'css', (pos.parent ? '.parent {\n  position: relative;\n}\n' : '') + '.child {\n  position: ' + pos.type + ';' + (pos.type === 'static' ? '' : '\n  top: ' + pos.top + 'px;\n  left: ' + pos.left + 'px;') + '\n}');
+  }
+  Lab.$$('#posType [data-pos]').forEach(b => b.addEventListener('click', () => { pos.type = b.dataset.pos; drawPos(); }));
+  posTop.addEventListener('input', () => { pos.top = Number(posTop.value); drawPos(); });
+  posLeft.addEventListener('input', () => { pos.left = Number(posLeft.value); drawPos(); });
+  posParent.addEventListener('change', () => { pos.parent = posParent.checked; drawPos(); });
+  drawPos();
+
+  // ---------- 3 flexbox ----------
+  let flexCount = 4;
+  const flexStage = document.getElementById('flexStage');
+  function drawItems() {
+    flexStage.innerHTML = Array.from({ length: flexCount }, (_, i) => '<div class="fi">' + (i + 1) + '</div>').join('');
+    document.getElementById('flexCount').textContent = flexCount;
+  }
+  drawItems();
+  document.getElementById('flexLess').addEventListener('click', () => { flexCount = Math.max(1, flexCount - 1); drawItems(); });
+  document.getElementById('flexMore').addEventListener('click', () => { flexCount = Math.min(12, flexCount + 1); drawItems(); });
+  Lab.playground(document.getElementById('flexPg'), {
+    target: flexStage, selector: '.container',
+    props: [
+      { prop: 'display', type: 'select', value: 'flex', options: ['block', 'flex'] },
+      { prop: 'flex-direction', type: 'select', value: 'row', options: ['row', 'column', 'row-reverse', 'column-reverse'] },
+      { prop: 'flex-wrap', type: 'select', value: 'nowrap', options: ['nowrap', 'wrap', 'wrap-reverse'] },
+      { prop: 'justify-content', type: 'select', value: 'flex-start', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'] },
+      { prop: 'align-items', type: 'select', value: 'stretch', options: ['stretch', 'flex-start', 'center', 'flex-end'] },
+      { prop: 'gap', type: 'range', min: 0, max: 40, value: 10, unit: 'px' }
+    ],
+    onChange: v => {
+      const col = /column/.test(v['flex-direction']);
+      document.getElementById('axisNote').textContent = v.display !== 'flex'
+        ? 'display: block – the children are ordinary blocks stacked below each other, flex properties don’t apply.'
+        : 'main axis: ' + (col ? 'vertical ↓' : 'horizontal →') + ' (justify-content) · cross axis: ' + (col ? 'horizontal →' : 'vertical ↓') + ' (align-items)';
+    }
+  });
+
+  // ---------- 4 flex potomkovia ----------
+  const kids = [1, 1, 1];
+  function drawKids() {
+    const box = document.getElementById('flexKids');
+    box.innerHTML = kids.map((f, i) => '<div class="flex-stage p-0" style="min-height:0;border:0;flex:' + f + '"><div class="fi grow">' + (i + 1) + ' · flex: ' + f + '</div></div>').join('');
+    const ctl = document.getElementById('flexKidsCtl');
+    ctl.innerHTML = kids.map((f, i) => '<span class="me-2">child ' + (i + 1) + ': ' + [1, 2, 3].map(n => '<button type="button" class="btn btn-sm ' + (n === f ? 'btn-dark' : 'btn-outline-secondary') + '" data-kid="' + i + '" data-flex="' + n + '">' + n + '</button>').join(' ') + '</span>').join('');
+    Lab.$$('#flexKidsCtl button').forEach(b => b.addEventListener('click', () => { kids[b.dataset.kid] = Number(b.dataset.flex); drawKids(); }));
+    const total = kids.reduce((a, b) => a + b, 0);
+    Lab.setCode(document.getElementById('flexKidsCode'), 'css', '.container {\n  display: flex;\n}\n' + kids.map((f, i) => '.item' + (i + 1) + ' { flex: ' + f + '; } /* ' + f + '/' + total + ' of the space */').join('\n'));
+  }
+  drawKids();
+
+  // ---------- 5 media queries ----------
+  const MQ_DOC = {
+    css: 'body{margin:0;font-family:system-ui,sans-serif}header{display:flex;justify-content:space-between;align-items:center;background:#3b0764;color:#fff;padding:12px 20px}' +
+      '.logo{font-weight:800;font-size:22px}nav{display:flex;gap:16px}nav a{color:#e9d5ff;text-decoration:none}main{padding:20px;color:#374151}' +
+      '@media (max-width: 600px){header{flex-direction:column;gap:15px}}',
+    html: '<header><div class="logo">🏔 Adventure</div><nav><a href="#">Home</a><a href="#">Trips</a><a href="#">Gallery</a><a href="#">Contact</a></nav></header><main><h2>Welcome</h2><p>Make the window narrower and watch the header.</p></main>'
+  };
+  Lab.resizer(document.getElementById('mqResizer'), {
+    doc: MQ_DOC, value: 900, max: 1100, height: 240,
+    onWidth: w => {
+      const st = document.getElementById('mqStatus');
+      st.className = 'mq-status ' + (w <= 600 ? 'on' : 'off');
+      st.textContent = w <= 600 ? '@media (max-width: 600px) applies ✔' : '@media (max-width: 600px) doesn’t apply – ' + w + ' px > 600 px';
+    }
+  });
+
+  // ---------- 6 kvíz ----------
+  Lab.quiz('#quiz4', [
+    { q: 'Which position value is the default and doesn’t react to top and left?', o: ['static', 'relative', 'absolute'], a: 0, e: 'static = the normal page flow.' },
+    { q: 'A child has position: absolute; top: 0. Why did it jump to the top of the page and not of its parent?', o: ['the parent has no position set (it is static)', 'it has no z-index', 'absolute always goes to the top of the page'], a: 0, e: 'absolute is positioned relative to the nearest ancestor with a position other than static. Give the parent position: relative.', mono: false },
+    { q: 'Which position stays in place even when the page scrolls?', o: ['relative', 'absolute', 'fixed'], a: 2, e: 'fixed is positioned relative to the browser window.' },
+    { q: 'Where do you write display: flex?', o: ['on the parent whose children you want to lay out', 'on every child', 'in <body> always'], a: 0, e: 'display: flex belongs to the parent (flex container). Children get e.g. flex: 1.', mono: false },
+    { q: 'With flex-direction: row, how do you lay out the elements so the first is at the far left and the last at the far right?', o: ['align-items: center', 'justify-content: space-between', 'flex-wrap: wrap'], a: 1, e: 'justify-content aligns on the main axis; space-between puts the free space between the elements.' },
+    { q: 'Two children have flex: 1 and flex: 3. What part of the space does the second take?', o: ['a half', 'three quarters', 'a third'], a: 1, e: '4 shares altogether, the second has 3 of them = 3/4.' },
+    { q: 'When does @media (max-width: 600px) apply?', o: ['when the window is wider than 600 px', 'when the window is at most 600 px wide', 'only on Android phones'], a: 1, e: 'max-width = at most. For “at least 600 px” we would use min-width.', mono: false }
+  ]);
+</script>
+</body>
+</html>

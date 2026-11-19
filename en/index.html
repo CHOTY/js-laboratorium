@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Languages · Lab</title>
+  <meta name="description" content="Interactive lessons for the Web Languages course – editor setup, HTML, CSS, flexbox, Bootstrap, JavaScript and XML. Examples you can try right away, quizzes and tasks.">
+  <meta property="og:title" content="Web Languages · Lab">
+  <meta property="og:description" content="Interactive lessons – HTML, CSS, Bootstrap, JavaScript and XML with examples, quizzes and tasks.">
+  <meta property="og:type" content="website">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f8fc; }
+    code { color: #9a2878; }
+    .lab-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; transition: transform .15s ease, box-shadow .15s ease; }
+    a.lab-card:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1.5rem #1d2d5020; }
+    .lab-num { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 3rem; width: 3rem; height: 3rem; border-radius: 50%; font-weight: 800; font-size: 1rem; }
+    .topic { display: inline-block; font-size: .76rem; padding: .12rem .5rem; border-radius: 1rem; background: #f1f3f9; color: #4b5563; margin: 0 .2rem .3rem 0; }
+    .group-title { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; font-weight: 700; margin: 2.2rem 0 .8rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5">
+  <h1 class="display-5 fw-bold">Web Languages · Lab</h1>
+  <p class="lead col-lg-8">Interactive lessons for the lab classes: from setting up your editor through HTML, CSS and Bootstrap to JavaScript and XML. You can run every example, change it and see the result immediately. Each lesson ends with a quiz and tasks for the class.</p>
+</header>
+
+<main class="container pb-5">
+
+  <div class="group-title">HTML and CSS</div>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <a href="0-setup.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#ccfbf1;color:#0f766e">0</span><div><h2 class="h5 mb-0">Setting up your editor</h2><div class="small text-secondary">VS Code or Zed with a local server</div></div></div>
+        <span class="topic">why a server</span><span class="topic">project folder</span><span class="topic">Live Server</span><span class="topic">Zed LiveServer</span><span class="topic">server from the terminal</span><span class="topic">troubleshooting</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="1-html.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#ffedd5;color:#c2410c">1</span><div><h2 class="h5 mb-0">HTML</h2><div class="small text-secondary">the skeleton of every page</div></div></div>
+        <span class="topic">tags and attributes</span><span class="topic">head and meta</span><span class="topic">text</span><span class="topic">links and images</span><span class="topic">lists</span><span class="topic">tables</span><span class="topic">forms</span><span class="topic">semantic tags</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="2-css-text.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#dbeafe;color:#1d4ed8">2</span><div><h2 class="h5 mb-0">CSS – text and backgrounds</h2><div class="small text-secondary">how a page looks</div></div></div>
+        <span class="topic">inline / internal / external</span><span class="topic">selector and property</span><span class="topic">colours</span><span class="topic">fonts</span><span class="topic">px, em, rem</span><span class="topic">background and gradient</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="3-css-box.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#e0e7ff;color:#4338ca">3</span><div><h2 class="h5 mb-0">CSS – the box model</h2><div class="small text-secondary">id, class and element sizes</div></div></div>
+        <span class="topic">id vs. class</span><span class="topic">margin, border, padding</span><span class="topic">shorthand notation</span><span class="topic">width and height</span><span class="topic">box-sizing</span><span class="topic">block / inline</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="4-layout.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#f3e8ff;color:#7e22ce">4</span><div><h2 class="h5 mb-0">Positioning, flexbox, media queries</h2><div class="small text-secondary">page layout</div></div></div>
+        <span class="topic">position</span><span class="topic">responsive design</span><span class="topic">display: flex</span><span class="topic">justify-content</span><span class="topic">align-items</span><span class="topic">flex</span><span class="topic">@media</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="5-bootstrap.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#ede9fe;color:#7952b3">5</span><div><h2 class="h5 mb-0">Responsive design and Bootstrap</h2><div class="small text-secondary">installation step by step</div></div></div>
+        <span class="topic">rem, vw, clamp()</span><span class="topic">installation: CDN / files</span><span class="topic">breakpoints</span><span class="topic">grid</span><span class="topic">spacing</span><span class="topic">components</span><span class="topic">team.html</span>
+      </div></a>
+    </div>
+  </div>
+
+  <div class="group-title">JavaScript</div>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <a href="js1.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#e7edff;color:#2548a8">JS 1</span><div><h2 class="h5 mb-0">JavaScript basics</h2><div class="small text-secondary">the language that makes a page “think”</div></div></div>
+        <span class="topic">alert and prompt</span><span class="topic">console.log</span><span class="topic">variables and types</span><span class="topic">var / let / const</span><span class="topic">operators</span><span class="topic">if / else</span><span class="topic">loops</span><span class="topic">functions</span><span class="topic">window and document</span><span class="topic">registration form</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="js2.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#fff3cd;color:#8a5a00">JS 2</span><div><h2 class="h5 mb-0">DOM manipulation</h2><div class="small text-secondary">JavaScript changes the page</div></div></div>
+        <span class="topic">the DOM tree</span><span class="topic">querySelector</span><span class="topic">createElement and append</span><span class="topic">innerText / innerHTML</span><span class="topic">attributes</span><span class="topic">classList</span><span class="topic">style</span><span class="topic">addEventListener</span><span class="topic">try / catch</span><span class="topic">calculator</span>
+      </div></a>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <a href="js3.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#d1f2e4;color:#146c43">JS 3</span><div><h2 class="h5 mb-0">Functions and events</h2><div class="small text-secondary">the page reacts to the user</div></div></div>
+        <span class="topic">types of functions</span><span class="topic">anonymous and arrow functions</span><span class="topic">events</span><span class="topic">onclick vs. listener</span><span class="topic">navigation</span><span class="topic">accordion</span><span class="topic">star rating</span><span class="topic">registration</span>
+      </div></a>
+    </div>
+  </div>
+
+  <div class="group-title">XML</div>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <a href="xml.html" class="card lab-card h-100 text-reset text-decoration-none"><div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3"><span class="lab-num" style="background:#fef3c7;color:#b45309">XML</span><div><h2 class="h5 mb-0">XML, DTD, XPath and XSLT</h2><div class="small text-secondary">data in tags</div></div></div>
+        <span class="topic">well-formed</span><span class="topic">CDATA and entities</span><span class="topic">namespaces</span><span class="topic">DOM</span><span class="topic">XML and CSS</span><span class="topic">DTD validator</span><span class="topic">XPath tester</span><span class="topic">XSLT</span>
+      </div></a>
+    </div>
+  </div>
+
+  <div class="group-title">Downloads</div>
+  <div class="card lab-card">
+    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center gap-3">
+      <div class="flex-grow-1">
+        <h2 class="h5 mb-1">Starter project (JS 1 and JS 2)</h2>
+        <p class="small text-secondary mb-0">A folder for your editor with Live Server: the pages <code>index.html</code>, <code>qna.html</code> (accordion), <code>kalkulacka.html</code> (calculator) and <code>formular.html</code> (the JS 1 exercise). Download it, unzip it and open the whole <code>projekt-ziaci</code> folder in your editor. The files are in Slovak.</p>
+      </div>
+      <a class="btn btn-primary text-nowrap" href="../projekt-ziaci.zip" download>Download project (.zip)</a>
+    </div>
+  </div>
+  <div class="card lab-card mt-3">
+    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center gap-3">
+      <div class="flex-grow-1">
+        <h2 class="h5 mb-1">JS 3 tasks</h2>
+        <p class="small text-secondary mb-0">Navigation, accordion, calculator, star rating, two pages in one HTML file and a registration form – the HTML and CSS are ready, you write the JavaScript yourself. The assignments are on the <a href="js3.html#ulohy">JS 3</a> page. The files are in Slovak.</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap flex-shrink-0">
+        <a class="btn btn-success text-nowrap" href="../ulohy-js3.zip" download>Download tasks (.zip)</a>
+        <a class="btn btn-outline-success text-nowrap" href="https://github.com/CHOTY/js-laboratorium/tree/main/ulohy-js3">GitHub</a>
+      </div>
+    </div>
+  </div>
+  <p class="small text-secondary mt-4 mb-0">Tip: the developer tools (the console and the page’s HTML and CSS) open with <kbd>F12</kbd>. The site is also available in Slovak and Spanish – use the language switch in the top right corner.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

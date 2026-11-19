@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0 · Setting up your editor – Zed and VS Code with a local server</title>
+  <meta name="description" content="Lesson 0 – how to set up a local server (Live Server) in VS Code or Zed so the page reloads by itself every time you save.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #0f766e; --accent-bg: #ccfbf1; }
+    .editor-tabs .btn { min-width: 9rem; }
+    .editor-tabs .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .mock-browser { border: 1px solid #d6dbe6; border-radius: .75rem; overflow: hidden; background: #fff; }
+    .mock-browser .bar { display: flex; align-items: center; gap: .5rem; background: #eef1f6; padding: .45rem .6rem; }
+    .mock-browser .dots span { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; background: #cbd2dd; margin-right: .2rem; }
+    .mock-browser .url { flex: 1; min-width: 0; background: #fff; border-radius: 1rem; padding: .2rem .8rem; font: .8rem ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    .mock-browser .url.local { color: #b45309; }
+    .mock-browser .url.server { color: #047857; }
+    .feature-list li { padding: .3rem 0; border-bottom: 1px solid #eef1f6; }
+    .feature-list .mark-ok { color: #047857; font-weight: 700; }
+    .feature-list .mark-no { color: #b91c1c; font-weight: 700; }
+    .tree { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; font: .85rem/1.6 ui-monospace, Menlo, Consolas, monospace; white-space: pre; overflow-x: auto; }
+    .tree .dir { color: #93c5fd; }
+    .tree .note { color: #9ca3af; font-style: italic; }
+    .checklist .form-check { padding: .5rem .75rem .5rem 2.25rem; border-radius: .5rem; background: #fff; border: 1px solid #e3e7f0; margin-bottom: .4rem; }
+    .checklist .form-check-input:checked + .form-check-label { text-decoration: line-through; color: #6b7280; }
+    .shot { border: 1px solid #d6dbe6; border-radius: .6rem; background: #1f2430; color: #d1d5db; font: .78rem/1.5 ui-monospace, Menlo, Consolas, monospace; overflow: hidden; }
+    .shot .shot-status { display: flex; justify-content: flex-end; gap: 1rem; background: #007acc; color: #fff; padding: .15rem .6rem; }
+    .shot .shot-status .golive { background: #ffffff26; padding: 0 .45rem; border-radius: .25rem; }
+    .shot .shot-body { padding: .6rem .8rem; min-height: 4rem; }
+    .shot.zed .shot-menu { background: #2b303b; border: 1px solid #3c4250; border-radius: .4rem; display: inline-block; padding: .25rem 0; margin-top: .4rem; }
+    .shot.zed .shot-menu div { padding: .1rem .8rem; }
+    .shot.zed .shot-menu .hl { background: #3b82f6; color: #fff; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lesson 0</span>
+  <h1 class="display-5 fw-bold">Editor and local server</h1>
+  <p class="lead col-lg-8">Before we write our first line of HTML, we will set up the editor so that the page in the browser reloads by itself every time you save. Choose <strong>VS Code</strong> or <strong>Zed</strong> – both are free and run on Windows, macOS and Linux.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#preco">1 · Why a server</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#priecinok">2 · Project folder</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#editor">3 · Editor setup</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#terminal">4 · Without an extension</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#problemy">5 · When it doesn’t work</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kontrola">6 · Checklist</a>
+  </div>
+  <div class="d-flex flex-wrap align-items-center gap-2 mt-4 small">
+    <span class="text-secondary">Show keyboard shortcuts for:</span>
+    <div class="btn-group btn-group-sm" role="group" id="osSwitch">
+      <button type="button" class="btn btn-outline-dark" data-os="win">Windows / Linux</button>
+      <button type="button" class="btn btn-outline-dark" data-os="mac">macOS</button>
+    </div>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="preco">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Why isn’t double-clicking the file enough?</h2>
+      <p>When you open an HTML file by double-clicking it, the browser loads it straight from the disk (the address starts with <code>file://</code>). That is fine for the first experiments, but you have to reload every change by hand and some things we will do later do not work this way at all. A <strong>local server</strong> is a small program that “serves” your folder to the browser like a real website – at the address <code>http://127.0.0.1:…</code> (<code>127.0.0.1</code> or <code>localhost</code> = your own computer).</p>
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap gap-2 mb-2" id="modeSwitch">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-mode="file">I opened the file by double-clicking</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-mode="server">I started Live Server</button>
+          </div>
+          <div class="mock-browser">
+            <div class="bar"><span class="dots"><span></span><span></span><span></span></span><span class="url" id="mockUrl"></span></div>
+            <div class="p-3 small" id="mockNote"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <ul class="list-unstyled feature-list small mb-0" id="featureList">
+            <li data-file="no">The page reloads by itself after you save the file</li>
+            <li data-file="no">Loading another file with JavaScript (<code>fetch()</code>) – we will need it in the XML lesson</li>
+            <li data-file="no">JavaScript modules (<code>&lt;script type="module"&gt;</code>)</li>
+            <li data-file="no">Paths from the site root, e.g. <code>/img/logo.png</code></li>
+            <li data-file="yes">Ordinary HTML, CSS and images with a relative path (<code>img/logo.png</code>)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="priecinok">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>One project = one folder</h2>
+      <p>Both the editor and the server work with a <strong>whole folder</strong>, not with a single file. So create a folder on your disk (e.g. on the Desktop) with a file called <code>index.html</code> in it – the browser opens it as the home page. Other files go into subfolders.</p>
+      <div class="row g-4">
+        <div class="col-md-5">
+<div class="tree"><span class="dir">my-website/</span> ├── index.html <span class="note">← home page</span> ├── <span class="dir">css/</span> │ └── style.css <span class="note">← lesson 2</span> ├── <span class="dir">img/</span> │ └── logo.png └── <span class="dir">js/</span> └── app.js <span class="note">← JS 1</span></div>
+        </div>
+        <div class="col-md-7">
+          <p class="small mb-2">Put this skeleton into <code>index.html</code> (in VS Code the shortcut <kbd>!</kbd> and <kbd>Tab</kbd> writes it for you):</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My first page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello, world!&lt;/h1&gt;
+  &lt;p&gt;If you see this at http://127.0.0.1, the server works.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Tip: don’t use spaces or accented letters in file and folder names – <code>my-page.html</code>, not <code>My page.html</code>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="editor">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Editor setup step by step</h2>
+      <p>Choose one editor. In class we will show VS Code, but everything works the same way in Zed.</p>
+      <div class="d-flex flex-wrap gap-2 mb-4 editor-tabs" data-tabs>
+        <button type="button" class="btn btn-outline-secondary active" data-tab="vscode">VS Code</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="zed">Zed</button>
+      </div>
+
+      <div id="vscode">
+        <ol class="steps">
+          <li>
+            <h3 class="h6 mb-1">Download and install VS Code</h3>
+            <p class="mb-0 small">Download it from <a href="https://code.visualstudio.com/Download">code.visualstudio.com/Download</a> for your system and install it. On Windows keep <em>Add to PATH</em> and <em>Open with Code</em> ticked – you can then open a folder with a right-click.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Open the project folder</h3>
+            <p class="mb-0 small">Menu <strong>File → Open Folder…</strong> and choose the <code>my-website</code> folder (not a single file). If VS Code asks whether you trust the authors of the files, click <em>Yes, I trust the authors</em>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Install the extensions</h3>
+            <p class="small mb-2">Click the <strong>Extensions</strong> icon on the left (four squares) or press <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>X</kbd>. Search for each of these and click <strong>Install</strong>:</p>
+            <div class="row g-2 small">
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Live Server</strong><br><span class="text-secondary">by Ritwick Dey</span><br>local server with automatic reload</div></div>
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Auto Close Tag</strong><br><span class="text-secondary">by Jun Han</span><br>writes the closing tag for you</div></div>
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Prettier – Code formatter</strong><br><span class="text-secondary">by Prettier</span><br>fixes the indentation of your code</div></div>
+            </div>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Create <code>index.html</code></h3>
+            <p class="mb-0 small">In the <em>Explorer</em> panel click the <em>New File</em> icon and type <code>index.html</code>. In the empty file type <kbd>!</kbd>, press <kbd>Tab</kbd> (Emmet inserts the page skeleton) and save with <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>S</kbd>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Start the server – <em>Go Live</em></h3>
+            <p class="small mb-2">Click <strong>Go Live</strong> in the blue status bar at the bottom right. Other options: right-click <code>index.html</code> → <strong>Open with Live Server</strong>, or <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>L</kbd>, then <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>O</kbd>. The browser opens at <code>http://127.0.0.1:5500/index.html</code>.</p>
+            <div class="shot" aria-hidden="true"><div class="shot-body">index.html — my-website</div><div class="shot-status"><span>Ln 9, Col 5</span><span>UTF-8</span><span>HTML</span><span class="golive">⦿ Go Live</span></div></div>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Edit, save, look</h3>
+            <p class="mb-0 small">Change the text in <code>&lt;h1&gt;</code> and save. The browser reloads by itself. So that you don’t have to keep saving, turn on <strong>File → Auto Save</strong>. Prettier tidies up messy code: right-click → <strong>Format Document</strong> (<kbd data-mac="⇧ Shift">Shift</kbd> + <kbd data-mac="⌥ Option">Alt</kbd> + <kbd>F</kbd>).</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Stop the server</h3>
+            <p class="mb-0 small">Instead of <em>Go Live</em> the status bar now says <strong>Port : 5500</strong> – click it to stop the server (or <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>L</kbd>, <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>C</kbd>).</p>
+          </li>
+        </ol>
+      </div>
+
+      <div id="zed" class="d-none">
+        <ol class="steps">
+          <li>
+            <h3 class="h6 mb-1">Download and install Zed</h3>
+            <p class="mb-0 small">Download it from <a href="https://zed.dev/download">zed.dev/download</a> (macOS, Linux and Windows). On Linux you can also install it with the command <code>curl -f https://zed.dev/install.sh | sh</code>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Open the project folder</h3>
+            <p class="mb-0 small">Menu <strong>File → Open…</strong> (<kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>O</kbd>) and choose the whole <code>my-website</code> folder. You will see the files on the left in the <em>Project</em> panel.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Install the LiveServer extension</h3>
+            <p class="mb-0 small">Open the extensions page: <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>X</kbd>, or the command palette <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>P</kbd> → <code>zed: extensions</code>. Search for <strong>LiveServer</strong> (by frederik) and click <strong>Install</strong>. Zed installs HTML support by itself the first time you open an <code>.html</code> file. If you want the same shortcuts as in VS Code, add the <strong>Emmet</strong> extension too.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Create <code>index.html</code></h3>
+            <p class="mb-0 small">Right-click the folder in the <em>Project</em> panel → <strong>New File</strong>, type <code>index.html</code> and paste the page skeleton from part 2 (with the Emmet extension type <kbd>!</kbd> and pick the suggestion from the menu). Save with <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>S</kbd>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Open the page in the browser – <em>Code Action</em></h3>
+            <p class="small mb-2">Right-click inside the text of <code>index.html</code> and choose <strong>Code Actions</strong>, or press <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>.</kbd> (full stop). Pick the LiveServer action from the menu – the page opens in the browser and Zed shows you which port the server runs on. The server keeps running while the project is open; you don’t have to start anything else.</p>
+            <div class="shot zed" aria-hidden="true"><div class="shot-body">&lt;h1&gt;Hello, world!&lt;/h1&gt;<br><div class="shot-menu"><div class="hl">⚡ LiveServer: open in browser</div><div>…</div></div></div></div>
+            <p class="small text-secondary mt-1 mb-0">The exact name of the action may differ slightly depending on the extension version.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Edit and watch the browser</h3>
+            <p class="mb-0 small">Changes show up immediately – depending on the settings while you type or after you save. When you change CSS only the styles are swapped; any other change reloads the page. Format your code via the command palette → <code>editor: format</code>.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="terminal">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Fallback: a server from the terminal</h2>
+      <p>If the extension can’t be installed (e.g. on a school computer), start a server from the terminal. In both editors the terminal opens with <kbd>Ctrl</kbd> + <kbd>`</kbd> and is already in the project folder.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">If you have Node.js – with automatic reload:</p>
+<pre class="code-inspector" data-lang="text" data-copy>npx live-server</pre>
+          <p class="small text-secondary mt-1 mb-0">The first run downloads the package and opens the browser at <code>http://127.0.0.1:8080</code>.</p>
+        </div>
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">If you have Python – without automatic reload:</p>
+<pre class="code-inspector" data-lang="text" data-copy>python3 -m http.server 8000</pre>
+          <p class="small text-secondary mt-1 mb-0">On Windows <code>py -m http.server 8000</code>. Then open <code>http://localhost:8000</code>. Stop it with <kbd>Ctrl</kbd> + <kbd>C</kbd>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="problemy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>When it doesn’t work</h2>
+      <div class="accordion" id="faq">
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">I can’t see the Go Live button in VS Code</button></h3>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Did you open the whole folder (<em>Open Folder</em>) and not just a file? Is the Live Server extension installed and enabled? Restarting VS Code also helps. You can start the server by right-clicking <code>index.html</code> → <em>Open with Live Server</em> as well.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">The page doesn’t reload after a change</button></h3>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Check that you saved the file – an unsaved file has a dot ● on its tab. Look at the address in the browser: if it starts with <code>file://</code>, the page is not running through the server. Are you editing a file from the same folder the server is serving?</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">In Zed the LiveServer action doesn’t appear in Code Actions</button></h3>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">The cursor has to be in an <code>.html</code> file that belongs to the opened folder. Check on the extensions page that LiveServer is installed and restart Zed. Until you sort it out, use a server from the terminal (part 4).</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">The port is taken / a different page opened</button></h3>
+          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Another server is already running on the same port (e.g. from another editor window). Stop it, or let the server pick a different port – you will always see the number in the address.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">An image doesn’t show</button></h3>
+          <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">The path is relative to the HTML file and upper/lower case matters: <code>img/Logo.PNG</code> is not the same as <code>img/logo.png</code>. On a web server (GitHub Pages too) such a mistake breaks the image even if it happens to work on Windows.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kontrola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Checklist before your first class</h2>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <p class="small">Tick off what you have done (your browser will remember it):</p>
+          <div class="checklist" id="checklist">
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c1"><label class="form-check-label" for="c1">I have VS Code or Zed installed</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c2"><label class="form-check-label" for="c2">I have the Live Server / LiveServer extension</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c3"><label class="form-check-label" for="c3">I have a project folder with an <code>index.html</code> file</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c4"><label class="form-check-label" for="c4">The address in the browser starts with <code>http://</code>, not <code>file://</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c5"><label class="form-check-label" for="c5">The page reloads by itself after I save</label></div>
+          </div>
+          <p class="small fw-semibold mt-2 mb-0 text-success d-none" id="allDone">Done – you can continue with lesson 1 · HTML.</p>
+        </div>
+        <div class="col-lg-7">
+          <div id="quiz0"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lesson 0 · Setting up your editor · Sources: <a href="https://code.visualstudio.com/docs">VS Code – documentation</a> · <a href="https://zed.dev/extensions/live-server">Zed – LiveServer extension</a> · <a href="https://github.com/ritwickdey/vscode-live-server">Live Server for VS Code</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>
+  // ---------- skratky podľa systému ----------
+  const keys = Lab.$$('kbd[data-mac]');
+  keys.forEach(k => { k.dataset.win = k.textContent; });
+  function setOS(os) {
+    keys.forEach(k => { k.textContent = os === 'mac' ? k.dataset.mac : k.dataset.win; });
+    Lab.$$('#osSwitch [data-os]').forEach(b => b.classList.toggle('active', b.dataset.os === os));
+  }
+  Lab.$$('#osSwitch [data-os]').forEach(b => b.addEventListener('click', () => setOS(b.dataset.os)));
+  setOS(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? 'mac' : 'win');
+
+  // ---------- file:// vs http:// ----------
+  const MODES = {
+    file: { url: 'file:///C:/Users/student/Desktop/my-website/index.html', cls: 'local',
+      note: 'The file is opened straight from the disk. You have to press F5 after every change, and the browser blocks some features for security reasons.' },
+    server: { url: 'http://127.0.0.1:5500/index.html', cls: 'server',
+      note: 'A local server serves the page, just like a real website. It reloads by itself after you save the file.' }
+  };
+  function setMode(mode) {
+    const m = MODES[mode];
+    const url = document.getElementById('mockUrl');
+    url.textContent = m.url;
+    url.className = 'url ' + m.cls;
+    document.getElementById('mockNote').textContent = m.note;
+    Lab.$$('#featureList li').forEach(li => {
+      const ok = mode === 'server' || li.dataset.file === 'yes';
+      let mark = li.querySelector('.mark');
+      if (!mark) { mark = document.createElement('span'); mark.className = 'mark me-2'; li.prepend(mark); }
+      mark.textContent = ok ? '✔' : '✖';
+      mark.classList.toggle('mark-ok', ok);
+      mark.classList.toggle('mark-no', !ok);
+    });
+    Lab.$$('#modeSwitch [data-mode]').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  }
+  Lab.$$('#modeSwitch [data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  setMode('file');
+
+  // ---------- kontrolný zoznam (pamätá si ho prehliadač) ----------
+  const boxes = Lab.$$('#checklist input');
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('lab0-checklist') || '{}'); } catch (e) { saved = {}; }
+  function updateDone() {
+    document.getElementById('allDone').classList.toggle('d-none', !boxes.every(b => b.checked));
+  }
+  boxes.forEach(b => {
+    b.checked = !!saved[b.id];
+    b.addEventListener('change', () => {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem('lab0-checklist', JSON.stringify(saved)); } catch (e) { /* bez pamäte */ }
+      updateDone();
+    });
+  });
+  updateDone();
+
+  // ---------- kvíz ----------
+  Lab.quiz('#quiz0', [
+    { q: 'At which address does the page open when you click Go Live in VS Code?', o: ['file:///C:/…/index.html', 'http://127.0.0.1:5500/index.html', 'https://github.com/index.html'], a: 1, e: 'Live Server runs on your computer (127.0.0.1) and uses port 5500 by default.' },
+    { q: 'How do you open the page in the browser with the LiveServer extension in Zed?', o: ['By double-clicking the file in the Project panel', 'Right-click in the file → Code Actions (or Ctrl + .) → the LiveServer action', 'With the Go Live button in the status bar'], a: 1, e: 'In Zed the extension offers to open the page as a Code Action. The Go Live button is in VS Code.', mono: false },
+    { q: 'What does the shortcut ! and Tab insert into an empty HTML file?', o: ['A comment', 'The skeleton of an HTML document (doctype, head, body)', 'An exclamation mark'], a: 1, e: 'It is an Emmet shortcut – built into VS Code; in Zed you add it with an extension.', mono: false },
+    { q: 'The page didn’t reload after a change. What do you check first?', o: ['Whether I saved the file and whether the address starts with http://', 'Whether my internet is fast', 'Whether I have Prettier installed'], a: 0, e: 'The server reacts to saving the file. At a file:// address the page never reloads by itself.', mono: false },
+    { q: 'Which command starts a simple server without any extension (with Python installed)?', o: ['python3 -m http.server 8000', 'npm start server', 'http://localhost'], a: 0, e: 'The http.server module is part of Python. Then you open http://localhost:8000.' }
+  ]);
+</script>
+</body>
+</html>
