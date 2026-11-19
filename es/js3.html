@@ -1,0 +1,1746 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript – funciones y eventos</title>
+  <meta name="description" content="JS 3 – tipos de funciones, funciones anónimas y flecha, eventos, onclick, manejadores de eventos y addEventListener. Ejemplos interactivos y tareas.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f8fc; }
+    code { color: #9a2878; }
+    .section-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; scroll-margin-top: 1rem; }
+    .section-number { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; padding: 0 .4rem; border-radius: 1rem; background: #d1f2e4; color: #146c43; font-weight: 700; margin-right: .5rem; }
+    .demo-area { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; overflow: hidden; }
+    .tiny-label { font-size: .8rem; color: #657086; }
+
+    .code-inspector { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 0; font: .85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .code-inspector .kw { color: #c4b5fd; }
+    .code-inspector .str { color: #86efac; }
+    .code-inspector .com { color: #9ca3af; font-style: italic; }
+    .code-inspector .obj { color: #93c5fd; }
+    .code-inspector .num { color: #fdba74; }
+    .code-inspector .tag { color: #93c5fd; }
+    .code-inspector .attr { color: #fcd34d; }
+    .code-inspector .value { color: #86efac; }
+    .code-inspector .ln { display: block; min-height: 1.55em; margin: 0 -.5rem; padding: 0 .5rem; border-radius: .3rem; }
+    .copy-wrap { position: relative; }
+    .copy-wrap > pre { padding-top: 2.1rem; }
+    .copy-btn { position: absolute; top: .45rem; right: .45rem; font-size: .7rem; padding: .1rem .45rem; border-radius: .35rem; border: 1px solid #ffffff30; background: #ffffff14; color: #e5e7eb; }
+    .copy-btn:hover { background: #ffffff2a; }
+
+    .console-out { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3.2rem; max-height: 260px; overflow: auto; font: .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .console-out .line { padding: .15rem 0; border-bottom: 1px solid #ffffff10; }
+    .console-out .line::before { content: "› "; color: #60a5fa; }
+    .console-out .line.err { color: #fca5a5; }
+    .console-out .line.err::before { content: "✖ "; color: #f87171; }
+    .console-out .line.warn { color: #fde68a; }
+    .console-out .line.warn::before { content: "⚠ "; color: #fbbf24; }
+    .console-out .line.hint { color: #fcd34d; font-family: system-ui, sans-serif; font-size: .8rem; }
+    .console-out .line.hint::before { content: "→ "; color: #fcd34d; }
+    .console-out .line.muted { color: #6b7280; }
+    .console-out .line.muted::before { content: ""; }
+
+    .code-btn { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .8rem; text-align: left; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+    .snippet { display: flex; flex-direction: column; gap: .5rem; height: 100%; }
+    .snippet .console-out { min-height: 2.6rem; }
+    .snippet-title { font-weight: 600; font-size: .95rem; }
+    .mini-frame { width: 100%; border: 0; background: #fff; border-radius: .5rem; display: block; }
+
+    .types-grid .type-card { height: 100%; border-radius: .75rem; background: #fff; border: 1px solid #e3e7f0; padding: 1rem; }
+    .type-card .badge { font-weight: 600; }
+    .zadanie-out p { margin-bottom: .35rem; font-size: 1.05rem; }
+
+    .step-btns .btn { font-size: .8rem; }
+    .ev-table td { transition: background-color .6s ease; }
+    .ev-table tr.flash td { background-color: #fff3a8 !important; transition: none; }
+    .ev-table td.count { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; text-align: right; width: 4rem; }
+    .ev-box { min-height: 120px; border-radius: .75rem; border: 2px solid #76c9a7; background: #e2f7ef; color: #155b43; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600; user-select: none; cursor: pointer; padding: 1rem; }
+
+    .live-btn { min-width: 9rem; transition: background-color .15s, border .15s; }
+
+    /* ukážka navigácie (Úloha 2) */
+    .demo-site { max-width: 360px; margin: 0 auto; border: 1px solid #d6dbe6; border-radius: .75rem; overflow: hidden; background: #fff; }
+    .demo-site .main-header { background: #1f2937; color: #fff; padding: .6rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .demo-site .main-header > a { color: #fff; font-weight: 700; text-decoration: none; }
+    .demo-site .hamburger { color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; user-select: none; text-decoration: none; }
+    .demo-site .main-nav { display: contents; }
+    .demo-site .main-menu { display: none; list-style: none; margin: .5rem 0 0; padding: 0; width: 100%; order: 3; }
+    .demo-site .main-menu.responsive { display: block; }
+    .demo-site .main-menu a { display: block; color: #e5e7eb; padding: .45rem 0; border-top: 1px solid #ffffff1f; text-decoration: none; }
+    .demo-site .page { padding: 1rem; color: #6b7280; font-size: .9rem; }
+
+    /* ukážka akordeónu (Úloha 3) – štýly zo slajdu */
+    .demo-acc .question { background-color: #f7f7f7; color: black; padding: 2%; }
+    .demo-acc .accordion .answer { display: none; }
+    .demo-acc .question::before { content: '+ '; }
+    .demo-acc .question:hover, .demo-acc .accordion.active .question { background-color: #bfbcbc; cursor: pointer; }
+    .demo-acc .accordion.active .answer { display: block; background-color: #f7f7f7; color: black; padding: 2%; }
+    .demo-acc .accordion.active .question::before { content: '- '; }
+
+    /* ukážka kalkulačky (Úloha 4) */
+    .calc-demo { width: 300px; max-width: 100%; margin: 0 auto; background: #1f2937; padding: 18px; border-radius: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .calc-demo .calc-row { display: flex; justify-content: space-between; gap: 8px; }
+    .calc-demo button { flex: 1; height: 46px; border: 0; border-radius: 10px; font-size: 1.1rem; font-weight: 600; background: #e5e7eb; color: #111827; cursor: pointer; }
+    .calc-demo button:hover { filter: brightness(1.08); }
+    .calc-demo .operator { background: #f59e0b; color: #fff; }
+    .calc-demo .equal-sign { background: #10b981; color: #fff; }
+    .calc-demo #cdClear { flex: 0 0 90px; background: #ef4444; color: #fff; font-size: .9rem; }
+    .calc-demo .result { flex: 1; min-width: 0; height: 46px; border: 0; border-radius: 10px; padding: 0 12px; text-align: right; font: 600 1.25rem ui-monospace, Menlo, Consolas, monospace; background: #f9fafb; }
+
+    /* ukážka hodnotenia (Úloha 5) */
+    .stars-demo { text-align: center; }
+    .stars-demo .hviezda { font-size: 2.6rem; color: #d1d5db; cursor: pointer; transition: color .1s, transform .1s; display: inline-block; user-select: none; }
+    .stars-demo .hviezda.svieti { color: #f59e0b; transform: scale(1.1); }
+
+    /* ukážka dvoch stránok v jednom HTML (Úloha 6) */
+    .spa-demo { height: 330px; overflow-y: auto; border: 1px solid #d6dbe6; border-radius: .75rem; background: #f3f4f6; }
+    .spa-demo .spa-hlavicka { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: .55rem .9rem; background: #1f2937; color: #fff; font-weight: 700; font-size: .9rem; }
+    .spa-demo nav { display: flex; gap: .9rem; }
+    .spa-demo nav a { color: #d1d5db; text-decoration: none; font-weight: 400; border-bottom: 2px solid transparent; }
+    .spa-demo nav a.aktivna { color: #fff; border-bottom-color: #10b981; }
+    .spa-demo .spa-stranka { margin: .8rem; padding: .9rem 1rem; background: #fff; border-radius: .6rem; font-size: .9rem; }
+    .spa-demo .spa-stranka h4 { font-size: 1.05rem; }
+    .spa-demo .skryta { display: none; }
+    .spa-demo button { border: 0; border-radius: .5rem; padding: .45rem .9rem; background: #10b981; color: #fff; font-weight: 600; }
+
+    /* ukážka registrácie (Úloha 7) */
+    .reg-demo { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; }
+    .reg-demo label { font-size: .8rem; font-weight: 600; color: #374151; margin-bottom: .1rem; }
+    .reg-tlacidlo { width: 100%; border: 0; border-radius: .6rem; padding: .6rem; background: #2563eb; color: #fff; font-weight: 700; transition: background-color .2s; }
+    .reg-tlacidlo.zvyraznene { background: #7c3aed; }
+    .reg-tlacidlo.odoslane { background: #16a34a; }
+
+    .quiz-question { margin-bottom: 1.25rem; }
+    .quiz-question .list-group-item { cursor: pointer; }
+    .quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
+
+    #playFrame { height: 330px; }
+    #playCode { min-height: 360px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85rem; tab-size: 2; }
+    .task-card { border: 2px solid #d1f2e4; border-radius: 1rem; padding: 1.25rem; background: #fbfefc; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge text-bg-success mb-3">JavaScript 3</span>
+  <h1 class="display-5 fw-bold">Más sobre funciones y eventos</h1>
+  <p class="lead col-lg-8">Tipos de funciones, funciones anónimas y flecha y tres formas de que una página reaccione a un clic. Al final rehacemos la navegación, el acordeón y la calculadora para que en el HTML no haya ni un solo <code>onclick</code>.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#rozcvicka">0 · Calentamiento</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#typy">1 · Tipos de funciones</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#anonymne">2 · Anónimas</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#arrow">3 · Flecha</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#eventy">4 · Eventos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#klik">5 · onclick vs. listener</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#navigacia">6 · Navegación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#akordeon">7 · Acordeón</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#playground">8 · Zona de pruebas</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Cuestionario</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Tareas para la clase</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="rozcvicka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">0</span>Calentamiento de JS 2</h2>
+      <p>Cuatro preguntas de la clase anterior: hoy las necesitaremos.</p>
+      <div data-quiz="rozcvicka"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="typy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Tres tipos de funciones</h2>
+      <p>Hasta ahora hemos escrito funciones con la forma <code>function nazovFunkcie() { … }</code>. Según cuántos valores recibe una función, distinguimos tres tipos:</p>
+      <div class="row g-3 types-grid mb-3">
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">sin parámetro</span>
+<pre class="code-inspector js">function ahoj() {
+  return "Hola";
+}
+ahoj();  // "Hola"</pre>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">con un parámetro</span>
+<pre class="code-inspector js">function pozdravMeno(meno) {
+  return ahoj() + " " + meno;
+}
+pozdravMeno("Jožo");  // "Hola Jožo"</pre>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="type-card">
+            <span class="badge text-bg-light border mb-2">con varios parámetros</span>
+<pre class="code-inspector js">function obsahStvorca(strana, jednotka) {
+  return strana * strana + jednotka;
+}
+obsahStvorca(5, "cm");  // "25cm"</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Enunciado 1</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <p class="small mb-2">Escribe tres párrafos en el HTML:</p>
+<pre class="code-inspector html" data-copy>&lt;p id="bez_parametra"&gt;Función sin parámetro: &lt;/p&gt;
+&lt;p id="jeden_parameter"&gt;Función con un parámetro: &lt;/p&gt;
+&lt;p id="dva_parametre"&gt;Función con dos parámetros: &lt;/p&gt;</pre>
+          <ol class="small mt-3 mb-0">
+            <li class="mb-1"><strong>a)</strong> La variable <code>bez_parametra</code> obtiene el párrafo <code>#bez_parametra</code>. La función <code>ahoj()</code> devuelve el texto “Hola”. Añade el resultado al párrafo.</li>
+            <li class="mb-1"><strong>b)</strong> La variable <code>jeden_parameter</code>, la función <code>pozdravMeno(meno)</code> llama a <code>ahoj()</code> y le añade el nombre.</li>
+            <li><strong>c)</strong> La variable <code>dva_parametre</code>, la función <code>obsahStvorca(strana, jednotka)</code> (área de un cuadrado) muestra el área con la unidad y la potencia, p. ej. 25cm<sup>2</sup>. Elige un método adecuado para que la potencia se vea bien.</li>
+          </ol>
+        </div>
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Así debe quedar el resultado: prueba a cambiar los valores</div>
+          <div class="demo-area zadanie-out mb-2">
+            <p>Función sin parámetro: <span id="z1a"></span></p>
+            <p>Función con un parámetro: <span id="z1b"></span></p>
+            <p class="mb-0">Función con dos parámetros: <span id="z1c"></span></p>
+          </div>
+          <div class="row g-2">
+            <div class="col-sm-4"><label class="form-label small mb-0" for="z1Meno">nombre</label><input class="form-control form-control-sm" id="z1Meno" value="Jožo"></div>
+            <div class="col-4 col-sm-2"><label class="form-label small mb-0" for="z1Strana">lado</label><input type="number" class="form-control form-control-sm" id="z1Strana" value="5"></div>
+            <div class="col-4 col-sm-2"><label class="form-label small mb-0" for="z1Jednotka">unidad</label><input class="form-control form-control-sm" id="z1Jednotka" value="cm"></div>
+            <div class="col-4 col-sm-4"><label class="form-label small mb-0" for="z1Metoda">c) añadir con</label><select class="form-select form-select-sm" id="z1Metoda"><option value="innerHTML">innerHTML</option><option value="textContent">textContent</option></select></div>
+          </div>
+          <p class="tiny-label mt-2 mb-0">Cambia a <code>textContent</code> y mira qué pasa con la potencia.</p>
+        </div>
+      </div>
+      <details class="mt-3">
+        <summary class="fw-semibold">Solución del Enunciado 1 (inténtalo tú primero)</summary>
+<pre class="code-inspector js mt-2" data-copy>const bez_parametra = document.getElementById("bez_parametra");
+const jeden_parameter = document.getElementById("jeden_parameter");
+const dva_parametre = document.getElementById("dva_parametre");
+
+// a) función sin parámetro
+function ahoj() {
+  return "Hola";
+}
+bez_parametra.textContent += ahoj();
+
+// b) función con un parámetro: dentro llama a otra función
+function pozdravMeno(meno) {
+  return ahoj() + " " + meno;
+}
+jeden_parameter.textContent += pozdravMeno("Jožo");
+
+// c) función con dos parámetros
+function obsahStvorca(strana, jednotka) {
+  return strana * strana + jednotka + "&lt;sup&gt;2&lt;/sup&gt;";
+}
+dva_parametre.innerHTML += obsahStvorca(5, "cm"); // innerHTML; si no, &lt;sup&gt; se mostraría como texto</pre>
+      </details>
+      <p class="tiny-label mt-2 mb-0"><code>+=</code> <strong>añade</strong> el texto a lo que ya hay en el párrafo. Un simple <code>=</code> sobrescribiría el texto original “Función sin parámetro:”.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="anonymne">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Funciones anónimas</h2>
+      <p>Una función anónima es una función <strong>sin nombre</strong>. Puede tener parámetros como cualquier otra. Como no la podemos llamar por su nombre, se usa de tres maneras:</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">1. Guardada en una variable</div>
+<pre class="code-inspector js">const vynasob = function (x, y) {
+  return x * y;
+};
+
+console.log(vynasob(2, 4));</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">El nombre lo tiene la variable, no la función.</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">2. Entregada a otra función</div>
+<pre class="code-inspector js">setTimeout(function () {
+  console.log("Ha pasado 1 segundo");
+}, 1000);
+
+console.log("Esto se muestra antes");</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary"><code>setTimeout</code> recibe la función y la ejecuta más tarde. Justo así se la entregaremos enseguida a <code>addEventListener</code>.</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">3. Llamada al instante</div>
+<pre class="code-inspector js">// la función
+(function () {
+  console.log("Esto es una función anónima");
+})
+// llamada a la función
+();</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Los paréntesis alrededor de la función la convierten en un valor y <code>()</code> detrás la ejecuta al momento. Se llama IIFE.</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-info small mt-3 mb-0">Donde más verás una función anónima es en los eventos: <code>tlacidlo.addEventListener("click", function () { … });</code>: la función no tiene nombre porque no la llamamos en ningún otro sitio.</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="arrow">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Funciones flecha</h2>
+      <p>Una función flecha no es un tipo nuevo de función, solo una <strong>forma más corta de escribirla</strong>. No usa la palabra <code>function</code> y asigna la función a una variable con una flecha <code>=&gt;</code>. La verás a menudo en el código de otros programadores. Elige una función y sigue la conversión paso a paso.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="arPriklad" aria-label="Función a convertir">
+              <option value="nahodne">sin parámetro – nahodneCislo()</option>
+              <option value="umocni" selected>con un parámetro – umocni(x)</option>
+              <option value="vynasob">con dos parámetros – vynasob(x, y)</option>
+              <option value="pozdrav">con varias instrucciones – pozdrav(meno)</option>
+            </select>
+          </div>
+          <div class="btn-group flex-wrap step-btns mb-2" role="group" aria-label="Pasos de la conversión" id="arKroky"></div>
+          <pre class="code-inspector js" id="arKod"></pre>
+          <div class="alert alert-light border small mt-2 mb-0" id="arVysvetlenie"></div>
+        </div>
+        <div class="col-lg-5">
+          <button type="button" class="btn btn-sm btn-success mb-2" id="arSpusti">▶ Ejecutar este paso</button>
+          <div class="console-out" id="arConsole" style="min-height: 120px"><div class="line muted">Consola</div></div>
+          <div class="table-responsive mt-3">
+            <table class="table table-sm small mb-0">
+              <thead><tr><th>Forma clásica</th><th>Forma flecha</th></tr></thead>
+              <tbody>
+                <tr><td><code>function nahodneCislo() { return Math.random(); }</code></td><td><code>const nahodneCislo = () =&gt; Math.random();</code></td></tr>
+                <tr><td><code>function umocni(x) { return x * x; }</code></td><td><code>const umocni = (x) =&gt; x * x;</code></td></tr>
+                <tr><td><code>function vynasob(x, y) { return x * y; }</code></td><td><code>const vynasob = (x, y) =&gt; x * y;</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title">Cuidado: con llaves hace falta <code>return</code></div>
+<pre class="code-inspector js">const zdvojnasob = (x) =&gt; { x * 2 };
+const zdvojnasob2 = (x) =&gt; { return x * 2; };
+const zdvojnasob3 = (x) =&gt; x * 2;
+
+console.log(zdvojnasob(5), zdvojnasob2(5), zdvojnasob3(5));</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="alert alert-warning small h-100 mb-0">
+            <strong>Cuándo no usar una función flecha:</strong> una función flecha no tiene <code>this</code> propio. Si en un listener necesitas <code>this</code> (el elemento en el que se hizo clic), usa <code>function () { … }</code>. Lo veremos en el acordeón de la sección 7.
+            <hr>
+            La presentación usa <code>var</code>. Hoy escribimos <code>const</code>: una función guardada en una variable ya no la cambiamos.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="eventy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Eventos</h2>
+      <p>Un <strong>evento</strong> es algo que ha hecho el usuario: hacer clic, pasar el ratón por encima de un elemento, pulsar una tecla, enviar un formulario… A reaccionar a los eventos se le llama <strong>event handling</strong>. Pruébalo: juega con los elementos de la izquierda y mira qué filas de la tabla se iluminan.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="ev-box mb-3" id="evBox">Pasa el ratón por aquí, haz clic y mantén pulsado el botón</div>
+          <form id="evForm" class="demo-area">
+            <label class="form-label small mb-0" for="evInput">Campo de texto</label>
+            <input class="form-control form-control-sm mb-2" id="evInput" placeholder="Haz clic aquí y escribe…">
+            <label class="form-label small mb-0" for="evSelect">Selección</label>
+            <select class="form-select form-select-sm mb-2" id="evSelect">
+              <option>JavaScript</option><option>HTML</option><option>CSS</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-success">Enviar el formulario</button>
+          </form>
+          <p class="tiny-label mt-2 mb-1">El evento <code>resize</code> lo provocas cambiando el tamaño de la ventana.</p>
+          <div class="console-out" id="evConsole"><div class="line muted">Últimos eventos</div></div>
+        </div>
+        <div class="col-lg-7">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle ev-table mb-0">
+              <thead><tr><th>Evento</th><th>Manejador</th><th>Cuándo ocurre</th><th class="text-end">Veces</th></tr></thead>
+              <tbody id="evTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">El evento es el nombre de lo que ha pasado (<code>click</code>); el manejador es una propiedad del elemento con el prefijo <code>on</code> (<code>onclick</code>). Veremos la diferencia en la siguiente sección.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="klik">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Tres formas de reaccionar a un clic</h2>
+      <p>En la calculadora teníamos <code>onclick</code> en cada botón y el HTML era un lío. ¿Y si tuviéramos un acordeón con 100 elementos? La reacción al clic también se puede definir directamente en JavaScript, sin tocar el HTML.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">a) el atributo <code>onclick</code> en el HTML</h3>
+<pre class="code-inspector js">&lt;button id="myBtn" onclick="klik()"&gt;Haz clic en mí&lt;/button&gt;
+
+function klik() {
+  const btn = document.getElementById("myBtn");
+  btn.innerHTML = "has hecho clic";
+}</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnA">Haz clic en mí</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">b) un manejador de eventos en JS</h3>
+<pre class="code-inspector js">&lt;button id="myBtn"&gt;Haz clic en mí&lt;/button&gt;
+
+const btn = document.getElementById("myBtn");
+function zmenText() {
+  btn.innerHTML = "Has hecho clic";
+}
+btn.onclick = zmenText;</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnB">Haz clic en mí</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0">c) <code>addEventListener</code></h3>
+<pre class="code-inspector js">&lt;button id="myBtn"&gt;Haz clic en mí&lt;/button&gt;
+
+const btn = document.getElementById("myBtn");
+btn.addEventListener("click", () =&gt; {
+  btn.innerHTML = "Has hecho clic";
+});</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start mt-auto" id="btnC">Haz clic en mí</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-link px-0 mt-1" id="btnReset">Restaurar los textos de los botones</button>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Cuidado: la función se entrega sin paréntesis</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title text-danger">Con paréntesis – mal</div>
+<pre class="code-inspector js">function zmenText() {
+  console.log("¡zmenText se ha ejecutado!");
+}
+const btn = document.createElement("button");
+btn.onclick = zmenText();
+console.log("btn.onclick es:", btn.onclick);</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">La función se ejecutó <strong>nada más cargar la página</strong> y en <code>onclick</code> se guardó su resultado (nada). Luego el clic no hace nada.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title text-success">Sin paréntesis – bien</div>
+<pre class="code-inspector js">function zmenText() {
+  console.log("¡zmenText se ha ejecutado!");
+}
+const btn = document.createElement("button");
+btn.onclick = zmenText;
+console.log("btn.onclick es:", btn.onclick);</pre>
+            <button type="button" class="btn btn-sm btn-success align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Hemos entregado <strong>la función en sí</strong>. El navegador la ejecuta solo después del clic.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Para pensar: dos funciones para un clic</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h4 class="h6 mb-0">El manejador <code>onclick</code> dos veces</h4>
+<pre class="code-inspector js">function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+btn.onclick = firstFunction;
+btn.onclick = secondFunction;</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start" id="btnHandler2">Haz clic en mí</button>
+            <div class="console-out" id="handler2Console"><div class="line muted">Consola</div></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h4 class="h6 mb-0"><code>addEventListener</code> dos veces</h4>
+<pre class="code-inspector js">function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+btn.addEventListener("click", firstFunction);
+btn.addEventListener("click", secondFunction);</pre>
+            <button type="button" class="btn btn-outline-success live-btn align-self-start" id="btnListener2">Haz clic en mí</button>
+            <div class="console-out" id="listener2Console"><div class="line muted">Consola</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="small mt-2">Un elemento solo puede tener <strong>un manejador</strong> del mismo tipo: la segunda asignación sobrescribe la primera. <strong>Listeners</strong> puede tener los que quiera y se ejecutan en el orden en que los añadimos. Por eso en la práctica se usa <code>addEventListener</code>.</p>
+<pre class="code-inspector js">// lo mismo con funciones flecha anónimas
+btn.addEventListener("click", () =&gt; { console.log(1); });
+btn.addEventListener("click", () =&gt; { console.log(2); });</pre>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Más eventos del ratón en un botón</h3>
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-7">
+<pre class="code-inspector js">const btn = document.getElementById("myBtn");
+btn.addEventListener("click", () =&gt; btn.innerHTML = "Has hecho clic");
+btn.addEventListener("mouseover", () =&gt; btn.style.backgroundColor = "red");
+btn.addEventListener("mouseleave", () =&gt; btn.style.backgroundColor = "green");
+btn.addEventListener("mousedown", () =&gt; btn.style.border = "10px solid black");
+btn.addEventListener("mouseup", () =&gt; btn.style.border = "10px solid yellow");</pre>
+        </div>
+        <div class="col-lg-5 text-center">
+          <button type="button" class="btn btn-light border live-btn py-3" id="btnMys">Haz clic en mí</button>
+          <div><button type="button" class="btn btn-sm btn-link" id="btnMysReset">Restaurar</button></div>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th></th><th>Dónde está el código</th><th>Varias funciones para un evento</th><th>Uso</th></tr></thead>
+          <tbody>
+            <tr><td><code>onclick="…"</code> en el HTML</td><td>en el HTML y en JS</td><td>no</td><td>pruebas rápidas; con muchos elementos es un lío</td></tr>
+            <tr><td><code>prvok.onclick = funkcia</code></td><td>solo en JS</td><td>no – gana la última asignación</td><td>casos sencillos</td></tr>
+            <tr class="table-success"><td><code>prvok.addEventListener("click", funkcia)</code></td><td>solo en JS</td><td>sí</td><td><strong>la forma recomendada</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny-label mt-2 mb-0"><code>addEventListener(evento, función, useCapture)</code>: el tercer parámetro es opcional y de momento no lo necesitamos. Si quieres profundizar: <a href="https://www.youtube.com/watch?v=XF1_MlZ5l6M">un vídeo sobre event listeners</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="navigacia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Tarea 2: navegación sin onclick</h2>
+      <p>Rehaz el código de la navegación para que, en lugar del atributo <code>onclick</code>, use un <strong>event listener</strong>. Haz clic en ☰ en el ejemplo y sigue cuatro pasos: del código original a la forma más corta.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-site" id="navDemo">
+            <header class="main-header">
+              <a href="#navigacia">Logo</a>
+              <nav class="main-nav">
+                <ul class="main-menu" id="navMenu">
+                  <li><a href="#navigacia">Inicio</a></li>
+                  <li><a href="#navigacia">Quiénes somos</a></li>
+                  <li><a href="#navigacia">Q&amp;A</a></li>
+                  <li><a href="#navigacia">Contacto</a></li>
+                </ul>
+                <a class="hamburger" id="navHamburger" role="button" tabindex="0" aria-label="Menú">☰</a>
+              </nav>
+            </header>
+            <div class="page">Así se ve la página en el móvil: el menú está oculto hasta que haces clic en ☰.</div>
+          </div>
+          <p class="text-center font-monospace small mt-2 mb-0">menu.className → <strong id="navClass">"main-menu"</strong></p>
+        </div>
+        <div class="col-lg-7">
+          <div class="btn-group flex-wrap step-btns mb-2" role="group" aria-label="Pasos de la navegación" id="navKroky">
+            <button type="button" class="btn btn-outline-success" data-krok="0">1 · original</button>
+            <button type="button" class="btn btn-outline-success" data-krok="1">2 · listener</button>
+            <button type="button" class="btn btn-outline-success" data-krok="2">3 · toggle</button>
+            <button type="button" class="btn btn-outline-success" data-krok="3">4 · arrow</button>
+          </div>
+          <div class="alert alert-light border small mb-2" id="navVysvetlenie"></div>
+          <div class="tiny-label mb-1">HTML</div>
+          <pre class="code-inspector mb-2" id="navHtml"></pre>
+          <div class="tiny-label mb-1">js/navigacia.js</div>
+          <pre class="code-inspector" id="navJs"></pre>
+        </div>
+      </div>
+      <p class="small mt-3 mb-0">El código inicial (HTML, CSS y el JS original con <code>onclick</code>) está en la carpeta <code>2-navigacia</code> de las <a href="#ulohy">tareas para la clase</a>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="akordeon">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Tarea 3: un acordeón</h2>
+      <p>Crea un acordeón: las respuestas están ocultas y aparecen al hacer clic en la pregunta. La pregunta cambia de color al pasar el ratón por encima y cuando está abierta.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">El acordeón terminado</div>
+          <div class="demo-acc demo-area p-0" id="accDemo">
+            <div class="accordion">
+              <div class="question">Pregunta 1</div>
+              <div class="answer">Respuesta 1</div>
+            </div>
+            <div class="accordion">
+              <div class="question">Pregunta 2</div>
+              <div class="answer">Respuesta 2</div>
+            </div>
+            <div class="accordion">
+              <div class="question">Pregunta 3</div>
+              <div class="answer">Respuesta 3</div>
+            </div>
+          </div>
+          <ol class="small mt-3 mb-0">
+            <li>Las respuestas (<code>.answer</code>) se ocultan con <code>display: none</code>.</li>
+            <li>La clase <code>active</code> en <code>.accordion</code> las muestra (<code>display: block</code>).</li>
+            <li>JavaScript solo alterna la clase <code>active</code> tras el clic.</li>
+          </ol>
+        </div>
+        <div class="col-lg-7">
+          <div class="btn-group mb-2" role="group" aria-label="El código del acordeón" id="accTaby">
+            <button type="button" class="btn btn-sm btn-success" data-tab="accHtml">HTML</button>
+            <button type="button" class="btn btn-sm btn-outline-success" data-tab="accCss">CSS</button>
+            <button type="button" class="btn btn-sm btn-outline-success" data-tab="accJs">js/accordion.js</button>
+          </div>
+<pre class="code-inspector html acc-tab" id="accHtml" data-copy>&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Pregunta 1&lt;/div&gt;
+  &lt;div class="answer"&gt;Respuesta 1&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Pregunta 2&lt;/div&gt;
+  &lt;div class="answer"&gt;Respuesta 2&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="accordion"&gt;
+  &lt;div class="question"&gt;Pregunta 3&lt;/div&gt;
+  &lt;div class="answer"&gt;Respuesta 3&lt;/div&gt;
+&lt;/div&gt;</pre>
+<pre class="code-inspector acc-tab d-none" id="accCss" data-copy>.question {
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+/* primero ocultamos las respuestas */
+.accordion .answer {
+  display: none;
+}
+/* delante de cada pregunta añadimos con ::before el signo + */
+.question::before {
+  content: '+ ';
+}
+/* pregunta bajo el ratón o en un acordeón abierto */
+.question:hover,
+.accordion.active .question {
+  background-color: #bfbcbc;
+  cursor: pointer;
+}
+/* la respuesta visible */
+.accordion.active .answer {
+  display: block;
+  background-color: #f7f7f7;
+  color: black;
+  padding: 2%;
+}
+/* en una pregunta abierta ponemos - en lugar de + */
+.accordion.active .question::before {
+  content: '- ';
+}</pre>
+<pre class="code-inspector js acc-tab d-none" id="accJs" data-copy>const accordion = document.getElementsByClassName("accordion");
+
+// tenemos varios acordeones, hay que recorrerlos
+for (const a of accordion) {
+  // a cada uno le añadimos un listener
+  a.addEventListener("click", function () {
+    // this = justo el acordeón en el que se acaba de hacer clic
+    this.classList.toggle("active");
+  });
+}</pre>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Experimento: ¿y si en lugar de function escribimos una función flecha?</h3>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-acc demo-area p-0" id="accArrow">
+            <div class="accordion"><div class="question">Pregunta 1</div><div class="answer">Respuesta 1</div></div>
+            <div class="accordion"><div class="question">Pregunta 2</div><div class="answer">Respuesta 2</div></div>
+          </div>
+          <div class="console-out mt-2" id="accArrowConsole"><div class="line muted">Haz clic en una pregunta de arriba</div></div>
+        </div>
+        <div class="col-lg-7">
+<pre class="code-inspector js">for (const a of accordion) {
+  a.addEventListener("click", () =&gt; {
+    this.classList.toggle("active");  // ¡aquí this NO es el acordeón!
+  });
+}</pre>
+          <p class="small mt-2 mb-2">Una función flecha no tiene <code>this</code> propio, por eso el acordeón no funciona. Si quieres una función flecha, usa la variable del bucle:</p>
+<pre class="code-inspector js">for (const a of accordion) {
+  a.addEventListener("click", () =&gt; a.classList.toggle("active"));
+}</pre>
+        </div>
+      </div>
+      <div class="alert alert-info small mt-3 mb-0"><strong>Todavía mejor:</strong> pon el listener en <code>.question</code>, no en todo el <code>.accordion</code>. Si no, el acordeón también se cierra al hacer clic en la respuesta (pruébalo arriba). La solución: <code>otazka.addEventListener("click", () =&gt; otazka.parentElement.classList.toggle("active"));</code></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="playground">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Zona de pruebas de JavaScript</h2>
+      <p>Escribe tu propio código o elige un ejemplo y ejecútalo. La página de ejemplo de la derecha contiene los párrafos del Enunciado 1, el botón <code>#myBtn</code> y el acordeón de la sección 7.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="playPreset" aria-label="Ejemplos preparados"></select>
+            <button type="button" class="btn btn-sm btn-success" id="playRun">▶ Ejecutar</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="playReset">Restaurar el ejemplo</button>
+          </div>
+          <textarea class="form-control" id="playCode" spellcheck="false"></textarea>
+          <p class="tiny-label mt-1 mb-0">Atajo: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> ejecuta el código. <kbd>Tab</kbd> sangra una línea.</p>
+        </div>
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Página de ejemplo</div>
+          <div class="demo-area p-1"><iframe class="mini-frame" id="playFrame" title="Página de ejemplo de la zona de pruebas" sandbox="allow-scripts allow-modals"></iframe></div>
+          <div class="tiny-label mt-2 mb-1">Consola</div>
+          <div class="console-out" id="playConsole" style="min-height: 120px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Cuestionario rápido</h2>
+      <p>Intenta responder sin ayuda. Al comprobar verás también una explicación.</p>
+      <div data-quiz="kviz"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Tareas para la clase</h2>
+      <p>Descarga los archivos preparados en un solo <code>.zip</code> o míralos en GitHub. Las tareas 3 a 7 tienen el HTML y el CSS hechos, pero <strong>nada de JavaScript</strong>: eso lo escribes tú. El archivo <code>js/…</code> lo creas y lo enlazas tú. Los archivos están en eslovaco.</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-success" href="../ulohy-js3.zip" download>Descargar tareas (.zip)</a>
+        <a class="btn btn-outline-success" href="https://github.com/CHOTY/js-laboratorium/tree/main/ulohy-js3">Ver en GitHub</a>
+      </div>
+      <div class="table-responsive mb-4">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>Carpeta</th><th>Tarea</th><th>Qué está preparado</th></tr></thead>
+          <tbody>
+            <tr><td><code>1-funkcie</code></td><td>Enunciado 1 – tres tipos de funciones</td><td>HTML con párrafos, <code>js/funkcie.js</code> con el enunciado</td></tr>
+            <tr><td><code>2-navigacia</code></td><td>Tarea 2 – navegación sin onclick</td><td>HTML, CSS y el <code>js/navigacia.js</code> original con <code>onclick</code> para rehacer</td></tr>
+            <tr><td><code>3-akordeon</code></td><td>Tarea 3 – acordeón</td><td>HTML y CSS, sin JS</td></tr>
+            <tr class="table-success"><td><code>4-kalkulacka</code></td><td>Tarea 4 – calculadora con listeners</td><td>HTML y CSS, sin JS y sin <code>onclick</code></td></tr>
+            <tr class="table-success"><td><code>5-hodnotenie</code></td><td>Tarea 5 – valoración con estrellas</td><td>HTML y CSS, sin JS</td></tr>
+            <tr><td><code>6-stranky</code></td><td>Tarea 6 – dos páginas en un solo HTML</td><td>HTML y CSS, sin JS</td></tr>
+            <tr><td><code>7-registracia</code></td><td>Tarea 7 – formulario de registro</td><td>HTML y CSS, sin JS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="task-card mb-4" id="uloha4">
+        <h3 class="h5">Tarea 4: una calculadora sin un solo onclick <span class="badge text-bg-light border align-middle">≈ 20 min</span></h3>
+        <p>Vuelves a tener la calculadora de la clase anterior en la carpeta <code>4-kalkulacka</code>, pero esta vez en el HTML <strong>no hay ningún <code>onclick</code></strong> ni hay JavaScript enlazado. Ponla en marcha solo con <code>addEventListener</code>.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1">Crea un archivo <code>js/kalkulacka.js</code> y enlázalo antes de <code>&lt;/body&gt;</code>.</li>
+              <li class="mb-1">Gestiona todos los botones de números y operadores (clases <code>.button</code> y <code>.operator</code>) con <strong>un solo bucle</strong>, no con 16 listeners uno debajo de otro. El carácter que hay que añadir a la pantalla es el texto del botón.</li>
+              <li class="mb-1">El botón <code>#clear</code> borra la pantalla <code>#result</code>.</li>
+              <li class="mb-1">El botón <code>#equals</code> calcula la operación (la función de cálculo ya la conoces de la clase anterior).</li>
+              <li>Escribe al menos un listener como <strong>función flecha</strong>.</li>
+            </ol>
+            <p class="small mb-2"><strong>Extra:</strong> control con el teclado (<code>keydown</code> en <code>document</code>), “Error” al dividir entre cero, la tecla <kbd>Backspace</kbd> borra el último carácter.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 1: cómo encontrar todos los botones a la vez</summary>
+<pre class="code-inspector js mt-2">const tlacidla = document.querySelectorAll(".button, .operator");
+console.log(tlacidla.length); // 15</pre>
+            </details>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 2: un listener en un bucle</summary>
+<pre class="code-inspector js mt-2">for (const tlacidlo of tlacidla) {
+  tlacidlo.addEventListener("click", () =&gt; {
+    // tlacidlo.textContent es p. ej. "7" o "+"
+  });
+}</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Pista 3: el cálculo</summary>
+              <p class="small mt-2 mb-0">Igual que la última vez: comprueba que en la pantalla solo hay números, un punto y <code>+ - * /</code>, y después <code>eval(priklad)</code> dentro de <code>try { … } catch { … }</code>. Pon el cálculo en su propia función: te vendrá bien también para el teclado.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Así debe funcionar (prueba también el teclado)</div>
+            <div class="calc-demo" id="calcDemo">
+              <div class="calc-row"><input type="text" id="cdResult" class="result" readonly aria-label="Pantalla"><button type="button" id="cdClear">borrar</button></div>
+              <div class="calc-row"><button type="button" class="button">7</button><button type="button" class="button">8</button><button type="button" class="button">9</button><button type="button" class="operator">/</button></div>
+              <div class="calc-row"><button type="button" class="button">4</button><button type="button" class="button">5</button><button type="button" class="button">6</button><button type="button" class="operator">*</button></div>
+              <div class="calc-row"><button type="button" class="button">1</button><button type="button" class="button">2</button><button type="button" class="button">3</button><button type="button" class="operator">-</button></div>
+              <div class="calc-row"><button type="button" class="button">0</button><button type="button" class="button">.</button><button type="button" id="cdEquals" class="equal-sign">=</button><button type="button" class="operator">+</button></div>
+            </div>
+            <div class="form-check form-switch mt-2 d-flex justify-content-center gap-2">
+              <input class="form-check-input" type="checkbox" role="switch" id="cdKlavesnica">
+              <label class="form-check-label small" for="cdKlavesnica">control con el teclado</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-card" id="uloha5">
+        <h3 class="h5">Tarea 5: valoración con estrellas <span class="badge text-bg-light border align-middle">≈ 15 min</span></h3>
+        <p>En la carpeta <code>5-hodnotenie</code> hay cinco estrellas. Ilumínalas siguiendo el ratón y guarda la valoración al hacer clic. Practicarás tres eventos distintos de la tabla de la sección 4.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1"><code>mouseover</code> en una estrella: se iluminan ella y todas las anteriores (añádeles la clase <code>svieti</code>).</li>
+              <li class="mb-1"><code>mouseout</code>: las estrellas vuelven a la valoración guardada (al principio 0: ninguna encendida).</li>
+              <li class="mb-1"><code>click</code>: se guarda la valoración y en el párrafo <code>#text</code> se muestra p. ej. “Tu valoración: 4/5”.</li>
+              <li>Cada estrella tiene un atributo <code>data-hodnota</code> con un número del 1 al 5.</li>
+            </ol>
+            <p class="small mb-2"><strong>Extra:</strong> un texto distinto según el número de estrellas (1 = “Regular” … 5 = “¡Clase genial!”), un botón “Anular valoración”.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 1: un número de un atributo data</summary>
+<pre class="code-inspector js mt-2">const hodnota = Number(hviezda.getAttribute("data-hodnota"));
+// o más corto: Number(hviezda.dataset.hodnota)</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Pista 2: una función auxiliar</summary>
+              <p class="small mt-2 mb-2">Escribe una función <code>rozsviet(pocet)</code> que recorra todas las estrellas, encienda las que tienen un valor ≤ <code>pocet</code> y apague las demás. Los tres listeners solo tendrán que llamarla con un número distinto.</p>
+<pre class="code-inspector js">let hodnotenie = 0;
+
+function rozsviet(pocet) {
+  // ...
+}</pre>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Así debe funcionar</div>
+            <div class="demo-area stars-demo">
+              <h4 class="h6">¿Qué te ha parecido la clase de hoy?</h4>
+              <div id="hviezdyDemo">
+                <span class="hviezda" data-hodnota="1">★</span><span class="hviezda" data-hodnota="2">★</span><span class="hviezda" data-hodnota="3">★</span><span class="hviezda" data-hodnota="4">★</span><span class="hviezda" data-hodnota="5">★</span>
+              </div>
+              <p class="mt-2 mb-0" id="hviezdyText">Haz clic en una estrella</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h5 mt-5 mb-1">Más tareas para practicar</h3>
+      <p class="small text-secondary mb-3">Para quien termine antes o como deberes. Aquí también solo están hechos el HTML y el CSS.</p>
+
+      <div class="task-card mb-4" id="uloha6">
+        <h3 class="h5">Tarea 6: dos páginas en un solo HTML <span class="badge text-bg-light border align-middle">≈ 15 min</span></h3>
+        <p>En la carpeta <code>6-stranky</code> hay un archivo HTML que en realidad está dividido en dos páginas: <strong>Inicio</strong> y <strong>Contacto</strong> (dos <code>&lt;section&gt;</code>). Contacto está oculto al principio con la clase <code>skryta</code>. Programa el cambio entre ellas sin cargar una página nueva.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1">Un clic en <strong>Contacto</strong> en el menú (<code>#menuKontakt</code>) oculta la sección <code>#domov</code> y muestra <code>#kontakt</code>: añade y quita la clase <code>skryta</code>. Un clic en <strong>Inicio</strong> (<code>#menuDomov</code>) hace lo contrario.</li>
+              <li class="mb-1">Después del cambio, desplaza la página <strong>hasta arriba del todo</strong>: <code>window.scrollTo(0, 0)</code>. Si no, la página nueva empezaría por la mitad.</li>
+              <li class="mb-1">Los botones del final de las páginas deben funcionar igual: <code>#naKontakt</code> y <code>#naDomov</code>.</li>
+              <li>El elemento activo del menú tiene la clase <code>aktivna</code> (subrayado verde).</li>
+            </ol>
+            <p class="small mb-2"><strong>Extra:</strong> cambia también el título de la pestaña del navegador según la página (<code>document.title</code>); que el desplazamiento sea suave: <code>window.scrollTo({ top: 0, behavior: "smooth" })</code>.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 1: una función para cuatro listeners</summary>
+              <p class="small mt-2 mb-2">Dos elementos del menú y dos botones hacen lo mismo; solo cambia la página. Escribe una función <code>ukazStranku(stranka)</code> y los listeners solo tendrán que llamarla.</p>
+<pre class="code-inspector js">function ukazStranku(stranka) {
+  if (stranka === "kontakt") {
+    // oculta inicio, muestra contacto, alterna la clase aktivna en el menú
+  } else {
+    // al revés
+  }
+  window.scrollTo(0, 0);
+}</pre>
+            </details>
+            <details>
+              <summary class="fw-semibold">Pista 2: enlaces con href="#"</summary>
+              <p class="small mt-2 mb-0">Los elementos del menú son enlaces <code>&lt;a href="#"&gt;</code>. Para que el navegador no añada <code>#</code> a la dirección, llama a <code>event.preventDefault()</code> en el listener, igual que con un formulario.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Así debe funcionar: desplázate hacia abajo y haz clic en el botón</div>
+            <div class="spa-demo" id="spaDemo">
+              <div class="spa-hlavicka">
+                <span>Taller</span>
+                <nav><a href="#" id="spaMenuDomov" class="aktivna">Inicio</a><a href="#" id="spaMenuKontakt">Contacto</a></nav>
+              </div>
+              <section class="spa-stranka" id="spaDomov">
+                <h4>Bienvenido al taller de programación</h4>
+                <p>Nos reunimos cada jueves en el aula de informática y programamos. Los principiantes son bienvenidos.</p>
+                <p>En el taller creamos nuestras propias páginas web: de HTML a CSS y JavaScript.</p>
+                <p>Durante el curso cada uno crea su propio proyecto: una página personal, un juego o un cuestionario.</p>
+                <p>Este mes trabajamos en cuestionarios; el mes que viene nos espera un concurso a la calculadora más bonita.</p>
+                <p>Si quieres apuntarte, encontrarás el contacto en la segunda página.</p>
+                <button type="button" id="spaNaKontakt">Ir a contacto →</button>
+              </section>
+              <section class="spa-stranka skryta" id="spaKontakt">
+                <h4>Contacto</h4>
+                <p>Aula de informática n.º 12, 2.ª planta, cada jueves desde las 14:00.</p>
+                <p><strong>¿Tengo que saber programar?</strong><br>No, empezamos desde cero.</p>
+                <p><strong>¿Necesito mi propio ordenador?</strong><br>No, en el aula hay ordenadores para todos.</p>
+                <p><strong>¿Cuánto cuesta?</strong><br>El taller es gratuito.</p>
+                <button type="button" id="spaNaDomov">← Volver al inicio</button>
+              </section>
+            </div>
+            <p class="tiny-label text-center mt-1 mb-0">En el ejemplo solo se desplaza el recuadro; en tu página será toda la ventana.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-card" id="uloha7">
+        <h3 class="h5">Tarea 7: un formulario de registro <span class="badge text-bg-light border align-middle">≈ 20 min</span></h3>
+        <p>En la carpeta <code>7-registracia</code> hay un formulario terminado: nombre, apellidos, correo, contraseña y fecha de nacimiento. En el CSS están preparadas las clases <code>zvyraznene</code> (resaltado) y <code>odoslane</code> (enviado): JavaScript solo las añadirá y quitará.</p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <ol class="mb-3">
+              <li class="mb-1"><strong>Mostrar la contraseña:</strong> el botón <code>#ukazHeslo</code> cambia el campo <code>#heslo</code> entre puntos y texto legible (el atributo <code>type</code>: <code>password</code> ↔ <code>text</code>) y cambia su propio texto a “Ocultar” / “Mostrar”.</li>
+              <li class="mb-1"><strong>Color bajo el ratón:</strong> cuando el ratón está sobre el botón <code>#registrovat</code>, añádele la clase <code>zvyraznene</code> (<code>mouseover</code>). Cuando el ratón se va, quita la clase (<code>mouseout</code>). En el CSS no hay <code>:hover</code> a propósito.</li>
+              <li><strong>Envío</strong>: el evento <code>submit</code> del formulario; no olvides <code>event.preventDefault()</code>:
+                <ul class="mt-1">
+                  <li>una ventana emergente (<code>alert</code>) con el login (correo) y la contraseña,</li>
+                  <li>borra el nombre, los apellidos, el correo, la contraseña y la fecha de nacimiento,</li>
+                  <li>el botón recibe la clase <code>odoslane</code> (verde) y el texto “Enviado ✓”,</li>
+                  <li>a los 3 segundos el botón vuelve a su estado original.</li>
+                </ul>
+              </li>
+            </ol>
+            <p class="small mb-2"><strong>Extra:</strong> si algún campo está vacío, no envíes el formulario y avisa al usuario; tras el envío, vuelve a ocultar la contraseña.</p>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 1: mostrar la contraseña</summary>
+<pre class="code-inspector js mt-2">heslo.setAttribute("type", "text");      // la contraseña se puede leer
+heslo.setAttribute("type", "password");  // otra vez puntos</pre>
+              <p class="small mt-2 mb-0">Lo mismo hicimos en JS 2 en la sección Atributos.</p>
+            </details>
+            <details class="mb-2">
+              <summary class="fw-semibold">Pista 2: algo al cabo de 3 segundos</summary>
+<pre class="code-inspector js mt-2">setTimeout(() =&gt; {
+  // este código se ejecuta al cabo de 3 segundos
+}, 3000);</pre>
+              <p class="small mt-2 mb-0">Lo conoces de la sección 2: una función anónima entregada a otra función.</p>
+            </details>
+            <details>
+              <summary class="fw-semibold">Pista 3: borrar los campos</summary>
+              <p class="small mt-2 mb-0">A cada campo ponle <code>.value = ""</code>, por ejemplo <code>document.getElementById("meno").value = "";</code>. Los valores que quieras mostrar en el <code>alert</code> léelos <strong>antes</strong> de borrar los campos.</p>
+            </details>
+          </div>
+          <div class="col-lg-5">
+            <div class="tiny-label mb-1 text-center">Así debe funcionar</div>
+            <form class="reg-demo" id="regDemo" novalidate>
+              <div class="d-flex gap-2">
+                <div class="mb-2 flex-fill"><label for="rgMeno">Nombre</label><input class="form-control form-control-sm" id="rgMeno"></div>
+                <div class="mb-2 flex-fill"><label for="rgPriezvisko">Apellidos</label><input class="form-control form-control-sm" id="rgPriezvisko"></div>
+              </div>
+              <div class="mb-2"><label for="rgEmail">Correo (login)</label><input type="email" class="form-control form-control-sm" id="rgEmail"></div>
+              <div class="mb-2">
+                <label for="rgHeslo">Contraseña</label>
+                <div class="d-flex gap-2"><input type="password" class="form-control form-control-sm" id="rgHeslo"><button type="button" class="btn btn-sm btn-light border text-nowrap" id="rgUkaz">Mostrar</button></div>
+              </div>
+              <div class="mb-3"><label for="rgDatum">Fecha de nacimiento</label><input type="date" class="form-control form-control-sm" id="rgDatum"></div>
+              <button type="submit" class="reg-tlacidlo" id="rgRegistrovat">Registrarse</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  JavaScript 3 · Funciones y eventos · Documentación: <a href="https://developer.mozilla.org/es/docs/Web/API/EventTarget/addEventListener">MDN – addEventListener</a> · <a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Functions/Arrow_functions">MDN – funciones flecha</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ============================================================
+     Pomocné funkcie
+     ============================================================ */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  function esc(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightJS(src) {
+    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|undefined|typeof|this)\b|\b(document|console|window|location|history|screen|navigator|Number|Math|setTimeout)\b|\b(\d+(?:\.\d+)?)\b/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      const cls = m[1] ? 'com' : m[2] ? 'str' : m[3] ? 'kw' : m[4] ? 'obj' : 'num';
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  function setCode(el, text) { el.innerHTML = highlightJS(text); }
+
+  function highlightHTML(src) {
+    return esc(src).replace(/(&lt;\/?)([a-zA-Z0-9!]+)((?:\s+[a-zA-Z-]+(?:="[^"]*")?)*)(\s*\/?&gt;)/g, (m, open, tag, attrs, close) =>
+      `<span class="tag">${open}${tag}</span>` +
+      attrs.replace(/([a-zA-Z-]+)(="[^"]*")?/g, (mm, name, val) => `<span class="attr">${name}</span>` + (val ? `=<span class="value">${val.slice(1)}</span>` : '')) +
+      `<span class="tag">${close}</span>`);
+  }
+
+  // kód rozdelený na riadky, aby sa dali zvýrazňovať
+  function renderLines(pre, lines) {
+    pre.innerHTML = lines.map(l => `<span class="ln">${highlightJS(l)}</span>`).join('');
+    return $$('.ln', pre);
+  }
+
+  // hodnota tak, ako ju ukáže konzola
+  function fmt(v, nested = false) {
+    if (typeof v === 'string') return nested ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'bigint') return String(v);
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anónima') + '()';
+    if (Array.isArray(v)) return '[' + v.map(x => fmt(x, true)).join(', ') + ']';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ` id="${v.id}"` : '') + (v.classList.length ? ` class="${[...v.classList].filter(c => c !== 'inspect-target').join(' ')}"` : '') + '>';
+    if (v instanceof HTMLCollection || v instanceof NodeList) return (v instanceof HTMLCollection ? 'HTMLCollection' : 'NodeList') + '(' + v.length + ') [' + [...v].map(e => fmt(e)).join(', ') + ']';
+    try { return '{ ' + Object.entries(v).map(([k, x]) => k + ': ' + fmt(x, true)).join(', ') + ' }'; } catch (e) { return String(v); }
+  }
+
+  // chybové hlášky po slovensky
+  const CHYBY = [
+    [/is not defined/, 'no existe ninguna variable o función con este nombre: revisa si hay una errata y las mayúsculas/minúsculas'],
+    [/Assignment to constant variable/, 'no se puede asignar un valor nuevo a una constante (const)'],
+    [/has already been declared/, 'ya existe una variable con este nombre: let y const no se pueden crear dos veces'],
+    [/Missing initializer in const/, 'const debe recibir su valor al crearla'],
+    [/is not a function/, 'esto no es una función: ¿hay una errata en el nombre?'],
+    [/Cannot (read|set) properties of undefined/, 'el valor es undefined: en una función flecha this no apunta al elemento en el que se hizo clic'],
+    [/Cannot (read|set) properties of null/, 'no se encontró el elemento (es null): ¿existe ese id? ¿Se ha cargado ya el HTML?'],
+    [/Unexpected token|Unexpected end of input|missing \) after|Invalid or unexpected token|Unexpected identifier/, 'error de sintaxis: revisa los paréntesis, las comillas y las comas']
+  ];
+  const preloz = msg => (CHYBY.find(([re]) => re.test(msg)) || [, ''])[1];
+
+  function logTo(box, text, cls = '') {
+    $$('.line.muted', box).forEach(l => l.remove());
+    const line = document.createElement('div');
+    line.className = 'line ' + cls;
+    line.textContent = text;
+    box.append(line);
+    box.scrollTop = box.scrollHeight;
+  }
+  function logError(box, name, message) {
+    logTo(box, (name ? name + ': ' : '') + message, 'err');
+    const sk = preloz(message);
+    if (sk) logTo(box, sk, 'hint');
+  }
+  function clearConsole(box) { box.innerHTML = ''; }
+
+  // spustí kód a výstup console.log presmeruje do boxu
+  function runSnippet(code, box) {
+    clearConsole(box);
+    const out = cls => (...args) => logTo(box, args.map(a => fmt(a)).join(' '), cls);
+    const fakeConsole = { log: out(''), info: out(''), warn: out('warn'), error: out('err'), table: out('') };
+    try {
+      new Function('console', code)(fakeConsole);
+    } catch (e) {
+      logError(box, e.name, e.message);
+    }
+    if (!box.children.length) logTo(box, '(no se ha mostrado nada)', 'muted');
+  }
+
+  function highlight(elements, scope) {
+    $$('.inspect-target', scope).forEach(e => e.classList.remove('inspect-target'));
+    elements.forEach(e => e && e.classList && e.classList.add('inspect-target'));
+  }
+
+  // ---------- iframe ukážky: konzola z iframe sa posiela sem ----------
+  const frameBoxes = [];
+  window.addEventListener('message', e => {
+    const f = frameBoxes.find(x => x.frame.contentWindow === e.source);
+    if (!f || !e.data || !e.data.__lab) return;
+    if (e.data.type === 'error') logError(f.box, '', e.data.text);
+    else logTo(f.box, e.data.text, e.data.type === 'warn' ? 'warn' : '');
+  });
+  function bridge(offset = 0) {
+    return `<script>(function () {
+  function fmt(v, n) {
+    if (typeof v === 'string') return n ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return '[' + v.map(function (x) { return fmt(x, true); }).join(', ') + ']';
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anónima') + '()';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ' id="' + v.id + '"' : '') + '>';
+    if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+    return String(v);
+  }
+  ['log', 'info', 'warn', 'error', 'table'].forEach(function (k) {
+    console[k] = function () {
+      parent.postMessage({ __lab: true, type: k, text: Array.prototype.map.call(arguments, function (a) { return fmt(a); }).join(' ') }, '*');
+    };
+  });
+  window.addEventListener('error', function (e) {
+    var riadok = e.lineno && ${offset} ? ' (riadok ' + (e.lineno - ${offset}) + ')' : '';
+    parent.postMessage({ __lab: true, type: 'error', text: e.message.replace(/^Uncaught /, '') + riadok }, '*');
+  });
+})();<\/script>`;
+  }
+  const FRAME_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{padding:.75rem 1rem;font-size:15px}h1{font-size:1.6rem}</style>';
+
+  // statické bloky kódu zafarbíme
+  $$('pre.code-inspector.js').forEach(pre => setCode(pre, pre.textContent));
+  $$('pre.code-inspector.html').forEach(pre => { pre.innerHTML = highlightHTML(pre.textContent); });
+
+  // všetky .snippet bloky s tlačidlom Spustiť
+  $$('.snippet').forEach(sn => {
+    const pre = $('pre', sn), box = $('.console-out', sn), btn = $('.run', sn);
+    if (!box.children.length) logTo(box, 'Consola: haz clic en Ejecutar', 'muted');
+    if (btn) btn.addEventListener('click', () => runSnippet(pre.textContent, box));
+  });
+
+  /* ============================================================
+     Kopírovanie kódu
+     ============================================================ */
+  async function kopiruj(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.append(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e2) { /* nič */ }
+      ta.remove();
+    }
+    btn.textContent = 'Copiado ✓';
+    setTimeout(() => { btn.textContent = 'Copiar'; }, 1500);
+  }
+  $$('pre[data-copy]').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'copy-wrap';
+    if (pre.classList.contains('d-none')) { wrap.classList.add('d-none'); pre.classList.remove('d-none'); }
+    if (pre.classList.contains('mt-2')) { wrap.classList.add('mt-2'); pre.classList.remove('mt-2'); }
+    pre.before(wrap);
+    wrap.append(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copiar';
+    btn.addEventListener('click', () => kopiruj(pre.textContent, btn));
+    wrap.append(btn);
+  });
+
+  /* ============================================================
+     Kvízy
+     ============================================================ */
+  const QUIZZES = {
+    rozcvicka: [
+      { q: '¿Qué devuelve document.querySelector(".panel")?', o: ['todos los elementos con la clase panel', 'el primer elemento con la clase panel', 'el texto de dentro del elemento'], a: 1, e: 'querySelector devuelve el primer elemento encontrado; querySelectorAll devuelve todos.' },
+      { q: '¿Qué hace prvok.classList.toggle("active")?', o: ['siempre añade la clase', 'si el elemento tiene la clase, la quita; si no, la añade', 'borra todas las clases del elemento'], a: 1, e: 'toggle = un interruptor. Hoy lo usaremos para abrir el menú y el acordeón.' },
+      { q: 'La pantalla de la calculadora es <input id="result">. ¿Cómo añades el carácter "7" al final?', o: ['document.getElementById("result").textContent = "7"', 'document.getElementById("result").value += "7"', 'document.getElementById("result").innerHTML = "7"'], a: 1, e: 'El contenido de un input está en la propiedad value y += añade al final.' },
+      { q: '¿Cómo se ejecutaba la última vez una función al hacer clic en un botón de la calculadora?', o: ["con el atributo onclick=\“display('7')\” directamente en el HTML", 'con CSS', 'la función se ejecutaba sola al cargar la página'], a: 0, e: 'El atributo onclick en el HTML. Hoy veremos por qué no es lo ideal con muchos botones y cómo hacerlo mejor.' }
+    ],
+    kviz: [
+      { q: 'const umocni = x => x * x; – ¿qué devuelve umocni(3)?', o: ['6', '9', 'un error: faltan los paréntesis alrededor de x'], a: 1, e: 'Con un solo parámetro podemos quitar los paréntesis. 3 · 3 = 9.' },
+      { q: 'const f = (x) => { x * 2 }; – ¿qué devuelve f(5)?', o: ['10', 'undefined', '"x * 2"'], a: 1, e: 'Con llaves tiene que haber return. Más corto y correcto: (x) => x * 2.' },
+      { q: '¿Qué forma es la versión flecha de la función function vynasob(x, y) { return x * y; }?', o: ['const vynasob = (x, y) => x * y;', 'const vynasob = x, y => x * y;', 'const vynasob => (x, y) { x * y };'], a: 0, e: 'Con dos parámetros los paréntesis se quedan y la flecha va justo detrás.' },
+      { q: '¿Qué es una función anónima?', o: ['una función sin parámetros', 'una función sin nombre', 'una función que no devuelve nada'], a: 1, e: 'Anónima = sin nombre. Lo más habitual es entregarla a otra función, p. ej. addEventListener.' },
+      { q: 'btn.onclick = prva; btn.onclick = druha; – ¿qué pasa al hacer clic?', o: ['se ejecutan prva y druha', 'solo se ejecuta druha', 'solo se ejecuta prva'], a: 1, e: 'Un elemento solo puede tener un manejador del mismo tipo: la segunda asignación sobrescribe la primera.' },
+      { q: 'btn.addEventListener("click", prva); btn.addEventListener("click", druha); – ¿qué pasa al hacer clic?', o: ['solo se ejecuta druha', 'se ejecutan las dos: primero prva, luego druha', 'un error: ya existe un listener de click'], a: 1, e: 'Puede haber varios listeners y se ejecutan en el orden en que los añadimos.' },
+      { q: '¿Por qué escribimos btn.onclick = zmenText; sin paréntesis?', o: ['los paréntesis son opcionales en JavaScript', 'con paréntesis la función se ejecutaría nada más cargar la página', 'sin paréntesis la función se ejecuta más rápido'], a: 1, e: 'zmenText es la función; zmenText() es ejecutarla. Al navegador le entregamos la función y él la ejecuta solo después del clic.' },
+      { q: '¿Qué evento ocurre cuando el cursor del ratón sale de un elemento?', o: ['mouseover', 'mouseout', 'blur'], a: 1, e: 'mouseover = el ratón llega al elemento, mouseout = el ratón sale de él. blur es para los elementos de formulario.' },
+      { q: 'En el acordeón usamos a.addEventListener("click", () => this.classList.toggle("active")). ¿Qué pasa?', o: ['funciona igual que con function', 'no funciona: una función flecha no tiene this propio', 'se abren todos los acordeones a la vez'], a: 1, e: 'En una función flecha this no apunta al elemento en el que se hizo clic. Usa function () { … } o la variable a.' },
+      { q: '¿Cómo añades 25cm² a un párrafo para que el 2 se vea como potencia?', o: ['odsek.textContent += "25cm<sup>2</sup>"', 'odsek.innerHTML += "25cm<sup>2</sup>"', 'odsek.value += "25cm2"'], a: 1, e: 'Solo innerHTML procesa la etiqueta <sup>. textContent la mostraría como texto normal.' }
+    ]
+  };
+
+  $$('[data-quiz]').forEach(holder => {
+    const questions = QUIZZES[holder.dataset.quiz];
+    const answers = new Array(questions.length).fill(null);
+    const wrap = document.createElement('div');
+    questions.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-question';
+      const title = document.createElement('p');
+      title.className = 'fw-semibold mb-2';
+      title.textContent = `${qi + 1}. ${item.q}`;
+      const list = document.createElement('div');
+      list.className = 'list-group';
+      item.o.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-group-item list-group-item-action font-monospace small';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+          if (holder.classList.contains('quiz-done')) return;
+          answers[qi] = oi;
+          $$('.list-group-item', list).forEach(b => b.classList.remove('vybrana'));
+          btn.classList.add('vybrana');
+        });
+        list.append(btn);
+      });
+      const fb = document.createElement('div');
+      fb.className = 'small mt-2';
+      box.append(title, list, fb);
+      wrap.append(box);
+    });
+    const controls = document.createElement('div');
+    controls.className = 'd-flex flex-wrap align-items-center gap-2';
+    controls.innerHTML = '<button type="button" class="btn btn-primary">Comprobar</button><button type="button" class="btn btn-outline-secondary">Borrar respuestas</button><span class="fw-semibold ms-2"></span>';
+    const [evalBtn, resetBtn, score] = controls.children;
+    evalBtn.addEventListener('click', () => {
+      let good = 0;
+      $$('.quiz-question', wrap).forEach((box, qi) => {
+        const opts = $$('.list-group-item', box);
+        opts[questions[qi].a].classList.add('list-group-item-success');
+        const fb = box.lastElementChild;
+        if (answers[qi] === questions[qi].a) { good++; fb.className = 'small mt-2 text-success'; fb.textContent = '✔ Correcto. ' + questions[qi].e; }
+        else {
+          if (answers[qi] !== null) opts[answers[qi]].classList.add('list-group-item-danger');
+          fb.className = 'small mt-2 text-danger';
+          fb.textContent = (answers[qi] === null ? '– Sin respuesta. ' : '✖ Incorrecto. ') + questions[qi].e;
+        }
+      });
+      holder.classList.add('quiz-done');
+      score.textContent = `Resultado: ${good} / ${questions.length}`;
+    });
+    resetBtn.addEventListener('click', () => {
+      answers.fill(null);
+      holder.classList.remove('quiz-done');
+      $$('.list-group-item', wrap).forEach(b => b.classList.remove('vybrana', 'list-group-item-success', 'list-group-item-danger'));
+      $$('.quiz-question > div:last-child', wrap).forEach(fb => { fb.textContent = ''; });
+      score.textContent = '';
+    });
+    holder.append(wrap, controls);
+  });
+
+  /* ============================================================
+     1 Zadanie 1 – tri typy funkcií
+     ============================================================ */
+  (() => {
+    const meno = $('#z1Meno'), strana = $('#z1Strana'), jednotka = $('#z1Jednotka'), metoda = $('#z1Metoda');
+    function ahoj() { return 'Hola'; }
+    function pozdravMeno(m) { return ahoj() + ' ' + m; }
+    function obsahStvorca(s, j) { return s * s + j + '<sup>2</sup>'; }
+    function vykresli() {
+      $('#z1a').textContent = ahoj();
+      $('#z1b').textContent = pozdravMeno(meno.value);
+      const vysledok = obsahStvorca(Number(strana.value), esc(jednotka.value));
+      if (metoda.value === 'innerHTML') $('#z1c').innerHTML = vysledok;
+      else $('#z1c').textContent = vysledok;
+    }
+    [meno, strana, jednotka, metoda].forEach(el => el.addEventListener('input', vykresli));
+    vykresli();
+  })();
+
+  /* ============================================================
+     3 Arrow funkcie – prevod krok po kroku
+     ============================================================ */
+  (() => {
+    const PRIKLADY = {
+      nahodne: { meno: 'nahodneCislo', par: '', telo: 'Math.random()', volanie: 'console.log(nahodneCislo());' },
+      umocni: { meno: 'umocni', par: 'x', telo: 'x * x', volanie: 'console.log(umocni(4));' },
+      vynasob: { meno: 'vynasob', par: 'x, y', telo: 'x * y', volanie: 'console.log(vynasob(2, 4));' },
+      pozdrav: { meno: 'pozdrav', par: 'meno', riadky: ['const text = "Hola " + meno;', 'return text + "!";'], volanie: 'console.log(pozdrav("Jana"));' }
+    };
+    const NAZVY = ['1 · function', '2 · anónima', '3 · flecha =>', '4 · sin { } ni return', '5 · sin paréntesis'];
+    const vyber = $('#arPriklad'), kroky = $('#arKroky'), pre = $('#arKod'), vysv = $('#arVysvetlenie'), box = $('#arConsole');
+    let krok = 0;
+
+    function kod(p, k) {
+      const telo = p.riadky ? p.riadky.map(r => '  ' + r).join('\n') : '  return ' + p.telo + ';';
+      if (k === 0) return `function ${p.meno}(${p.par}) {\n${telo}\n}`;
+      if (k === 1) return `const ${p.meno} = function (${p.par}) {\n${telo}\n};`;
+      if (k === 2 || p.riadky) return `const ${p.meno} = (${p.par}) => {\n${telo}\n};`;
+      if (k === 3 || p.par === '' || p.par.includes(',')) return `const ${p.meno} = (${p.par}) => ${p.telo};`;
+      return `const ${p.meno} = ${p.par} => ${p.telo};`;
+    }
+    function vysvetlenie(p, k) {
+      if (k === 0) return 'Una función clásica con nombre, tal como la conocemos.';
+      if (k === 1) return 'Una función anónima guardada en una variable. El nombre ha pasado de la función a la variable <code>const</code>.';
+      if (k === 2) return 'Borramos la palabra <code>function</code> y detrás de los paréntesis con los parámetros añadimos una flecha <code>=&gt;</code>. Esto ya es una función flecha.';
+      if (p.riadky) return 'Esta función tiene <strong>varias instrucciones</strong>, por eso <code>{ }</code> y <code>return</code> tienen que quedarse. Más corta ya no puede ser.';
+      if (k === 3) return 'La función solo devuelve una expresión, así que borramos <code>{ }</code> y <code>return</code> : el resultado se devuelve automáticamente.';
+      if (p.par === '') return 'Sin parámetro, los paréntesis vacíos <code>()</code> tienen que quedarse. El paso 4 es la forma más corta posible.';
+      if (p.par.includes(',')) return 'Con dos o más parámetros los paréntesis se quedan. El paso 4 es la forma más corta posible.';
+      return 'Con <strong>un solo</strong> parámetro también podemos quitar sus paréntesis. Los pasos 4 y 5 son correctos: elige.';
+    }
+    function aktualnyKod() {
+      const p = PRIKLADY[vyber.value];
+      return kod(p, krok) + '\n\n' + p.volanie;
+    }
+    function vykresli() {
+      const p = PRIKLADY[vyber.value];
+      $$('button', kroky).forEach((b, i) => {
+        b.classList.toggle('btn-success', i === krok);
+        b.classList.toggle('btn-outline-success', i !== krok);
+      });
+      setCode(pre, aktualnyKod());
+      vysv.innerHTML = vysvetlenie(p, krok);
+    }
+    NAZVY.forEach((nazov, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-outline-success';
+      b.textContent = nazov;
+      b.addEventListener('click', () => { krok = i; vykresli(); runSnippet(aktualnyKod(), box); });
+      kroky.append(b);
+    });
+    vyber.addEventListener('change', () => { krok = 0; vykresli(); clearConsole(box); logTo(box, 'Consola', 'muted'); });
+    $('#arSpusti').addEventListener('click', () => runSnippet(aktualnyKod(), box));
+    vykresli();
+  })();
+
+  /* ============================================================
+     4 Udalosti – tabuľka naživo
+     ============================================================ */
+  (() => {
+    const EVENTY = [
+      ['click', 'onclick', 'Al hacer clic con el ratón en el elemento'],
+      ['mouseover', 'onmouseover', 'Cuando el cursor del ratón llega al elemento'],
+      ['mouseout', 'onmouseout', 'Cuando el cursor del ratón sale del elemento'],
+      ['mousedown', 'onmousedown', 'Cuando se pulsa un botón del ratón sobre el elemento'],
+      ['mouseup', 'onmouseup', 'Al soltar el botón del ratón sobre el elemento'],
+      ['mousemove', 'onmousemove', 'Cuando el ratón se mueve'],
+      ['keydown', 'onkeydown', 'Cuando el usuario pulsa una tecla'],
+      ['keyup', 'onkeyup', 'Cuando el usuario suelta una tecla'],
+      ['focus', 'onfocus', 'Cuando el usuario hace clic en un input (recibe el foco)'],
+      ['blur', 'onblur', 'Cuando el usuario sale de un input (hace clic en otro sitio)'],
+      ['input', 'oninput', 'Con cada cambio del texto de un input'],
+      ['change', 'onchange', 'Cuando el usuario cambia el valor de un elemento de formulario y lo confirma'],
+      ['submit', 'onsubmit', 'Cuando el usuario envía un formulario'],
+      ['load', 'onload', 'Cuando el navegador termina de cargar la página'],
+      ['resize', 'onresize', 'Cuando cambia el tamaño de la ventana del navegador']
+    ];
+    const tab = $('#evTabulka'), box = $('#evConsole');
+    const pocty = {}, riadky = {};
+    EVENTY.forEach(([ev, handler, popis]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><code>${ev}</code></td><td><code>${handler}</code></td><td class="small">${popis}</td><td class="count">0</td>`;
+      tab.append(tr);
+      pocty[ev] = 0;
+      riadky[ev] = tr;
+    });
+    function zaznamenaj(ev, kde) {
+      pocty[ev]++;
+      const tr = riadky[ev];
+      tr.lastChild.textContent = pocty[ev];
+      tr.classList.add('flash');
+      clearTimeout(tr.casovac);
+      tr.casovac = setTimeout(() => tr.classList.remove('flash'), 120);
+      if (ev === 'mousemove' || ev === 'resize') return;
+      logTo(box, `${ev} – ${kde}`);
+      while (box.children.length > 8) box.firstChild.remove();
+    }
+    const plocha = $('#evBox');
+    ['click', 'mouseover', 'mouseout', 'mousedown', 'mouseup', 'mousemove'].forEach(ev =>
+      plocha.addEventListener(ev, () => zaznamenaj(ev, 'área verde')));
+    const input = $('#evInput');
+    ['keydown', 'keyup', 'focus', 'blur', 'input', 'change'].forEach(ev =>
+      input.addEventListener(ev, e => zaznamenaj(ev, ev.startsWith('key') ? `tecla "${e.key}"` : 'campo de texto')));
+    const select = $('#evSelect');
+    ['focus', 'blur', 'change'].forEach(ev => select.addEventListener(ev, () => zaznamenaj(ev, 'selección: ' + select.value)));
+    $('#evForm').addEventListener('submit', e => {
+      e.preventDefault(); // stránka sa neobnoví
+      zaznamenaj('submit', 'formulario (hemos detenido el envío con preventDefault)');
+    });
+    window.addEventListener('resize', () => zaznamenaj('resize', 'okno'));
+    if (document.readyState === 'complete') zaznamenaj('load', 'página');
+    else window.addEventListener('load', () => zaznamenaj('load', 'la página se ha cargado'));
+  })();
+
+  /* ============================================================
+     5 onclick, handler, listener
+     ============================================================ */
+  (() => {
+    // a) atribút onclick v HTML
+    window.klik = function () {
+      const btn = document.getElementById('btnA');
+      btn.innerHTML = 'has hecho clic';
+    };
+    $('#btnA').setAttribute('onclick', 'klik()');
+
+    // b) event handler
+    const btnB = document.getElementById('btnB');
+    function zmenText() {
+      btnB.innerHTML = 'Has hecho clic';
+    }
+    btnB.onclick = zmenText;
+
+    // c) addEventListener
+    const btnC = document.getElementById('btnC');
+    btnC.addEventListener('click', () => {
+      btnC.innerHTML = 'Has hecho clic';
+    });
+
+    $('#btnReset').addEventListener('click', () => {
+      ['#btnA', '#btnB', '#btnC'].forEach(id => { $(id).innerHTML = 'Haz clic en mí'; });
+    });
+
+    // úvaha: dve funkcie
+    const box1 = $('#handler2Console'), box2 = $('#listener2Console');
+    const h2 = $('#btnHandler2');
+    h2.onclick = () => logTo(box1, '1');
+    h2.onclick = () => logTo(box1, '2');
+    const l2 = $('#btnListener2');
+    l2.addEventListener('click', () => logTo(box2, '1'));
+    l2.addEventListener('click', () => logTo(box2, '2'));
+
+    // ďalšie udalosti myši
+    const btn = $('#btnMys');
+    btn.addEventListener('click', () => btn.innerHTML = 'Has hecho clic');
+    btn.addEventListener('mouseover', () => btn.style.backgroundColor = 'red');
+    btn.addEventListener('mouseleave', () => btn.style.backgroundColor = 'green');
+    btn.addEventListener('mousedown', () => btn.style.border = '10px solid black');
+    btn.addEventListener('mouseup', () => btn.style.border = '10px solid yellow');
+    $('#btnMysReset').addEventListener('click', () => {
+      btn.removeAttribute('style');
+      btn.innerHTML = 'Haz clic en mí';
+    });
+  })();
+
+  /* ============================================================
+     6 Úloha 2 – navigácia
+     ============================================================ */
+  (() => {
+    const htmlMenu = (onclick) => `<header class="container main-header">
+  <a href="#">Logo</a>
+  <nav class="main-nav">
+    <ul class="main-menu" id="main-menu">
+      <li><a href="index.html">Domov</a></li>
+      <li><a href="o-nas.html">Quiénes somos</a></li>
+      <li><a href="qna.html">Q&A</a></li>
+      <li><a href="kontakt.html">Kontakt</a></li>
+    </ul>
+    <a class="hamburger"${onclick ? ' onclick="myNav()"' : ''}>
+      <i class="fa fa-bars"></i>
+    </a>
+  </nav>
+</header>`;
+    const podmienka = `function myNav() {
+  const menu = document.querySelector(".main-menu");
+  if (menu.className === "main-menu") {
+    menu.className += " responsive";
+  } else {
+    menu.className = "main-menu";
+  }
+}`;
+    const KROKY = [
+      {
+        text: 'Estado original: <code>myNav()</code> se llama desde el atributo <code>onclick</code> en el HTML. La condición comprueba <code>className</code> y añade o quita la clase a mano <code>responsive</code>.',
+        html: htmlMenu(true),
+        js: podmienka
+      },
+      {
+        text: 'Del HTML <strong>borramos <code>onclick</code></strong>. En JS buscamos el hamburger y le añadimos un listener. La función <code>myNav</code> se entrega <strong>sin paréntesis</strong>.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", myNav);\n\n' + podmienka
+      },
+      {
+        text: 'Toda la condición la sustituye <code>classList.toggle("responsive")</code> : la clase se añade o se quita sola.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", myNav);\n\nfunction myNav() {\n  const menu = document.querySelector(".main-menu");\n  menu.classList.toggle("responsive");\n}'
+      },
+      {
+        text: 'La función <code>myNav</code> no la llamamos en ningún otro sitio, así que puede ser <strong>anónima</strong> , y directamente en forma de flecha.',
+        html: htmlMenu(false),
+        js: 'const hamburger = document.querySelector(".hamburger");\nhamburger.addEventListener("click", () => {\n  const menu = document.querySelector(".main-menu");\n  menu.classList.toggle("responsive");\n});'
+      }
+    ];
+    const menu = $('#navMenu'), hamburger = $('#navHamburger');
+    function prepni() {
+      menu.classList.toggle('responsive');
+      $('#navClass').textContent = JSON.stringify(menu.className);
+    }
+    hamburger.addEventListener('click', prepni);
+    hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); prepni(); } });
+    $$('#navMenu a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+
+    function ukaz(k) {
+      $$('#navKroky button').forEach((b, i) => {
+        b.classList.toggle('btn-success', i === k);
+        b.classList.toggle('btn-outline-success', i !== k);
+      });
+      $('#navVysvetlenie').innerHTML = KROKY[k].text;
+      $('#navHtml').innerHTML = highlightHTML(KROKY[k].html);
+      setCode($('#navJs'), KROKY[k].js);
+    }
+    $$('#navKroky button').forEach(b => b.addEventListener('click', () => ukaz(Number(b.dataset.krok))));
+    ukaz(0);
+  })();
+
+  /* ============================================================
+     7 Úloha 3 – akordeón
+     ============================================================ */
+  (() => {
+    // hotový akordeón – presne ako na slajde, len s const
+    const accordion = $('#accDemo').getElementsByClassName('accordion');
+    for (const a of accordion) {
+      a.addEventListener('click', function () {
+        this.classList.toggle('active');
+      });
+    }
+
+    // taby HTML / CSS / JS
+    $$('#accTaby button').forEach(b => b.addEventListener('click', () => {
+      $$('#accTaby button').forEach(x => {
+        x.classList.toggle('btn-success', x === b);
+        x.classList.toggle('btn-outline-success', x !== b);
+      });
+      $$('.acc-tab').forEach(pre => {
+        const obal = pre.closest('.copy-wrap') || pre;
+        obal.classList.toggle('d-none', pre.id !== b.dataset.tab);
+      });
+    }));
+
+    // pokus s arrow funkciou – this tu nie je akordeón
+    const box = $('#accArrowConsole');
+    for (const a of $('#accArrow').getElementsByClassName('accordion')) {
+      a.addEventListener('click', () => {
+        try {
+          this.classList.toggle('active');
+        } catch (e) {
+          logError(box, e.name, e.message);
+          logTo(box, 'aquí this es: ' + (this === window ? 'window (toda la ventana), no el acordeón' : fmt(this)), 'hint');
+        }
+      });
+    }
+  })();
+
+  /* ============================================================
+     8 Playground
+     ============================================================ */
+  (() => {
+    const FRAME_HTML = `<p id="bez_parametra">Función sin parámetro: </p>
+<p id="jeden_parameter">Función con un parámetro: </p>
+<p id="dva_parametre">Función con dos parámetros: </p>
+<button id="myBtn" class="btn btn-outline-success btn-sm mb-3">Haz clic en mí</button>
+<div class="accordion"><div class="question">Pregunta 1</div><div class="answer">Respuesta 1</div></div>
+<div class="accordion"><div class="question">Pregunta 2</div><div class="answer">Respuesta 2</div></div>
+<div class="accordion"><div class="question">Pregunta 3</div><div class="answer">Respuesta 3</div></div>`;
+    const FRAME_STYLE = '<style>p{margin-bottom:.35rem}.question{background-color:#f7f7f7;color:black;padding:2%}.accordion .answer{display:none}.question::before{content:"+ "}.question:hover,.accordion.active .question{background-color:#bfbcbc;cursor:pointer}.accordion.active .answer{display:block;background-color:#f7f7f7;color:black;padding:2%}.accordion.active .question::before{content:"- "}</style>';
+    const PRESETS = [
+      ['Enunciado 1 – esqueleto', `const bez_parametra = document.getElementById("bez_parametra");
+const jeden_parameter = document.getElementById("jeden_parameter");
+const dva_parametre = document.getElementById("dva_parametre");
+
+// a) escribe una función ahoj() que devuelva "Hola" y añade el resultado al párrafo
+
+
+// b) escribe una función pozdravMeno(meno) que llame a ahoj() y añada el nombre
+
+
+// c) escribe una función obsahStvorca(strana, jednotka): resultado p. ej. 25cm²
+`],
+      ['Funciones flecha (de las diapositivas)', `// FUNCIÓN SIN PARÁMETRO
+function nahodneCislo() {
+  return Math.random();
+}
+const nahodne_cislo = () => Math.random();
+
+// FUNCIÓN CON UN PARÁMETRO
+function umocni(x) {
+  return x * x;
+}
+const mocnina = (x) => x * x;
+
+// FUNCIÓN CON DOS PARÁMETROS
+function vynasob(x, y) {
+  return x * y;
+}
+const nasobok = (x, y) => x * y;
+
+console.log(nahodneCislo(), nahodne_cislo());
+console.log(umocni(4), mocnina(4));
+console.log(vynasob(2, 4), nasobok(2, 4));`],
+      ['Función anónima', `// llamada al instante
+(function () {
+  console.log("Esto es una función anónima");
+})();
+
+// guardada en una variable
+const pozdrav = function (meno) {
+  return "Hola " + meno;
+};
+console.log(pozdrav("Jana"));`],
+      ['onclick vs. addEventListener', `const btn = document.getElementById("myBtn");
+
+function firstFunction() {
+  console.log(1);
+}
+function secondFunction() {
+  console.log(2);
+}
+
+// prueba a cambiar estas dos líneas por:
+// btn.onclick = firstFunction;
+// btn.onclick = secondFunction;
+btn.addEventListener("click", firstFunction);
+btn.addEventListener("click", secondFunction);
+
+console.log("Haz clic en el botón del ejemplo");`],
+      ['Eventos del ratón en un botón', `const btn = document.getElementById("myBtn");
+
+btn.addEventListener("click", () => btn.innerHTML = "Has hecho clic");
+btn.addEventListener("mouseover", () => btn.style.backgroundColor = "red");
+btn.addEventListener("mouseleave", () => btn.style.backgroundColor = "green");
+btn.addEventListener("mousedown", () => btn.style.border = "10px solid black");
+btn.addEventListener("mouseup", () => btn.style.border = "10px solid yellow");`],
+      ['Acordeón', `const accordion = document.getElementsByClassName("accordion");
+
+for (const a of accordion) {
+  a.addEventListener("click", function () {
+    this.classList.toggle("active");
+  });
+}
+
+console.log("Número de acordeones: " + accordion.length);`],
+      ['Código vacío', `// Escribe aquí tu código
+`]
+    ];
+    const frame = $('#playFrame'), code = $('#playCode'), box = $('#playConsole'), preset = $('#playPreset');
+    frameBoxes.push({ frame, box });
+    PRESETS.forEach(([name], i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = name;
+      preset.append(o);
+    });
+    function run() {
+      clearConsole(box);
+      const userCode = code.value.replace(/<\/script/gi, '<\\/script');
+      const pred = `<!doctype html><html lang="sk"><head><meta charset="utf-8">${FRAME_CSS}${FRAME_STYLE}`;
+      const telo = '</head><body>' + FRAME_HTML + '\n<script>\n';
+      const offset = (pred + bridge(1) + telo).split('\n').length - 1;
+      frame.srcdoc = pred + bridge(offset) + telo + userCode + '\n<\/script></body></html>';
+      setTimeout(() => { if (!box.children.length) logTo(box, '(no se ha mostrado nada)', 'muted'); }, 600);
+    }
+    function load(i) { code.value = PRESETS[i][1]; run(); }
+    preset.addEventListener('change', () => load(preset.value));
+    $('#playReset').addEventListener('click', () => load(preset.value));
+    $('#playRun').addEventListener('click', run);
+    code.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        code.setRangeText('  ', code.selectionStart, code.selectionEnd, 'end');
+      }
+    });
+    load(0);
+  })();
+
+  /* ============================================================
+     10 Úloha 4 – kalkulačka (ukážka hotového riešenia)
+     ============================================================ */
+  (() => {
+    const displej = $('#cdResult');
+    const tlacidla = $$('#calcDemo .button, #calcDemo .operator');
+    function pridaj(znak) {
+      if (displej.value === 'Error') displej.value = '';
+      displej.value += znak;
+    }
+    for (const tlacidlo of tlacidla) {
+      tlacidlo.addEventListener('click', () => pridaj(tlacidlo.textContent.trim()));
+    }
+    $('#cdClear').addEventListener('click', () => { displej.value = ''; });
+    function vypocitaj() {
+      const priklad = displej.value;
+      if (priklad === '') return;
+      if (!/^[0-9+\-*/.]+$/.test(priklad)) { displej.value = 'Error'; return; }
+      try {
+        const vysledok = Function('"use strict"; return (' + priklad + ')')();
+        displej.value = isFinite(vysledok) ? Math.round(vysledok * 1e10) / 1e10 : 'Error';
+      } catch (e) {
+        displej.value = 'Error';
+      }
+    }
+    $('#cdEquals').addEventListener('click', vypocitaj);
+    document.addEventListener('keydown', e => {
+      if (!$('#cdKlavesnica').checked) return;
+      if (e.target.matches('textarea, select, input:not([readonly]):not([type=checkbox])')) return;
+      if ('0123456789+-*/.'.includes(e.key) && e.key.length === 1) { pridaj(e.key); e.preventDefault(); }
+      else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); vypocitaj(); }
+      else if (e.key === 'Escape') displej.value = '';
+      else if (e.key === 'Backspace') { e.preventDefault(); displej.value = displej.value.slice(0, -1); }
+    });
+  })();
+
+  /* ============================================================
+     10 Úloha 5 – hodnotenie hviezdičkami (ukážka)
+     ============================================================ */
+  (() => {
+    const hviezdy = $$('#hviezdyDemo .hviezda'), text = $('#hviezdyText');
+    const TEXTY = ['', 'Regular', 'Pasable', 'Buena', 'Muy buena', '¡Clase genial!'];
+    let hodnotenie = 0;
+    function rozsviet(pocet) {
+      for (const h of hviezdy) {
+        if (Number(h.dataset.hodnota) <= pocet) h.classList.add('svieti');
+        else h.classList.remove('svieti');
+      }
+    }
+    for (const h of hviezdy) {
+      const hodnota = Number(h.dataset.hodnota);
+      h.addEventListener('mouseover', () => rozsviet(hodnota));
+      h.addEventListener('mouseout', () => rozsviet(hodnotenie));
+      h.addEventListener('click', () => {
+        hodnotenie = hodnota;
+        rozsviet(hodnotenie);
+        text.textContent = `Tvoje hodnotenie: ${hodnotenie}/5 – ${TEXTY[hodnotenie]}`;
+      });
+    }
+  })();
+
+  /* ============================================================
+     10 Úloha 6 – dve stránky v jednom HTML (ukážka)
+     ============================================================ */
+  (() => {
+    const ramcek = $('#spaDemo');
+    const domov = $('#spaDomov'), kontakt = $('#spaKontakt');
+    const menuDomov = $('#spaMenuDomov'), menuKontakt = $('#spaMenuKontakt');
+    function ukazStranku(stranka) {
+      const jeKontakt = stranka === 'kontakt';
+      kontakt.classList.toggle('skryta', !jeKontakt);
+      domov.classList.toggle('skryta', jeKontakt);
+      menuKontakt.classList.toggle('aktivna', jeKontakt);
+      menuDomov.classList.toggle('aktivna', !jeKontakt);
+      ramcek.scrollTo({ top: 0, behavior: 'smooth' }); // na stránke: window.scrollTo(0, 0)
+    }
+    menuDomov.addEventListener('click', e => { e.preventDefault(); ukazStranku('domov'); });
+    menuKontakt.addEventListener('click', e => { e.preventDefault(); ukazStranku('kontakt'); });
+    $('#spaNaKontakt').addEventListener('click', () => ukazStranku('kontakt'));
+    $('#spaNaDomov').addEventListener('click', () => ukazStranku('domov'));
+  })();
+
+  /* ============================================================
+     10 Úloha 7 – registračný formulár (ukážka)
+     ============================================================ */
+  (() => {
+    const formular = $('#regDemo'), heslo = $('#rgHeslo'), ukaz = $('#rgUkaz'), tlacidlo = $('#rgRegistrovat');
+    const POLIA = ['#rgMeno', '#rgPriezvisko', '#rgEmail', '#rgHeslo', '#rgDatum'];
+    let casovac = null;
+    function skryHeslo() {
+      heslo.setAttribute('type', 'password');
+      ukaz.textContent = 'Mostrar';
+    }
+    ukaz.addEventListener('click', () => {
+      if (heslo.getAttribute('type') === 'password') {
+        heslo.setAttribute('type', 'text');
+        ukaz.textContent = 'Ocultar';
+      } else {
+        skryHeslo();
+      }
+    });
+    tlacidlo.addEventListener('mouseover', () => tlacidlo.classList.add('zvyraznene'));
+    tlacidlo.addEventListener('mouseout', () => tlacidlo.classList.remove('zvyraznene'));
+    formular.addEventListener('submit', e => {
+      e.preventDefault();
+      if (POLIA.some(id => $(id).value.trim() === '')) {
+        alert('Rellena todos los campos.');
+        return;
+      }
+      alert('¡El registro se ha completado!\n\nLogin: ' + $('#rgEmail').value + '\nHeslo: ' + heslo.value);
+      POLIA.forEach(id => { $(id).value = ''; });
+      skryHeslo();
+      tlacidlo.classList.add('odoslane');
+      tlacidlo.textContent = 'Enviado ✓';
+      clearTimeout(casovac);
+      casovac = setTimeout(() => {
+        tlacidlo.classList.remove('odoslane');
+        tlacidlo.textContent = 'Registrarse';
+      }, 3000);
+    });
+  })();
+</script>
+</body>
+</html>
