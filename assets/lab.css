@@ -1,0 +1,90 @@
+/* =====================================================================
+   Jazyky webu – laboratórium: spoločné štýly lekcií 0–5 a XML
+   Farbu lekcie nastavíš na <body>: style="--accent:#9a3412; --accent-bg:#ffedd5"
+   ===================================================================== */
+:root { --accent: #2548a8; --accent-bg: #e7edff; }
+body { background: #f7f8fc; }
+code { color: #9a2878; }
+.section-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; scroll-margin-top: 1rem; }
+.section-number { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; padding: 0 .4rem; border-radius: 1rem; background: var(--accent-bg); color: var(--accent); font-weight: 700; margin-right: .5rem; }
+.lesson-badge { background: var(--accent-bg); color: var(--accent); font-weight: 700; }
+.demo-area { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; overflow: hidden; }
+.tiny-label { font-size: .8rem; color: #657086; }
+.toc a { text-decoration: none; }
+.task-card { border: 2px solid var(--accent-bg); border-radius: 1rem; padding: 1.25rem; background: #fff; }
+.erratum { border-left: 4px solid #f59e0b; background: #fffbeb; padding: .6rem .9rem; border-radius: .4rem; font-size: .9rem; }
+
+/* ---------- kód ---------- */
+.code-inspector { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 0; font: .85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.code-inspector .kw { color: #c4b5fd; }
+.code-inspector .str { color: #86efac; }
+.code-inspector .com { color: #9ca3af; font-style: italic; }
+.code-inspector .obj { color: #93c5fd; }
+.code-inspector .num { color: #fdba74; }
+.code-inspector .tag { color: #93c5fd; }
+.code-inspector .attr { color: #fcd34d; }
+.code-inspector .value { color: #86efac; }
+.code-inspector .sel { color: #f9a8d4; }
+.code-inspector .prop { color: #93c5fd; }
+.code-inspector .pi { color: #c4b5fd; }
+.code-inspector mark { background: #f59e0b55; color: inherit; border-radius: .2rem; padding: 0 .1rem; }
+.copy-wrap { position: relative; }
+.copy-wrap > pre { padding-top: 2.1rem; }
+.copy-btn { position: absolute; top: .45rem; right: .45rem; font-size: .7rem; padding: .1rem .45rem; border-radius: .35rem; border: 1px solid #ffffff30; background: #ffffff14; color: #e5e7eb; }
+.copy-btn:hover { background: #ffffff2a; }
+
+/* ---------- konzola ---------- */
+.console-out { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3rem; max-height: 260px; overflow: auto; font: .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.console-out .line { padding: .15rem 0; border-bottom: 1px solid #ffffff10; }
+.console-out .line::before { content: "› "; color: #60a5fa; }
+.console-out .line.err { color: #fca5a5; }
+.console-out .line.err::before { content: "✖ "; color: #f87171; }
+.console-out .line.ok { color: #86efac; }
+.console-out .line.ok::before { content: "✔ "; color: #4ade80; }
+.console-out .line.muted { color: #6b7280; }
+.console-out .line.muted::before { content: ""; }
+
+/* ---------- živý editor ---------- */
+.live { border: 1px solid #d6dbe6; border-radius: .9rem; background: #fff; overflow: hidden; }
+.live-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .45rem .6rem; background: #f1f3f9; border-bottom: 1px solid #e3e7f0; }
+.live-bar .live-tab { border: 0; background: transparent; padding: .2rem .65rem; border-radius: .4rem; font: 600 .78rem ui-monospace, Menlo, Consolas, monospace; color: #4b5563; }
+.live-bar .live-tab.active { background: #111827; color: #fff; }
+.live-bar .live-reset { margin-left: auto; border: 0; background: transparent; font-size: .78rem; color: #4b5563; text-decoration: underline; }
+.live-body { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 992px) { .live-body { grid-template-columns: 1fr 1fr; } .live.stacked .live-body { grid-template-columns: 1fr; } }
+.live textarea { display: block; width: 100%; min-height: 260px; border: 0; resize: vertical; padding: .8rem 1rem; background: #111827; color: #e5e7eb; font: .84rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; tab-size: 2; outline: none; }
+.live textarea:focus { box-shadow: inset 0 0 0 2px #60a5fa; }
+.live-preview { position: relative; background: #fff; border-left: 1px solid #e3e7f0; min-width: 0; }
+.live-preview-label { position: absolute; top: .3rem; right: .5rem; font-size: .7rem; color: #9ca3af; pointer-events: none; z-index: 1; background: #ffffffd9; padding: 0 .35rem; border-radius: .3rem; }
+.live iframe { display: block; width: 100%; height: 100%; min-height: 260px; border: 0; background: #fff; }
+
+/* ---------- náhľad s meniteľnou šírkou ---------- */
+.resizer { background: #e9edf5; border-radius: .9rem; padding: .75rem; }
+.resizer-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: .5rem; font-size: .85rem; }
+.resizer-bar input[type=range] { flex: 1 1 160px; }
+.resizer-bar .px { font: 700 .85rem ui-monospace, Menlo, Consolas, monospace; min-width: 4.5rem; }
+.resizer-stage { overflow: hidden; }
+.resizer-stage iframe { display: block; margin: 0 auto; border: 0; border-radius: .5rem; background: #fff; box-shadow: 0 .25rem 1rem #1d2d5018; height: 340px; max-width: none; }
+
+/* ---------- ihrisko s vlastnosťami ---------- */
+.pg-controls { display: grid; gap: .55rem; }
+.pg-row { display: grid; grid-template-columns: minmax(7.5rem, 11rem) 1fr auto; gap: .5rem; align-items: center; font-size: .85rem; }
+.pg-row label { font-family: ui-monospace, Menlo, Consolas, monospace; color: #9a2878; }
+.pg-row .pg-val { font: 600 .8rem ui-monospace, Menlo, Consolas, monospace; min-width: 4.2rem; text-align: right; }
+.pg-row input[type=color] { width: 3rem; height: 1.8rem; padding: 0; border: 0; background: none; }
+.pg-row select { font-size: .85rem; }
+.pg-stage { min-height: 160px; display: flex; align-items: center; justify-content: center; }
+
+/* ---------- kvíz ---------- */
+.quiz-question { margin-bottom: 1.25rem; }
+.quiz-question .list-group-item { cursor: pointer; }
+.quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
+
+/* ---------- krokovanie (inštalácia) ---------- */
+.steps { counter-reset: krok; list-style: none; padding-left: 0; }
+.steps > li { counter-increment: krok; position: relative; padding: 0 0 1.1rem 3rem; }
+.steps > li::before { content: counter(krok); position: absolute; left: 0; top: -.1rem; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.steps > li::after { content: ""; position: absolute; left: .95rem; top: 2.1rem; bottom: .2rem; width: 2px; background: var(--accent-bg); }
+.steps > li:last-child::after { display: none; }
+.kbd-row kbd { font-size: .8rem; }
+.os-tabs .nav-link { font-size: .85rem; }

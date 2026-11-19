@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XML · syntax, DTD, CSS, XPath a XSLT</title>
+  <meta name="description" content="XML – syntax a pravidlá (well-formed), deklarácia, atribúty, CDATA, entity, menné priestory, DOM, zobrazenie cez CSS, DTD s validátorom, XPath tester a XSLT transformácia priamo v prehliadači.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #b45309; --accent-bg: #fef3c7; }
+    .xml-area { font: .84rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #111827; color: #e5e7eb; border: 0; border-radius: .75rem; padding: .8rem 1rem; width: 100%; min-height: 260px; resize: vertical; tab-size: 2; }
+    .xml-area:focus { outline: 2px solid #f59e0b; }
+    .status { border-radius: .6rem; padding: .55rem .8rem; font-size: .88rem; }
+    .status.ok { background: #dcfce7; color: #166534; }
+    .status.bad { background: #fee2e2; color: #991b1b; white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .8rem; }
+    .tree-view { background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: .6rem .8rem; font: .8rem/1.6 ui-monospace, Menlo, Consolas, monospace; max-height: 340px; overflow: auto; }
+    .tree-view ul { list-style: none; padding-left: 1.1rem; margin: 0; border-left: 1px dashed #d1d5db; }
+    .tree-view > ul { border-left: 0; padding-left: 0; }
+    .tree-view .t-el { color: #1d4ed8; font-weight: 700; }
+    .tree-view .t-at { color: #b45309; }
+    .tree-view .t-tx { color: #047857; }
+    .tree-view .t-cm { color: #6b7280; font-style: italic; }
+    .rule-list li { margin-bottom: .3rem; }
+    .xp-chips .btn, .break-btns .btn { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .75rem; }
+    .result-list { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3rem; max-height: 300px; overflow: auto; font: .8rem/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .result-list .r { padding: .2rem 0; border-bottom: 1px solid #ffffff12; }
+    .result-list .r::before { content: "› "; color: #f59e0b; }
+    .xml-frame { width: 100%; height: 300px; border: 1px solid #d6dbe6; border-radius: .75rem; background: #fff; }
+    .ns-table td { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .8rem; vertical-align: top; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">XML</span>
+  <h1 class="display-5 fw-bold">XML – dáta v značkách</h1>
+  <p class="lead col-lg-8">XML (eXtensible Markup Language) vyzerá ako HTML, ale značky si vymýšľaš sám. Neslúži na zobrazenie stránky, ale na <strong>uloženie a výmenu dát</strong>. Na tejto stránke si XML napíšeš, skontroluješ, zobrazíš cez CSS, overíš podľa DTD, prehľadáš cez XPath a pretransformuješ cez XSLT – všetko priamo v prehliadači.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#co-je">1 · Čo je XML</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#syntax">2 · Syntax a kontrola</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#obsah">3 · Atribúty, CDATA, entity</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#dom">4 · DOM</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#css">5 · XML a CSS</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#dtd">6 · DTD</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#xpath">7 · XPath</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#xslt">8 · XSLT</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Úlohy</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 1 ČO JE XML -->
+  <section class="card section-card mb-4" id="co-je">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Čo je XML a na čo sa používa</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <p class="small">XML je odporúčanie organizácie W3C z roku 1998. Nie je náhradou HTML – oba jazyky majú iný cieľ:</p>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <thead><tr><th></th><th>HTML</th><th>XML</th></tr></thead>
+              <tbody>
+                <tr><td>účel</td><td>zobraziť dáta – <em>ako vyzerajú</em></td><td>niesť dáta – <em>čo to je</em></td></tr>
+                <tr><td>značky</td><td>pevne dané (<code>p</code>, <code>h1</code>…)</td><td>vymýšľa autor (<code>&lt;phone&gt;</code>)</td></tr>
+                <tr><td>chyby</td><td>prehliadač ich potichu opraví</td><td>jediná chyba = dokument je neplatný</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small mb-0">Kde ho stretneš: výmena dát medzi rôznymi systémami, RSS kanály noviniek, formáty Office (<code>.docx</code> a <code>.xlsx</code> sú ZIP plný XML), obrázky SVG, konfiguračné súbory, webové služby. Pre veľmi veľké dáta alebo pre JavaScript je dnes častejší JSON; obrázky a iné binárne dáta XML neuloží dobre, je to len text.</p>
+        </div>
+        <div class="col-lg-6">
+          <p class="small mb-2">Vizitka zapísaná v XML – značky popisujú, čo ktorý údaj znamená:</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;BusinessCard&gt;
+  &lt;name&gt;Jana Nováková&lt;/name&gt;
+  &lt;phone type="mobile"&gt;(+421) 900 123 456&lt;/phone&gt;
+  &lt;email&gt;jana@example.com&lt;/email&gt;
+&lt;/BusinessCard&gt;
+</pre>
+          <p class="small mt-3 mb-1 fw-semibold">Technológie okolo XML:</p>
+          <ul class="small mb-0">
+            <li><strong>DTD</strong> a <strong>XML Schema</strong> – pravidlá, aké značky smie dokument obsahovať</li>
+            <li><strong>XPath</strong> – „cesta“ k údajom v dokumente</li>
+            <li><strong>XSLT</strong> – premena XML na niečo iné (HTML, text, iné XML)</li>
+            <li><strong>XQuery</strong> – dopytovací jazyk nad XML (ako SQL nad databázou)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 SYNTAX -->
+  <section class="card section-card mb-4" id="syntax">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Syntax a kontrola „well-formed“</h2>
+      <p>Dokument, ktorý dodržiava všetky pravidlá zápisu, je <strong>well-formed</strong> (správne utvorený). Iba taký vie program (parser) prečítať. Píš do editora – kontrola beží hneď. Alebo dokument schválne pokaz tlačidlami:</p>
+      <div class="d-flex flex-wrap gap-1 break-btns mb-2" id="breakBtns">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="close">chýba &lt;/email&gt;</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="case">&lt;Name&gt;…&lt;/name&gt;</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="quote">type=mobile bez úvodzoviek</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="root">dva koreňové prvky</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="amp">znak &amp; v texte</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-break="decl">medzera pred &lt;?xml</button>
+        <button type="button" class="btn btn-sm btn-outline-success" data-break="reset">obnoviť</button>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <textarea class="xml-area" id="wfArea" spellcheck="false" aria-label="XML dokument"></textarea>
+          <div class="status mt-2" id="wfStatus"></div>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Pravidlá</h3>
+          <ul class="small rule-list">
+            <li>Dokument má <strong>práve jeden koreňový prvok</strong>, ktorý obaľuje všetko ostatné.</li>
+            <li>Každá značka sa musí zatvoriť. Prázdny prvok môžeš zapísať skrátene: <code>&lt;photo /&gt;</code> namiesto <code>&lt;photo&gt;&lt;/photo&gt;</code>.</li>
+            <li>Záleží na <strong>veľkosti písmen</strong>: <code>&lt;Name&gt;</code> a <code>&lt;name&gt;</code> sú dve rôzne značky.</li>
+            <li>Značky sa nesmú prekrývať: <code>&lt;b&gt;&lt;i&gt;…&lt;/i&gt;&lt;/b&gt;</code>, nie <code>&lt;b&gt;&lt;i&gt;…&lt;/b&gt;&lt;/i&gt;</code>.</li>
+            <li>Hodnota atribútu je vždy v úvodzovkách a nedá sa skrátiť: <code>selected="selected"</code>, nie len <code>selected</code>.</li>
+            <li>Názov značky začína písmenom alebo <code>_</code>, potom písmená, číslice, <code>-</code>, <code>_</code>, <code>.</code>. Nesmie začínať slovom <code>xml</code> (v žiadnej veľkosti písmen) a nesmie obsahovať medzeru.</li>
+            <li>Deklarácia <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code> nie je povinná, ale ak je, musí byť <strong>úplne na začiatku</strong> – ani medzera pred ňou. Bez <code>encoding</code> sa predpokladá UTF-8; <code>standalone="yes"</code> hovorí, že dokument nezávisí od externých súborov (napr. DTD).</li>
+            <li>Komentár: <code>&lt;!-- poznámka --&gt;</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 OBSAH -->
+  <section class="card section-card mb-4" id="obsah">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Atribúty, CDATA, inštrukcie, entity a menné priestory</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">Atribút alebo prvok?</h3>
+          <p class="small">Atribúty sú v začiatočnej značke a pomenúvajú sa podľa rovnakých pravidiel ako prvky. Hodí sa na ne doplňujúca informácia o údaji (typ telefónu), samotné dáta dávaj radšej do prvkov – dajú sa opakovať a vnárať.</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;phone type="mobile" primary="primary"&gt;(+421) 900 123 456&lt;/phone&gt;
+&lt;phone type="home"&gt;(+421) 37 765 4321&lt;/phone&gt;
+&lt;phone type="work"&gt;(+421) 37 641 2000&lt;/phone&gt;
+</pre>
+          <h3 class="h6 mt-3">CDATA – text, ktorý parser nečíta</h3>
+          <p class="small">Obsah medzi <code>&lt;![CDATA[</code> a <code>]]&gt;</code> parser preskočí – znaky <code>&lt;</code> a <code>&amp;</code> v ňom nemusíš nahrádzať. Hodí sa na ukážky kódu.</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;example&gt;&lt;![CDATA[
+  if (a &lt; b &amp;&amp; c &gt; d) { alert("&lt;b&gt;OK&lt;/b&gt;"); }
+]]&gt;&lt;/example&gt;
+</pre>
+          <h3 class="h6 mt-3">Inštrukcia pre spracovanie</h3>
+          <p class="small mb-1">Pokyn pre program, ktorý XML spracúva: <code>&lt;?cieľ inštrukcia?&gt;</code>. Najznámejšia pripája štýl: <code>&lt;?xml-stylesheet type="text/css" href="card.css"?&gt;</code>.</p>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Entity</h3>
+          <p class="small">Znaky, ktoré majú v XML význam, sa v texte nahrádzajú entitou. Číselná entita zapíše ľubovoľný znak podľa kódu. Vlastné entity (skratky za dlhší text) sa definujú v DTD.</p>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <thead><tr><th>Znak</th><th>Entita</th><th>Číselne</th></tr></thead>
+              <tbody>
+                <tr><td>&lt;</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td></tr>
+                <tr><td>&gt;</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td></tr>
+                <tr><td>&amp;</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td></tr>
+                <tr><td>"</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td></tr>
+                <tr><td>'</td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td></tr>
+                <tr><td>®</td><td>– (iba v HTML <code>&amp;reg;</code>)</td><td><code>&amp;#174;</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+<pre class="code-inspector" data-lang="xml">
+&lt;!DOCTYPE card [
+  &lt;!ENTITY company "Stann &amp;amp; White &amp;#174;"&gt;
+]&gt;
+&lt;card&gt;&lt;company&gt;&amp;company;&lt;/company&gt;&lt;/card&gt;
+</pre>
+          <h3 class="h6 mt-3">Menné priestory (namespaces)</h3>
+          <p class="small mb-2">Keď spojíme XML z dvoch zdrojov, môžu sa stretnúť rovnaké názvy s rôznym významom – <code>&lt;table&gt;</code> ako HTML tabuľka a <code>&lt;table&gt;</code> ako kus nábytku. Konflikt vyriešime predponou, ktorú atribútom <code>xmlns:</code> spojíme s jedinečnou adresou (URI):</p>
+<pre class="code-inspector" data-lang="xml">
+&lt;root xmlns:h="http://www.w3.org/TR/html4/"
+      xmlns:f="https://example.com/furniture"&gt;
+  &lt;h:table&gt;&lt;h:tr&gt;&lt;h:td&gt;Jablká&lt;/h:td&gt;&lt;/h:tr&gt;&lt;/h:table&gt;
+  &lt;f:table&gt;&lt;f:name&gt;Konferenčný stolík&lt;/f:name&gt;&lt;/f:table&gt;
+&lt;/root&gt;
+</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 DOM -->
+  <section class="card section-card mb-4" id="dom">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>XML a DOM</h2>
+      <p>Keď si požičiaš auto, ktoré si nikdy nešoféroval, nepanikáriš – v hlave máš <em>model</em>, ako sa auto ovláda. Prehliadač si podobne z každého dokumentu (HTML aj XML) postaví model – <strong>DOM</strong> (Document Object Model): strom uzlov, ku ktorému sa dostane aj JavaScript. Je to štandard W3C, nezávislý od jazyka a platformy. Strom vpravo sa kreslí z editora v časti 2:</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="legend small mb-2"><span class="t-el" style="color:#1d4ed8;font-weight:700">prvok</span> · <span style="color:#b45309">atribút</span> · <span style="color:#047857">text</span> · <span style="color:#6b7280;font-style:italic">komentár</span></div>
+          <div class="tree-view" id="domTree"></div>
+        </div>
+        <div class="col-lg-6">
+          <p class="small mb-2">S XML stromom pracuje JavaScript rovnako ako s HTML (JS 2). Najprv text rozoberieme parserom:</p>
+<pre class="code-inspector" data-lang="js" data-copy>
+const xmlText = document.getElementById("wfArea").value;
+const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+
+const name = doc.querySelector("name").textContent;
+console.log("Meno: " + name);
+
+doc.querySelectorAll("phone").forEach(phone => {
+  console.log(phone.getAttribute("type") + ": " + phone.textContent);
+});
+</pre>
+          <button type="button" class="btn btn-sm btn-primary mt-2" id="domRun">Spustiť nad XML z editora</button>
+          <div class="console-out mt-2" id="domOut"><div class="line muted">Výstup sa zobrazí tu.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 CSS -->
+  <section class="card section-card mb-4" id="css">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Zobrazenie XML pomocou CSS</h2>
+      <p>XML neobsahuje žiadne informácie o vzhľade, prehliadač ho bez štýlu ukáže ako strom alebo jeden dlhý text. CSS funguje rovnako ako pri HTML, len všetko musíme nastaviť my – aj to, či je prvok <code>block</code>, <code>inline</code> alebo <code>none</code> (skrytý). Štýl k XML pripojíme inštrukciou <code>&lt;?xml-stylesheet type="text/css" href="card.css"?&gt;</code>.</p>
+      <div class="row g-3">
+        <div class="col-lg-4"><div class="tiny-label mb-1">card.xml</div><textarea class="xml-area" id="cssXml" spellcheck="false" aria-label="XML" style="min-height:300px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">card.css</div><textarea class="xml-area" id="cssCss" spellcheck="false" aria-label="CSS" style="min-height:300px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">výsledok v prehliadači</div><iframe class="xml-frame" id="cssFrame" title="XML so štýlom"></iframe></div>
+      </div>
+      <div class="row g-3 small mt-1">
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><code>::before</code> a <code>::after</code> vložia pred/za obsah text z vlastnosti <code>content</code>. <code>attr(type)</code> vypíše hodnotu atribútu – <code>phone::before { content: attr(type) ": "; }</code>.</div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Počítadlá</strong>: <code>counter-reset: n;</code> na rodičovi, <code>counter-increment: n;</code> na položke a <code>content: counter(n) ". ";</code> ich vypíše.</div></div>
+        <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Tabuľky</strong>: <code>display: table</code>, <code>table-row</code>, <code>table-cell</code> spravia z ľubovoľných prvkov tabuľku. Selektor atribútu: <code>phone[primary]</code>.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 DTD -->
+  <section class="card section-card mb-4" id="dtd">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>DTD – pravidlá pre dokument</h2>
+      <p>Ak chceš, aby iní ľudia (alebo programy) posielali XML v tvojej štruktúre, musíš im povedať, aké prvky a atribúty smie obsahovať a v akom poradí. Jednoduchý spôsob je <strong>DTD</strong> (Document Type Definition); mocnejšia, ale zložitejšia je <strong>XML Schema</strong>. Dokument, ktorý je well-formed a navyše spĺňa pravidlá DTD, je <strong>valid</strong> (platný).</p>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-6">
+          <h3 class="h6">Prvky: <code>&lt;!ELEMENT názov obsah&gt;</code></h3>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <tbody>
+                <tr><td><code>(#PCDATA)</code></td><td>iba text (Parsed Character Data – text medzi značkami)</td></tr>
+                <tr><td><code>EMPTY</code></td><td>prázdny prvok, napr. <code>&lt;photo /&gt;</code></td></tr>
+                <tr><td><code>ANY</code></td><td>čokoľvek</td></tr>
+                <tr><td><code>(to, from, body)</code></td><td>presne tieto prvky v tomto poradí</td></tr>
+                <tr><td><code>(house | flat)</code></td><td>jeden z nich</td></tr>
+                <tr><td><code>(#PCDATA | b)*</code></td><td>zmiešaný obsah – text aj prvky</td></tr>
+                <tr><td><code>a?</code> <code>b*</code> <code>c+</code></td><td><code>?</code> 0 alebo 1×, <code>*</code> 0 a viac×, <code>+</code> 1 a viac×</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Atribúty: <code>&lt;!ATTLIST prvok atribút typ predvolené&gt;</code></h3>
+          <div class="table-responsive">
+            <table class="table table-sm small mb-2">
+              <tbody>
+                <tr><td><code>CDATA</code></td><td>ľubovoľný text</td></tr>
+                <tr><td><code>(mobile|home|work)</code></td><td>jedna z vymenovaných hodnôt</td></tr>
+                <tr><td><code>ID</code></td><td>jedinečný identifikátor</td></tr>
+                <tr><td><code>#REQUIRED</code></td><td>povinný</td></tr>
+                <tr><td><code>#IMPLIED</code></td><td>nepovinný</td></tr>
+                <tr><td><code>#FIXED "1.0"</code></td><td>ak je uvedený, musí mať presne túto hodnotu</td></tr>
+                <tr><td><code>"OK"</code></td><td>predvolená hodnota, keď atribút chýba</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small mb-0">DTD môže byť priamo v dokumente (<code>&lt;!DOCTYPE koreň [ … ]&gt;</code>) alebo v samostatnom súbore, ktorý použije viac dokumentov: <code>&lt;!DOCTYPE pets SYSTEM "pets.dtd"&gt;</code>.</p>
+        </div>
+      </div>
+      <h3 class="h6">Validátor</h3>
+      <p class="small">Prehliadač DTD nekontroluje, preto sme mu pripísali malý validátor (zvláda <code>ELEMENT</code> a <code>ATTLIST</code> z vnútornej DTD). Pokaz dokument – vymaž <code>&lt;age&gt;</code>, prehoď poradie prvkov, zmeň <code>type="mobile"</code> na <code>"fax"</code>…</p>
+      <div class="d-flex flex-wrap gap-2 mb-2" id="dtdSamples">
+        <button type="button" class="btn btn-sm btn-outline-secondary active" data-sample="pets">pets.xml</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-sample="card">businesscard.xml</button>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-7"><textarea class="xml-area" id="dtdArea" spellcheck="false" aria-label="XML s DTD" style="min-height:380px"></textarea></div>
+        <div class="col-lg-5"><div id="dtdStatus"></div><p class="small text-secondary mt-2 mb-0">Na skutočné projekty: online validátory, napr. <a href="https://www.xmlvalidation.com/">xmlvalidation.com</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 XPATH -->
+  <section class="card section-card mb-4" id="xpath">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>XPath – cesta k údajom</h2>
+      <p>XPath zapisuje cestu k prvkom podobne ako cestu k súboru v priečinkoch: <code>/BusinessCard/name</code>. Je základom XSLT aj XQuery. <code>/</code> na začiatku = od koreňa, <code>//</code> = kdekoľvek v dokumente, <code>[1]</code> = prvý (číslujeme od 1!), <code>@type</code> = atribút, <code>[…]</code> = podmienka (predikát). Klikni na výraz alebo napíš vlastný:</p>
+      <div class="d-flex flex-wrap gap-1 xp-chips mb-2" id="xpChips"></div>
+      <div class="input-group mb-3">
+        <span class="input-group-text font-monospace">XPath</span>
+        <input class="form-control font-monospace" id="xpInput" spellcheck="false" autocomplete="off" aria-label="XPath výraz">
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6"><textarea class="xml-area" id="xpXml" spellcheck="false" aria-label="XML pre XPath" style="min-height:330px"></textarea></div>
+        <div class="col-lg-6"><div class="small fw-semibold mb-1" id="xpCount"></div><div class="result-list" id="xpOut"></div><p class="small text-secondary mt-2 mb-0" id="xpNote"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 XSLT -->
+  <section class="card section-card mb-4" id="xslt">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>XSLT – premena XML na HTML</h2>
+      <p><strong>XSLT</strong> (eXtensible Stylesheet Language Transformations) je na rozdiel od CSS celý jazyk: obsahuje <strong>šablóny</strong> (<code>&lt;xsl:template match="…"&gt;</code>), ktoré sa priradia prvkom podľa XPath a nahradia ich výstupom. Sám je zapísaný v XML. Z jedného XML vie vyrobiť HTML stránku, text, iné XML (a s ďalšími nástrojmi aj PDF). Postup: <em>XML dokument + XSLT dokument → XSLT procesor → výsledný dokument</em>.</p>
+      <div class="row g-3">
+        <div class="col-lg-4"><div class="tiny-label mb-1">pets.xml</div><textarea class="xml-area" id="xsXml" spellcheck="false" aria-label="XML" style="min-height:340px"></textarea></div>
+        <div class="col-lg-4"><div class="tiny-label mb-1">pets.xslt</div><textarea class="xml-area" id="xsXsl" spellcheck="false" aria-label="XSLT" style="min-height:340px"></textarea></div>
+        <div class="col-lg-4">
+          <div class="d-flex align-items-center gap-2 mb-1"><button type="button" class="btn btn-sm btn-primary" id="xsRun">Transformovať</button><span class="tiny-label" id="xsEngine"></span></div>
+          <iframe class="xml-frame" id="xsFrame" title="výsledok XSLT" style="height:300px"></iframe>
+        </div>
+      </div>
+      <div class="status bad mt-2 d-none" id="xsErr"></div>
+      <div class="erratum mt-3">Pozor: Chrome od verzie 158 (november 2026) zabudované XSLT vypol a ostatné prehliadače to plánujú tiež. Súbor XML s <code>&lt;?xml-stylesheet type="text/xsl" …?&gt;</code> otvorený priamo v prehliadači sa už nemusí premeniť. Táto stránka si preto v takom prípade sama načíta náhradnú knižnicu (polyfill <a href="https://github.com/mfreed7/xslt_polyfill">xslt-polyfill</a>, ~1,5 MB). Mimo prehliadača XSLT ďalej funguje bežne (Python, Java, PHP, online testery).</div>
+    </div>
+  </section>
+
+  <!-- 9 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Kvíz</h2>
+      <div id="quizXml"></div>
+    </div>
+  </section>
+
+  <!-- 10 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Úlohy</h2>
+      <p>Všetky úlohy si môžeš priebežne kontrolovať v editoroch na tejto stránke – stačí do nich vložiť svoj kód.</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 1 · Vizitka</h3>
+            <ol class="small mb-0">
+              <li>Napíš <code>businesscard.xml</code> pre vizitku: meno, pozícia (<em>HR manager</em>), firma <em>Stann &amp; White ®</em> (pozor na znaky &amp; a ®!), tri telefóny s atribútom <code>type</code> (mobile, home, work), e-mail.</li>
+              <li>Navrhni vlastnú štruktúru adresy: ulica <em>Oravská 458/7</em>, PSČ <em>949 74</em>, mesto <em>Nitra</em>, štát <em>Slovensko</em>.</li>
+              <li>Over v časti 2, že je dokument well-formed.</li>
+              <li>Vytvor <code>card.css</code>: vizitka ako rámček so šírkou 300 px, meno modré a hrubé, pred e-mail vlož text „e-mail: “ a pred telefón jeho typ (<code>attr(type)</code>). Hlavný telefón (<code>primary</code>) označ za číslom.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 2 · Zvieratká</h3>
+            <p class="small mb-2">Zapíš tieto údaje do XML (<code>pets</code> → <code>pet</code> → <code>name</code>, <code>age</code>, <code>type</code>, <code>color</code>):</p>
+            <div class="table-responsive"><table class="table table-sm small mb-2"><tbody>
+              <tr><td>Tilly</td><td>14</td><td>cat</td><td>silver</td></tr><tr><td>Amanda</td><td>10</td><td>dog</td><td>brown</td></tr>
+              <tr><td>Jack</td><td>3</td><td>cat</td><td>black</td></tr><tr><td>Blake</td><td>12</td><td>dog</td><td>blue</td></tr>
+              <tr><td>Loosey</td><td>1</td><td>cat</td><td>brown</td></tr><tr><td>Stop</td><td>5</td><td>pig</td><td>brown</td></tr>
+            </tbody></table></div>
+            <ol class="small mb-0">
+              <li>Napíš k nemu DTD a over ho validátorom v časti 6.</li>
+              <li>XPath: mená všetkých psov, zvieratká staršie ako 10 rokov, počet hnedých zvieratiek, posledné zvieratko.</li>
+              <li>DTD pre vizitku z úlohy 1: <code>BusinessCard (name, phone+, email?)</code>, <code>type</code> povinný z hodnôt mobile, fax, work, home; <code>primary</code> nepovinný.</li>
+              <li>Bonus: uprav XSLT v časti 8 tak, aby vypisoval len psov a zoradil ich podľa veku (<code>&lt;xsl:sort&gt;</code>).</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  XML · Dokumentácia: <a href="https://www.w3.org/TR/xml/">W3C – XML 1.0</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction">MDN – úvod do XML</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/XPath">MDN – XPath</a> · <a href="https://www.w3.org/TR/xslt-10/">W3C – XSLT 1.0</a> · <a href="https://developer.chrome.com/docs/web-platform/deprecating-xslt">Chrome – odstránenie XSLT</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>
+  const $id = id => document.getElementById(id);
+  const parseXML = text => new DOMParser().parseFromString(text, 'application/xml');
+  const parseError = doc => { const e = doc.getElementsByTagName('parsererror')[0]; return e ? e.textContent.replace(/\s+/g, ' ').replace(/^This page contains the following errors:\s*/, '').replace(/Below is a rendering.*$/, '').trim() : null; };
+
+  // ---------- spoločné ukážkové dáta ----------
+  const CARD = `<?xml version="1.0" encoding="UTF-8"?>
+<BusinessCard>
+  <!-- kontaktné údaje -->
+  <name>Jana Nováková</name>
+  <position>HR manager</position>
+  <phone type="mobile" primary="primary">(+421) 900 123 456</phone>
+  <phone type="home">(+421) 37 765 4321</phone>
+  <phone type="work">(+421) 37 641 2000</phone>
+  <email>jana@example.com</email>
+</BusinessCard>`;
+
+  const PETS = [['Tilly', 14, 'cat', 'silver'], ['Amanda', 10, 'dog', 'brown'], ['Jack', 3, 'cat', 'black'], ['Blake', 12, 'dog', 'blue'], ['Loosey', 1, 'cat', 'brown'], ['Stop', 5, 'pig', 'brown']];
+  const petsXml = (rows, indent) => rows.map(p => indent + '<pet>\n' + indent + '  <name>' + p[0] + '</name>\n' + indent + '  <age>' + p[1] + '</age>\n' + indent + '  <type>' + p[2] + '</type>\n' + indent + '  <color>' + p[3] + '</color>\n' + indent + '</pet>').join('\n');
+
+  // ---------- 2 well-formed + 4 DOM strom ----------
+  const wfArea = $id('wfArea');
+  wfArea.value = CARD;
+  function renderTree(node) {
+    if (node.nodeType === 1) {
+      const attrs = Array.from(node.attributes).map(a => ' <span class="t-at">' + Lab.esc(a.name) + '="' + Lab.esc(a.value) + '"</span>').join('');
+      const kids = Array.from(node.childNodes).map(renderTree).filter(Boolean).join('');
+      return '<li><span class="t-el">&lt;' + Lab.esc(node.nodeName) + '&gt;</span>' + attrs + (kids ? '<ul>' + kids + '</ul>' : '') + '</li>';
+    }
+    if (node.nodeType === 3 || node.nodeType === 4) {
+      const t = node.nodeValue.trim();
+      return t ? '<li><span class="t-tx">"' + Lab.esc(t) + '"</span></li>' : '';
+    }
+    if (node.nodeType === 8) return '<li><span class="t-cm">&lt;!-- ' + Lab.esc(node.nodeValue.trim()) + ' --&gt;</span></li>';
+    return '';
+  }
+  function checkWF() {
+    const doc = parseXML(wfArea.value);
+    const err = parseError(doc);
+    const st = $id('wfStatus');
+    if (err) {
+      st.className = 'status bad mt-2';
+      st.textContent = '✖ Dokument nie je well-formed.\n' + err;
+      $id('domTree').innerHTML = '<span class="text-danger">Z chybného dokumentu sa strom postaviť nedá.</span>';
+    } else {
+      st.className = 'status ok mt-2';
+      st.textContent = '✔ Dokument je well-formed. Koreňový prvok: <' + doc.documentElement.nodeName + '>';
+      $id('domTree').innerHTML = '<ul><li><span class="t-el">document</span><ul>' + renderTree(doc.documentElement) + '</ul></li></ul>';
+    }
+  }
+  const BREAKS = {
+    close: s => s.replace('</email>', ''),
+    case: s => s.replace('<name>', '<Name>'),
+    quote: s => s.replace('type="mobile"', 'type=mobile'),
+    root: s => s + '\n<BusinessCard>\n  <name>Druhá vizitka</name>\n</BusinessCard>',
+    amp: s => s.replace('<position>HR manager</position>', '<position>HR & PR manager</position>'),
+    decl: s => ' ' + s,
+    reset: () => CARD
+  };
+  Lab.$$('#breakBtns [data-break]').forEach(b => b.addEventListener('click', () => {
+    wfArea.value = BREAKS[b.dataset.break](b.dataset.break === 'reset' ? '' : CARD);
+    checkWF();
+  }));
+  wfArea.addEventListener('input', checkWF);
+  checkWF();
+
+  // DOM ukážka
+  $id('domRun').addEventListener('click', () => {
+    const out = $id('domOut');
+    Lab.clearConsole(out);
+    const doc = parseXML(wfArea.value);
+    if (parseError(doc)) { Lab.logTo(out, 'XML v editore nie je well-formed – najprv ho oprav.', 'err'); return; }
+    const name = doc.querySelector('name');
+    Lab.logTo(out, 'Meno: ' + (name ? name.textContent : '(prvok name chýba)'));
+    doc.querySelectorAll('phone').forEach(phone => Lab.logTo(out, phone.getAttribute('type') + ': ' + phone.textContent));
+  });
+
+  // ---------- 5 XML + CSS ----------
+  $id('cssXml').value = CARD.replace('?>\n', '?>\n<?xml-stylesheet type="text/css" href="card.css"?>\n');
+  $id('cssCss').value = `BusinessCard {
+  display: block;
+  width: 260px;
+  margin: 10px;
+  padding: 12px;
+  border: 2px solid #b45309;
+  border-radius: 8px;
+  background: #fef3c7;
+  font-family: Arial, sans-serif;
+}
+name {
+  display: block;
+  color: blue;
+  font-weight: bold;
+  font-size: 20px;
+}
+position { display: block; font-style: italic; margin-bottom: 8px; }
+phone, email { display: block; }
+phone::before { content: attr(type) ": "; color: gray; }
+phone[primary]::after { content: " ★"; }
+email::before { content: "e-mail: "; color: gray; }`;
+  let cssUrls = [];
+  function renderXmlCss() {
+    cssUrls.forEach(u => URL.revokeObjectURL(u));
+    const cssUrl = URL.createObjectURL(new Blob([$id('cssCss').value], { type: 'text/css' }));
+    const xml = $id('cssXml').value.replace(/href="card\.css"/, 'href="' + cssUrl + '"');
+    const xmlUrl = URL.createObjectURL(new Blob([xml], { type: 'application/xml' }));
+    cssUrls = [cssUrl, xmlUrl];
+    $id('cssFrame').src = xmlUrl;
+  }
+  let cssTimer;
+  ['cssXml', 'cssCss'].forEach(id => $id(id).addEventListener('input', () => { clearTimeout(cssTimer); cssTimer = setTimeout(renderXmlCss, 400); }));
+  renderXmlCss();
+
+  // ---------- 6 DTD validátor ----------
+  const DTD_SAMPLES = {
+    pets: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pets [
+  <!ELEMENT pets (pet+)>
+  <!ELEMENT pet (name, age, type, color)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT age (#PCDATA)>
+  <!ELEMENT type (#PCDATA)>
+  <!ELEMENT color (#PCDATA)>
+]>
+<pets>
+` + petsXml(PETS.slice(0, 3), '  ') + `
+</pets>`,
+    card: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE BusinessCards [
+  <!ELEMENT BusinessCards (BusinessCard+)>
+  <!ELEMENT BusinessCard (name, phone+, email?)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT phone (#PCDATA)>
+  <!ATTLIST phone type (mobile|fax|work|home) #REQUIRED>
+  <!ATTLIST phone primary (primary) #IMPLIED>
+  <!ELEMENT email (#PCDATA)>
+]>
+<BusinessCards>
+  <BusinessCard>
+    <name>Jana Nováková</name>
+    <phone type="mobile" primary="primary">(+421) 900 123 456</phone>
+    <phone type="work">(+421) 37 641 2000</phone>
+    <email>jana@example.com</email>
+  </BusinessCard>
+  <BusinessCard>
+    <name>Peter Malý</name>
+    <phone type="home">(+421) 37 765 4321</phone>
+  </BusinessCard>
+</BusinessCards>`
+  };
+  function parseDTD(src) {
+    const m = /<!DOCTYPE\s+([\w:.-]+)\s*\[([\s\S]*?)\]\s*>/.exec(src);
+    if (!m) return null;
+    const dtd = { root: m[1], elements: {}, attrs: {} };
+    const body = m[2].replace(/<!--[\s\S]*?-->/g, '');
+    body.replace(/<!ELEMENT\s+([\w:.-]+)\s+([^>]+)>/g, (_, name, model) => { dtd.elements[name] = model.trim(); });
+    body.replace(/<!ATTLIST\s+([\w:.-]+)\s+([^>]+)>/g, (_, el, rest) => {
+      const re = /([\w:.-]+)\s+(CDATA|ID|IDREFS?|NMTOKENS?|\([^)]*\))\s+(#REQUIRED|#IMPLIED|#FIXED\s+(?:"[^"]*"|'[^']*')|"[^"]*"|'[^']*')/g;
+      let a;
+      dtd.attrs[el] = dtd.attrs[el] || {};
+      while ((a = re.exec(rest))) {
+        const fixed = /^#FIXED\s+["'](.*)["']$/.exec(a[3]);
+        dtd.attrs[el][a[1]] = {
+          type: a[2],
+          values: a[2][0] === '(' ? a[2].slice(1, -1).split('|').map(v => v.trim()) : null,
+          required: a[3] === '#REQUIRED',
+          fixed: fixed ? fixed[1] : null
+        };
+      }
+    });
+    return dtd;
+  }
+  function modelRegex(model) {
+    const tokens = model.match(/[\w:.-]+|[(),|?*+]/g) || [];
+    const re = tokens.map(t => {
+      if (t === '(') return '(?:';
+      if (t === ',') return '';
+      if ('|)?*+'.includes(t)) return t;
+      return '(?:<' + t.replace(/\./g, '\\.') + '>)';
+    }).join('');
+    return new RegExp('^' + re + '$');
+  }
+  function validateDTD(src) {
+    const msgs = [];
+    const doc = parseXML(src);
+    const err = parseError(doc);
+    if (err) return { wf: false, msgs: [err] };
+    const dtd = parseDTD(src);
+    if (!dtd) return { wf: true, noDtd: true, msgs: [] };
+    if (doc.documentElement.nodeName !== dtd.root) msgs.push('Koreňový prvok je <' + doc.documentElement.nodeName + '>, ale DOCTYPE hovorí <' + dtd.root + '>.');
+    const ids = new Set();
+    (function walk(el) {
+      const name = el.nodeName;
+      const model = dtd.elements[name];
+      const kids = Array.from(el.children).map(c => c.nodeName);
+      const text = Array.from(el.childNodes).some(n => (n.nodeType === 3 || n.nodeType === 4) && n.nodeValue.trim());
+      if (model === undefined) msgs.push('Prvok <' + name + '> nie je v DTD deklarovaný.');
+      else if (model === 'EMPTY') { if (el.childNodes.length) msgs.push('Prvok <' + name + '> má byť prázdny (EMPTY).'); }
+      else if (model !== 'ANY') {
+        if (/#PCDATA/.test(model)) {
+          const allowed = (model.match(/[\w:.-]+/g) || []).filter(n => n !== 'PCDATA');
+          kids.filter(k => !allowed.includes(k)).forEach(k => msgs.push('V prvku <' + name + '> nesmie byť <' + k + '> – podľa DTD obsahuje ' + model + '.'));
+        } else {
+          if (text) msgs.push('Prvok <' + name + '> nesmie obsahovať text, iba prvky ' + model + '.');
+          let ok = false;
+          try { ok = modelRegex(model).test(kids.map(k => '<' + k + '>').join('')); } catch (e) { msgs.push('Nerozumiem zápisu obsahu ' + model + '.'); ok = true; }
+          if (!ok) msgs.push('Prvok <' + name + '> má obsah ' + (kids.length ? kids.join(', ') : '(nič)') + ', ale DTD požaduje ' + model + '.');
+        }
+      }
+      const decl = dtd.attrs[name] || {};
+      Array.from(el.attributes).forEach(a => {
+        if (/^xmlns/.test(a.name)) return;
+        const d = decl[a.name];
+        if (!d) { msgs.push('Atribút ' + a.name + ' prvku <' + name + '> nie je v DTD deklarovaný.'); return; }
+        if (d.values && !d.values.includes(a.value)) msgs.push(name + '/@' + a.name + '="' + a.value + '" – povolené hodnoty sú ' + d.values.join(', ') + '.');
+        if (d.fixed !== null && a.value !== d.fixed) msgs.push(name + '/@' + a.name + ' musí mať pevnú hodnotu "' + d.fixed + '".');
+        if (d.type === 'ID') { if (ids.has(a.value)) msgs.push('ID "' + a.value + '" je použité viackrát.'); ids.add(a.value); }
+      });
+      Object.entries(decl).forEach(([an, d]) => { if (d.required && !el.hasAttribute(an)) msgs.push('Prvku <' + name + '> chýba povinný atribút ' + an + '.'); });
+      Array.from(el.children).forEach(walk);
+    })(doc.documentElement);
+    return { wf: true, msgs };
+  }
+  const dtdArea = $id('dtdArea');
+  function runDTD() {
+    const r = validateDTD(dtdArea.value);
+    const st = $id('dtdStatus');
+    if (!r.wf) { st.innerHTML = '<div class="status bad">✖ Dokument nie je ani well-formed:\n' + Lab.esc(r.msgs[0]) + '</div>'; return; }
+    if (r.noDtd) { st.innerHTML = '<div class="status bad">Nenašiel som vnútornú DTD (&lt;!DOCTYPE koreň [ … ]&gt;).</div>'; return; }
+    st.innerHTML = r.msgs.length
+      ? '<div class="status bad">✖ Well-formed áno, valid nie (' + r.msgs.length + '):\n' + r.msgs.map(m => '• ' + Lab.esc(m)).join('\n') + '</div>'
+      : '<div class="status ok">✔ Dokument je well-formed aj valid – spĺňa všetky pravidlá DTD.</div>';
+  }
+  Lab.$$('#dtdSamples [data-sample]').forEach(b => b.addEventListener('click', () => {
+    dtdArea.value = DTD_SAMPLES[b.dataset.sample];
+    Lab.$$('#dtdSamples [data-sample]').forEach(x => x.classList.toggle('active', x === b));
+    runDTD();
+  }));
+  dtdArea.addEventListener('input', runDTD);
+  dtdArea.value = DTD_SAMPLES.pets;
+  runDTD();
+
+  // ---------- 7 XPath ----------
+  $id('xpXml').value = CARD;
+  const XP = [
+    ['/', 'celý dokument'], ['/BusinessCard', 'koreňový prvok'], ['/BusinessCard/name', 'prvok name v koreni'],
+    ['/BusinessCard/name/text()', 'len text prvku'], ['/BusinessCard/phone', 'všetky telefóny'], ['/BusinessCard/phone[3]', 'tretí telefón (počíta sa od 1)'],
+    ['/BusinessCard/phone[last()]', 'posledný telefón'], ['//phone', 'telefóny kdekoľvek v dokumente'], ['//phone[@type="work"]', 'telefón s atribútom type="work"'],
+    ['//phone/@type', 'hodnoty atribútov type'], ['//phone[@primary]', 'telefón, ktorý má atribút primary'], ['//name[contains(text(), "Jana")]', 'meno obsahujúce „Jana“'],
+    ['count(//phone)', 'funkcia – počet telefónov']
+  ];
+  XP.forEach(([expr, note]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-sm btn-outline-secondary'; b.textContent = expr; b.title = note;
+    b.addEventListener('click', () => { $id('xpInput').value = expr; runXPath(); });
+    $id('xpChips').appendChild(b);
+  });
+  const serializer = new XMLSerializer();
+  function runXPath() {
+    const out = $id('xpOut'), expr = $id('xpInput').value.trim();
+    const hit = XP.find(x => x[0] === expr);
+    $id('xpNote').textContent = hit ? hit[1] : '';
+    out.innerHTML = '';
+    const doc = parseXML($id('xpXml').value);
+    if (parseError(doc)) { $id('xpCount').textContent = 'XML nie je well-formed.'; return; }
+    if (!expr) { $id('xpCount').textContent = ''; return; }
+    let res;
+    try { res = doc.evaluate(expr, doc, null, XPathResult.ANY_TYPE, null); }
+    catch (e) { $id('xpCount').innerHTML = '<span class="text-danger">Neplatný výraz XPath.</span>'; return; }
+    const add = t => { const d = document.createElement('div'); d.className = 'r'; d.textContent = t; out.appendChild(d); };
+    if (res.resultType === XPathResult.NUMBER_TYPE) { $id('xpCount').textContent = 'Výsledok je číslo:'; add(res.numberValue); return; }
+    if (res.resultType === XPathResult.STRING_TYPE) { $id('xpCount').textContent = 'Výsledok je text:'; add(res.stringValue); return; }
+    if (res.resultType === XPathResult.BOOLEAN_TYPE) { $id('xpCount').textContent = 'Výsledok je pravdivostná hodnota:'; add(res.booleanValue); return; }
+    let n, count = 0;
+    while ((n = res.iterateNext())) {
+      count++;
+      if (n.nodeType === 2) add(n.name + '="' + n.value + '"');
+      else if (n.nodeType === 3) add('"' + n.nodeValue + '"');
+      else if (n.nodeType === 9) add(serializer.serializeToString(n.documentElement));
+      else add(serializer.serializeToString(n));
+    }
+    $id('xpCount').textContent = 'Nájdené uzly: ' + count;
+  }
+  $id('xpInput').addEventListener('input', runXPath);
+  $id('xpXml').addEventListener('input', runXPath);
+  $id('xpInput').value = '/BusinessCard/phone';
+  runXPath();
+
+  // ---------- 8 XSLT ----------
+  $id('xsXml').value = '<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="pets.xslt"?>\n<pets>\n' + petsXml(PETS, '  ') + '\n</pets>';
+  $id('xsXsl').value = `<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="html"/>
+
+  <!-- šablóna pre koreňový prvok pets -->
+  <xsl:template match="/pets">
+    <html>
+      <body style="font-family: Arial, sans-serif">
+        <h2>Moje zvieratká</h2>
+        <table border="1" cellpadding="6">
+          <tr><th>Meno</th><th>Vek</th><th>Druh</th></tr>
+          <xsl:for-each select="pet">
+            <tr>
+              <td><xsl:value-of select="name"/></td>
+              <td><xsl:value-of select="age"/></td>
+              <td><xsl:value-of select="type"/></td>
+            </tr>
+          </xsl:for-each>
+        </table>
+        <p>Spolu: <xsl:value-of select="count(pet)"/></p>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>`;
+  const POLYFILL = 'https://cdn.jsdelivr.net/npm/xslt-polyfill@1.0.34/xslt-polyfill.min.js';
+  let polyfillPromise = null;
+  function hasNativeXSLT() {
+    if (typeof XSLTProcessor === 'undefined') return false;
+    try {
+      const p = new XSLTProcessor();
+      p.importStylesheet(parseXML('<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"><xsl:template match="/"><r/></xsl:template></xsl:stylesheet>'));
+      return !!p.transformToDocument(parseXML('<a/>'));
+    } catch (e) { return false; }
+  }
+  function ensureXSLT() {
+    if (hasNativeXSLT()) return Promise.resolve('native');
+    if (!polyfillPromise) polyfillPromise = new Promise((resolve, reject) => {
+      $id('xsEngine').textContent = 'načítavam polyfill…';
+      const s = document.createElement('script');
+      s.src = POLYFILL;
+      s.onload = () => resolve('polyfill');
+      s.onerror = () => reject(new Error('Polyfill sa nepodarilo načítať (si offline?).'));
+      document.head.appendChild(s);
+    });
+    return polyfillPromise;
+  }
+  async function runXSLT() {
+    const errBox = $id('xsErr');
+    errBox.classList.add('d-none');
+    const xml = parseXML($id('xsXml').value), xsl = parseXML($id('xsXsl').value);
+    const bad = parseError(xml) ? 'pets.xml: ' + parseError(xml) : parseError(xsl) ? 'pets.xslt: ' + parseError(xsl) : null;
+    if (bad) { errBox.textContent = '✖ ' + bad; errBox.classList.remove('d-none'); return; }
+    try {
+      const engine = await ensureXSLT();
+      $id('xsEngine').textContent = engine === 'native' ? 'XSLT procesor prehliadača' : 'XSLT cez polyfill';
+      const proc = new XSLTProcessor();
+      proc.importStylesheet(xsl);
+      const result = proc.transformToDocument(xml);
+      if (!result || !result.documentElement) throw new Error('Transformácia nevrátila žiadny výsledok.');
+      $id('xsFrame').srcdoc = '<!doctype html>' + (result.documentElement.outerHTML || serializer.serializeToString(result));
+    } catch (e) {
+      errBox.textContent = '✖ ' + e.message;
+      errBox.classList.remove('d-none');
+    }
+  }
+  $id('xsRun').addEventListener('click', runXSLT);
+  runXSLT();
+
+  // ---------- 9 kvíz ----------
+  Lab.quiz('#quizXml', [
+    { q: 'Na čo je XML určené predovšetkým?', o: ['na zobrazenie stránky', 'na uloženie a výmenu dát', 'na programovanie animácií'], a: 1, e: 'HTML ukazuje, ako dáta vyzerajú; XML hovorí, čo dáta sú.', mono: false },
+    { q: 'Ktorý dokument je well-formed?', o: ['<a><b></a></b>', '<a><b/></a>', '<a></a><b></b>'], a: 1, e: 'Prvý má prekrížené značky, tretí dva koreňové prvky. <b/> je skrátený prázdny prvok.' },
+    { q: 'Ktorý názov prvku je v XML povolený?', o: ['<1st-place>', '<xmlData>', '<first_place>', '<first place>'], a: 2, e: 'Nesmie začínať číslicou ani slovom xml a nesmie obsahovať medzeru.' },
+    { q: 'Ako zapíšeš znak & v texte XML?', o: ['&', '&amp;', '\\&'], a: 1, e: 'Samotný & začína entitu, preto ho zapíšeme ako &amp;.' },
+    { q: 'Čo znamená v DTD <!ELEMENT BusinessCard (name, phone+, email?)>?', o: ['name 1×, phone aspoň 1×, email 0 alebo 1×, v tomto poradí', 'ľubovoľné poradie prvkov', 'phone je nepovinný'], a: 0, e: '+ = 1 a viac, ? = 0 alebo 1, čiarka určuje poradie.', mono: false },
+    { q: 'Čo vráti XPath //phone[1] v našej vizitke?', o: ['všetky telefóny', 'prvý telefón', 'posledný telefón'], a: 1, e: 'V XPath sa čísluje od 1. Posledný by bol //phone[last()].' },
+    { q: 'Ktorý XPath vyberie telefóny s atribútom type="work"?', o: ['//phone.work', '//phone[@type="work"]', '//phone/type=work'], a: 1, e: '@ označuje atribút, hranaté zátvorky podmienku.' },
+    { q: 'Aký je hlavný rozdiel medzi CSS a XSLT pre XML?', o: ['žiadny', 'CSS iba štýluje, XSLT vie dokument pretvoriť (zoradiť, vybrať, vyrobiť HTML)', 'XSLT funguje len v Exceli'], a: 1, e: 'XSLT je jazyk so šablónami a XPath; CSS len nastavuje vzhľad existujúcich prvkov.', mono: false }
+  ]);
+</script>
+</body>
+</html>

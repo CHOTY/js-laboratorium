@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5 · Responzívne jednotky a Bootstrap – inštalácia krok za krokom</title>
+  <meta name="description" content="Lekcia 5 – responzívne jednotky rem, em, %, vw, vh a clamp(), framework Bootstrap 5: inštalácia cez CDN aj stiahnutím, breakpointy, kontajnery, mriežka, medzery a komponenty. Úlohy team.html, pizzeria, modálne okno.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #7952b3; --accent-bg: #ede9fe; }
+    .install-tabs .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bp-table td, .bp-table th { white-space: nowrap; }
+    .bp-table tr.now td { background: var(--accent-bg); font-weight: 600; }
+    .preset-btns .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bs-demo { border: 1px solid #e3e7f0; border-radius: .9rem; background: #fff; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+    .bs-demo > h3 { font-size: .95rem; font-weight: 700; padding: .7rem 1rem .2rem; margin: 0; }
+    .bs-demo > p { font-size: .82rem; color: #6b7280; padding: 0 1rem; margin: 0 0 .5rem; }
+    .bs-render { padding: .5rem 1rem 1rem; }
+    .bs-demo .code-inspector { border-radius: 0; margin-top: auto; font-size: .76rem; max-height: 260px; overflow: auto; }
+    .bs-demo .copy-wrap { margin-top: auto; }
+    .unit-table td { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82rem; }
+    .err-list li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lekcia 5</span>
+  <h1 class="display-5 fw-bold">Responzívne jednotky a Bootstrap</h1>
+  <p class="lead col-lg-8">Najprv jednotky, s ktorými sa stránka prispôsobí obrazovke aj nastaveniu písma v prehliadači. Potom <strong>Bootstrap</strong> – hotové CSS a JavaScript, s ktorými postavíš responzívnu stránku za pár minút. Ukážeme si inštaláciu krok za krokom od úplného začiatku.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#jednotky">1 · Responzívne jednotky</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bootstrap">2 · Čo je Bootstrap</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#instalacia">3 · Inštalácia</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#breakpointy">4 · Breakpointy a kontajnery</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#mriezka">5 · Mriežka</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#zarovnanie">6 · Zarovnanie a medzery</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#komponenty">7 · Komponenty</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">8 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">9 · Úlohy</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 1 JEDNOTKY -->
+  <section class="card section-card mb-4" id="jednotky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Responzívne jednotky</h2>
+      <div class="table-responsive">
+        <table class="table table-sm small align-middle unit-table">
+          <thead><tr><th>Jednotka</th><th>Vzhľadom na čo</th><th>Kedy ju použiť</th></tr></thead>
+          <tbody>
+            <tr><td>rem</td><td style="font-family:inherit">veľkosť písma koreňa <code>&lt;html&gt;</code> (rem = <em>root em</em>, predvolene 16 px)</td><td style="font-family:inherit">písmo a medzery – keď si slabozraký človek zväčší písmo v prehliadači, stránka sa zväčší s ním</td></tr>
+            <tr><td>em</td><td style="font-family:inherit">veľkosť písma rodiča (body 5 px → odsek 2em = 10 px)</td><td style="font-family:inherit">veci, ktoré majú rásť s textom okolo (padding tlačidla)</td></tr>
+            <tr><td>%</td><td style="font-family:inherit">šírka rodiča</td><td style="font-family:inherit">plynulé stĺpce – takto má šírky aj mriežka Bootstrapu</td></tr>
+            <tr><td>vw / vh</td><td style="font-family:inherit">1 % šírky / výšky okna prehliadača (viewport)</td><td style="font-family:inherit">sekcia na celú výšku obrazovky (<code>100vh</code>), písmo podľa šírky okna</td></tr>
+            <tr><td>clamp(min, ideál, max)</td><td style="font-family:inherit">ideálna hodnota, ale nikdy menej ako min a viac ako max</td><td style="font-family:inherit">responzívne písmo bez media queries: <code>clamp(1.5rem, 5vw, 3rem)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">Zmeň šírku okna a porovnaj tri nadpisy – jeden v <code>px</code>, jeden vo <code>vw</code> a jeden s <code>clamp()</code>:</p>
+      <div id="unitResizer"></div>
+      <p class="small text-secondary mt-2 mb-0">Nadpis vo <code>vw</code> je na mobile drobný a na veľkom monitore obrovský. <code>clamp()</code> rastie s oknom, ale len v rozumných hraniciach. Inú možnosť – rôzne veľkosti pre rôzne zariadenia – poznáš z lekcie 4: media queries.</p>
+    </div>
+  </section>
+
+  <!-- 2 ČO JE BOOTSTRAP -->
+  <section class="card section-card mb-4" id="bootstrap">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Čo je Bootstrap</h2>
+      <p><strong>Bootstrap</strong> je najznámejší CSS <em>framework</em> – balík pripraveného CSS a JavaScriptu na stavbu responzívnych stránok. Vznikol v roku 2011 vo firme Twitter. Namiesto písania vlastného CSS pridávaš prvkom hotové triedy: <code>class="btn btn-primary"</code> spraví pekné modré tlačidlo, <code>class="row"</code> a <code>class="col"</code> rozložia stránku do stĺpcov. Základom je <strong>mriežka s 12 stĺpcami</strong>.</p>
+      <div class="row g-3 small">
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-success">Výhody</strong><ul class="mb-0 mt-1"><li>zrýchli vývoj – mriežka, tlačidlá, formuláre, menu sú hotové</li><li>funguje rovnako vo všetkých prehliadačoch</li><li>čisté, súmerné rozloženie a dobré návyky (mobile-first)</li><li>obrovská dokumentácia a príklady</li></ul></div></div>
+        <div class="col-md-6"><div class="border rounded-3 p-3 h-100 bg-white"><strong class="text-danger">Nevýhody</strong><ul class="mb-0 mt-1"><li>stránky vyzerajú podobne („bootstrapovo“)</li><li>pridá veľa kódu, ktorý nepoužiješ</li><li>musíš sa naučiť jeho triedy a pravidlá</li><li>keď chceš niečo úplne iné, prepisovanie štýlov zaberie čas</li></ul></div></div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Používame verziu <strong>5.3</strong>. Dokumentácia: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">getbootstrap.com/docs/5.3</a>.</p>
+    </div>
+  </section>
+
+  <!-- 3 INŠTALÁCIA -->
+  <section class="card section-card mb-4" id="instalacia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Inštalácia krok za krokom</h2>
+      <p>Bootstrap sú v podstate dva súbory: <code>bootstrap.min.css</code> (štýly, patrí do hlavičky) a <code>bootstrap.bundle.min.js</code> (interaktívne časti ako rozbaľovacie menu či modálne okno, patrí na koniec <code>&lt;body&gt;</code>). Môžeš ich načítať z internetu (CDN) alebo stiahnuť do projektu. Prípona <code>.min</code> znamená <em>minifikovaný</em> súbor – bez medzier a komentárov, menší a rýchlejší; vhodný na zverejnený web.</p>
+      <div class="d-flex flex-wrap gap-2 mb-4 install-tabs" data-tabs>
+        <button type="button" class="btn btn-outline-secondary active" data-tab="instCdn">A · Cez CDN (odporúčané)</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instDownload">B · Stiahnutím do projektu</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="instNpm">C · Cez npm (pre pokročilých)</button>
+      </div>
+
+      <div id="instCdn">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Priprav projekt</h3><p class="small mb-0">Nový priečinok, v ňom <code>index.html</code> a <code>css/style.css</code>, otvorený v editore so spusteným Live Serverom – presne ako v <a href="0-setup.html">lekcii 0</a>.</p></li>
+          <li><h3 class="h6 mb-1">Nájdi odkazy na CDN</h3><p class="small mb-0">CDN (Content Delivery Network) je server, z ktorého si prehliadač súbory stiahne. Na <a href="https://getbootstrap.com/">getbootstrap.com</a> klikni na <strong>Docs</strong> → <strong>Get started</strong> → časť <em>Quick start</em> / <em>Include via CDN</em>. Sú tam dva riadky – <code>&lt;link&gt;</code> a <code>&lt;script&gt;</code>.</p></li>
+          <li><h3 class="h6 mb-1">CSS do hlavičky</h3><p class="small mb-0">Riadok s <code>&lt;link … bootstrap.min.css&gt;</code> vlož do <code>&lt;head&gt;</code> za meta viewport. <strong>Tvoj</strong> <code>style.css</code> pripoj až <strong>za</strong> Bootstrap – tak môžeš jeho štýly prepísať.</p></li>
+          <li><h3 class="h6 mb-1">JavaScript na koniec body</h3><p class="small mb-0">Riadok s <code>&lt;script … bootstrap.bundle.min.js&gt;</code> vlož tesne pred <code>&lt;/body&gt;</code>. Bez neho sa stránka zobrazí, ale nebude fungovať rozbaľovanie menu, modálne okná ani zatváranie upozornení.</p></li>
+          <li><h3 class="h6 mb-1">Over, že to funguje</h3><p class="small mb-0">Ulož a pozri do prehliadača: tlačidlo je fialovomodré a zaoblené (CSS funguje) a po kliknutí na „Vyskúšaj JavaScript“ sa rozbalí text (JS funguje). Ak nie, otvor <kbd>F12</kbd> → <em>Console</em> a pozri chyby.</p></li>
+        </ol>
+        <p class="small fw-semibold mb-1">Celá kostra – skopíruj do <code>index.html</code>:</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Moja stránka s Bootstrapom&lt;/title&gt;
+  &lt;!-- 1. Bootstrap CSS --&gt;
+  &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;!-- 2. môj CSS až za ním --&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container py-5"&gt;
+    &lt;h1&gt;Ahoj, Bootstrap!&lt;/h1&gt;
+    &lt;button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#test"&gt;
+      Vyskúšaj JavaScript
+    &lt;/button&gt;
+    &lt;div class="collapse mt-3" id="test"&gt;
+      &lt;div class="alert alert-success"&gt;Funguje CSS aj JavaScript.&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 3. Bootstrap JS na koniec body --&gt;
+  &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p class="small text-secondary mt-2 mb-0">CDN potrebuje internet. Na stránke getbootstrap.com sú odkazy ešte doplnené atribútmi <code>integrity</code> a <code>crossorigin</code> – kontrolujú, že súbor nikto nepodvrhol; môžeš ich tam nechať.</p>
+      </div>
+
+      <div id="instDownload" class="d-none">
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Stiahni skompilované súbory</h3><p class="small mb-0">Na <a href="https://getbootstrap.com/docs/5.3/getting-started/download/">getbootstrap.com → Download</a> klikni v časti <strong>Compiled CSS and JS</strong> na <strong>Download</strong>. Stiahne sa archív <code>bootstrap-5.3.x-dist.zip</code>.</p></li>
+          <li><h3 class="h6 mb-1">Rozbaľ a vyber, čo treba</h3><p class="small mb-0">V archíve sú priečinky <code>css</code> a <code>js</code> s množstvom súborov. Stačia dva: <code>css/bootstrap.min.css</code> a <code>js/bootstrap.bundle.min.js</code>. (<em>bundle</em> = vrátane knižnice Popper pre rozbaľovacie menu a tooltipy; súbory <code>.map</code> nepotrebuješ.)</p></li>
+          <li><h3 class="h6 mb-1">Skopíruj ich do projektu</h3>
+<div class="tree small mt-1" style="background:#111827;color:#e5e7eb;border-radius:.6rem;padding:.7rem 1rem;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto">my-website/
+├── index.html
+├── css/
+│   ├── bootstrap.min.css   ← zo stiahnutého archívu
+│   └── style.css           ← tvoje štýly
+└── js/
+    └── bootstrap.bundle.min.js</div></li>
+          <li><h3 class="h6 mb-1">Pripoj ich relatívnou cestou</h3>
+<pre class="code-inspector mt-1" data-lang="html" data-copy>
+&lt;head&gt;
+  …
+  &lt;link href="css/bootstrap.min.css" rel="stylesheet"&gt;
+  &lt;link href="css/style.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  …
+  &lt;script src="js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+</pre></li>
+          <li><h3 class="h6 mb-1">Over, že to funguje</h3><p class="small mb-0">Rovnako ako pri CDN – vlož do body tlačidlo a rozbaľovací text z kostry vedľa. Výhoda: stránka funguje aj bez internetu. Ak sa štýly nenačítali, skontroluj cestu (<kbd>F12</kbd> → <em>Network</em> – chyba 404 znamená zlú cestu).</p></li>
+        </ol>
+      </div>
+
+      <div id="instNpm" class="d-none">
+        <p class="small">Profesionálne projekty spravujú knižnice cez <strong>npm</strong> (správca balíkov pre Node.js). Na hodine to nepotrebuješ, ale je dobré vedieť, že existuje:</p>
+        <ol class="steps">
+          <li><h3 class="h6 mb-1">Nainštaluj Node.js</h3><p class="small mb-0">Z <a href="https://nodejs.org/">nodejs.org</a> verziu LTS. Overíš v termináli príkazom <code>node -v</code>.</p></li>
+          <li><h3 class="h6 mb-1">Nainštaluj Bootstrap do projektu</h3>
+<pre class="code-inspector mt-1" data-lang="text" data-copy>npm init -y
+npm install bootstrap@5.3.3</pre></li>
+          <li><h3 class="h6 mb-1">Pripoj súbory z <code>node_modules</code></h3>
+<pre class="code-inspector mt-1" data-lang="html">&lt;link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</pre>
+          <p class="small text-secondary mt-1 mb-0">V praxi sa súbory ďalej spracúvajú nástrojom (napr. Vite), ktorý ich zbalí s tvojím kódom.</p></li>
+        </ol>
+      </div>
+
+      <h3 class="h6 mt-4">Časté chyby</h3>
+      <ul class="small err-list mb-0">
+        <li><strong>Chýba meta viewport</strong> – na mobile sa mriežka nezalomí a stránka je maličká.</li>
+        <li><strong>Vlastný CSS je pred Bootstrapom</strong> – Bootstrap tvoje štýly prepíše. Tvoj <code>&lt;link&gt;</code> daj až za neho.</li>
+        <li><strong>Návod pre starú verziu</strong> – v Bootstrape 3 a 4 (aj v starších materiáloch) sa písalo <code>data-toggle</code>, <code>col-xs-6</code>, <code>glyphicon</code> a potreboval jQuery. V Bootstrape 5 je to <code>data-bs-toggle</code>, <code>col-6</code>, ikony sú samostatná knižnica <a href="https://icons.getbootstrap.com/">Bootstrap Icons</a> a jQuery netreba.</li>
+        <li><strong>Interaktívne časti nereagujú</strong> – chýba <code>bootstrap.bundle.min.js</code>, alebo si pripojil <code>bootstrap.min.js</code> bez Poppera.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 BREAKPOINTY -->
+  <section class="card section-card mb-4" id="breakpointy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Breakpointy a kontajnery</h2>
+      <p><strong>Breakpoint</strong> je šírka obrazovky, pri ktorej sa rozloženie môže zmeniť. Bootstrap ich má šesť a ich skratky uvidíš v názvoch tried (<code>col-md-6</code>, <code>d-lg-none</code>…). Platí <strong>mobile-first</strong>: trieda so skratkou platí od danej šírky <em>vyššie</em>.</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="table-responsive">
+            <table class="table table-sm small bp-table mb-2" id="bpTable">
+              <thead><tr><th>Breakpoint</th><th>Skratka</th><th>Šírka okna</th><th>.container</th></tr></thead>
+              <tbody>
+                <tr data-min="0"><td>Extra small</td><td><em>bez skratky</em></td><td>&lt; 576 px</td><td>100 %</td></tr>
+                <tr data-min="576"><td>Small</td><td><code>sm</code></td><td>≥ 576 px</td><td>540 px</td></tr>
+                <tr data-min="768"><td>Medium</td><td><code>md</code></td><td>≥ 768 px</td><td>720 px</td></tr>
+                <tr data-min="992"><td>Large</td><td><code>lg</code></td><td>≥ 992 px</td><td>960 px</td></tr>
+                <tr data-min="1200"><td>Extra large</td><td><code>xl</code></td><td>≥ 1200 px</td><td>1140 px</td></tr>
+                <tr data-min="1400"><td>Extra extra large</td><td><code>xxl</code></td><td>≥ 1400 px</td><td>1320 px</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="small mb-0">
+            <li><code>.container</code> obalí obsah, vycentruje ho a na každom breakpointe mu dá maximálnu šírku.</li>
+            <li><code>.container-fluid</code> má vždy 100 % šírky.</li>
+            <li><code>.container-md</code> má 100 % až do md, potom sa správa ako <code>.container</code>.</li>
+            <li>Kontajnery sa dajú vnárať, ale väčšinou to netreba – jeden okolo obsahu stačí.</li>
+          </ul>
+        </div>
+        <div class="col-lg-7"><div id="bpResizer"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 MRIEŽKA -->
+  <section class="card section-card mb-4" id="mriezka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Mriežka: <code>row</code> a <code>col</code></h2>
+      <p>Stĺpce sú vždy vnútri riadku <code>.row</code> a riadok vnútri kontajnera. Riadok má 12 dielikov: <code>col-6</code> zaberie polovicu, <code>col-4</code> tretinu. Samotné <code>col</code> si miesto rozdelí rovnakým dielom. Triedy s breakpointom sa dajú kombinovať: <code>col-12 col-md-6 col-lg-3</code> = na mobile celá šírka, od tabletu polovica, od počítača štvrtina. Vyber rozloženie a meň šírku okna:</p>
+      <div class="d-flex flex-wrap gap-2 mb-3 preset-btns" id="gridPresets"></div>
+      <div class="row g-4">
+        <div class="col-xl-5"><pre class="code-inspector" id="gridCode"></pre><p class="small text-secondary mt-2 mb-0" id="gridNote"></p></div>
+        <div class="col-xl-7"><div id="gridResizer"></div></div>
+      </div>
+      <h3 class="h6 mt-4">Skús sám</h3>
+      <p class="small">Editor s pripojeným Bootstrapom – zmeň triedy stĺpcov alebo pridaj ďalší riadok.</p>
+      <div class="live" data-bootstrap="css" data-height="260">
+<textarea data-part="html" data-label="HTML">
+<div class="container py-3">
+  <div class="row g-2">
+    <div class="col-8"><div class="p-3 bg-primary text-white">col-8</div></div>
+    <div class="col-4"><div class="p-3 bg-info">col-4</div></div>
+  </div>
+  <div class="row g-2 mt-1">
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+    <div class="col"><div class="p-3 bg-warning">col</div></div>
+  </div>
+</div>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 ZAROVNANIE A MEDZERY -->
+  <section class="card section-card mb-4" id="zarovnanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Zarovnanie a medzery</h2>
+      <p>Riadok <code>.row</code> je vo vnútri flexbox (lekcia 4), takže triedy pre zarovnanie fungujú rovnako: na riadok dávame <code>justify-content-*</code> (vodorovne) a <code>align-items-*</code> (zvislo), na jeden stĺpec <code>align-self-*</code>. Medzery medzi stĺpcami (<em>gutters</em>) nastaví <code>g-*</code>, len vodorovné <code>gx-*</code>, len zvislé <code>gy-*</code>.</p>
+      <div class="row g-4" id="alignPg">
+        <div class="col-lg-5">
+          <div class="pg-row mb-2"><label for="alJustify">justify-content-</label><select class="form-select form-select-sm" id="alJustify"><option>start</option><option>center</option><option>end</option><option>between</option><option>around</option><option>evenly</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alItems">align-items-</label><select class="form-select form-select-sm" id="alItems"><option>start</option><option>center</option><option>end</option></select><span></span></div>
+          <div class="pg-row mb-2"><label for="alGx">gx-</label><input type="range" class="form-range" id="alGx" min="0" max="5" value="3"><span class="pg-val" id="alGxV"></span></div>
+          <div class="pg-row mb-2"><label for="alSelf">2. stĺpec align-self-</label><select class="form-select form-select-sm" id="alSelf"><option value="">(nič)</option><option>start</option><option>center</option><option>end</option></select><span></span></div>
+        </div>
+        <div class="col-lg-7">
+          <iframe id="alFrame" title="zarovnanie" style="width:100%;height:220px;border:1px solid #d6dbe6;border-radius:.6rem;background:#fff"></iframe>
+          <pre class="code-inspector mt-2" id="alCode"></pre>
+        </div>
+      </div>
+      <h3 class="h6 mt-4">Margin a padding: <code>{m|p}{strana}-{veľkosť}</code></h3>
+      <div class="row g-3 small">
+        <div class="col-md-6">
+          <ul class="mb-0">
+            <li><code>m</code> = margin, <code>p</code> = padding</li>
+            <li>strana: <code>t</code> hore, <code>b</code> dole, <code>s</code> začiatok (vľavo), <code>e</code> koniec (vpravo), <code>x</code> vľavo aj vpravo, <code>y</code> hore aj dole, bez písmena = všade</li>
+            <li>príklady: <code>mt-3</code>, <code>px-4</code>, <code>py-5</code>, <code>mx-auto</code> (vycentruje blok)</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <table class="table table-sm mb-0"><thead><tr><th>veľkosť</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody><tr><td>rem</td><td>0</td><td>.25</td><td>.5</td><td>1</td><td>1.5</td><td>3</td></tr><tr><td>px</td><td>0</td><td>4</td><td>8</td><td>16</td><td>24</td><td>48</td></tr></tbody></table>
+        </div>
+      </div>
+      <div class="erratum mt-3">Číslo za pomlčkou nie je násobok: <code>px-4</code> aj <code>gx-4</code> znamená 1,5 rem (24 px), nie 1,5 rem × 4. Predvolená medzera medzi stĺpcami je 1,5 rem (<code>g-4</code>).</div>
+    </div>
+  </section>
+
+  <!-- 7 KOMPONENTY -->
+  <section class="card section-card mb-4" id="komponenty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Komponenty – hotové časti stránky</h2>
+      <p>Každý komponent je len HTML s triedami z dokumentácie. Kód pod ukážkou je presne to, čo je nad ním – skopíruj a uprav. Tie s ⚡ potrebujú Bootstrap JavaScript.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Tlačidlá a farby</h3><p>btn-* pre tlačidlá, bg-* a text-* pre pozadie a text.</p>
+            <div class="bs-render">
+<button class="btn btn-primary">Primary</button>
+<button class="btn btn-success">Success</button>
+<button class="btn btn-outline-danger">Outline</button>
+<button class="btn btn-warning btn-sm">Malé</button>
+<span class="badge bg-dark">Odznak</span>
+<p class="bg-info-subtle text-info-emphasis p-2 mt-2 mb-0">Pozadie bg-info-subtle</p>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Upozornenie, ktoré sa dá zavrieť ⚡</h3><p>alert-* a tlačidlo btn-close.</p>
+            <div class="bs-render">
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Hotovo!</strong> Objednávka bola odoslaná.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavrieť"></button>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Karta</h3><p>card s obrázkom, nadpisom a tlačidlom.</p>
+            <div class="bs-render">
+<div class="card" style="max-width: 18rem;">
+  <img data-img="hory" class="card-img-top" alt="hory">
+  <div class="card-body">
+    <h5 class="card-title">Výlet do hôr</h5>
+    <p class="card-text">Trojdňový prechod hrebeňom.</p>
+    <a href="#" class="btn btn-primary">Viac</a>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Obrázky</h3><p>rounded, rounded-circle, img-thumbnail; img-fluid = nikdy nie širší ako rodič.</p>
+            <div class="bs-render">
+<img data-img="more" class="rounded" width="110" alt="more">
+<img data-img="mesto" class="rounded-circle" width="110" height="110" alt="mesto">
+<img data-img="slnecnica" class="img-thumbnail" width="110" alt="slnečnica">
+<img data-img="hory" class="img-fluid mt-2" alt="hory">
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Navigačná lišta ⚡</h3><p>navbar sa na úzkej obrazovke zbalí do „hamburgera“.</p>
+            <div class="bs-render">
+<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Pizzeria</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoMenu" aria-label="Menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="demoMenu">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link active" href="#">Domov</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Menu</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Kontakt</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Záložky ⚡</h3><p>nav-tabs (alebo nav-pills) a tab-content.</p>
+            <div class="bs-render">
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabPopis" type="button">Popis</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCena" type="button">Cena</button></li>
+</ul>
+<div class="tab-content border border-top-0 p-3">
+  <div class="tab-pane fade show active" id="tabPopis">Paradajky, mozzarella, bazalka.</div>
+  <div class="tab-pane fade" id="tabCena">Malá 6 €, veľká 9 €.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Modálne okno ⚡</h3><p>Okno nad stránkou – tlačidlo s data-bs-toggle="modal".</p>
+            <div class="bs-render">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">Prihlásiť sa</button>
+<div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Prihlásenie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavrieť"></button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control mb-2" type="email" placeholder="E-mail">
+        <input class="form-control" type="password" placeholder="Heslo">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušiť</button>
+        <button type="button" class="btn btn-primary">Prihlásiť</button>
+      </div>
+    </div>
+  </div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bs-demo"><h3>Rozbaľovací obsah ⚡</h3><p>collapse – zobrazí a skryje dlhší text.</p>
+            <div class="bs-render">
+<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#demoMore">Zobraziť viac</button>
+<div class="collapse mt-2" id="demoMore">
+  <div class="card card-body">Toto bolo skryté, kým si neklikol.</div>
+</div>
+            </div></div>
+        </div>
+        <div class="col-12">
+          <div class="bs-demo"><h3>Tabuľka</h3><p>table + table-striped, table-hover; table-responsive pridá posúvanie na mobile.</p>
+            <div class="bs-render">
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead><tr><th>Pizza</th><th>Malá</th><th>Stredná</th><th>Veľká</th></tr></thead>
+    <tbody>
+      <tr><td>Margherita</td><td>6 €</td><td>8 €</td><td>10 €</td></tr>
+      <tr><td>Quattro formaggi</td><td>7 €</td><td>9 €</td><td>11 €</td></tr>
+    </tbody>
+  </table>
+</div>
+            </div></div>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Ďalšie hotové časti: <a href="https://getbootstrap.com/docs/5.3/examples/">oficiálne príklady</a>, <a href="https://bootsnipp.com/">Bootsnipp</a> (galéria od komunity – pozor, časť je pre staršie verzie), farebné témy <a href="https://bootswatch.com/">Bootswatch</a>, písma <a href="https://fonts.google.com/">Google Fonts</a>.</p>
+    </div>
+  </section>
+
+  <!-- 8 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Kvíz</h2>
+      <div id="quiz5"></div>
+    </div>
+  </section>
+
+  <!-- 9 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Úlohy na hodinu</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 1 · team.html – štruktúra firmy</h3>
+            <ol class="small mb-0">
+              <li>Vytvor <code>team.html</code> a pripoj Bootstrap (časť 3).</li>
+              <li>Pomocou mriežky vytvor štruktúru firmy: riadok s riaditeľom, riadok s 2 manažérmi a riadok so 6 programátormi (<code>col-2</code> × 6).</li>
+              <li>Programátori 5 a 6 dali výpoveď 🙂 – zmeň posledný riadok na 4 programátorov (<code>col-3</code> × 4).</li>
+              <li>Pracovnú pozíciu každého človeka daj do značky <code>&lt;kbd&gt;</code>.</li>
+              <li>Fotkám vyskúšaj triedy <code>rounded</code>, <code>rounded-circle</code>, <code>img-thumbnail</code>, <code>img-fluid</code>.</li>
+              <li>Prvému manažérovi a programátorovi 3 pridaj odznak „nový zamestnanec“ (<code>badge</code>).</li>
+              <li>Na mobile nech je každý človek na celú šírku (<code>col-12 col-md-…</code>).</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="task-card mb-4">
+            <h3 class="h5">Úloha 2 · Pizzeria Giovanni</h3>
+            <p class="small mb-0">Cenník pizze s cenami pre malú, strednú a veľkú pizzu: tri karty vedľa seba (na mobile pod sebou), v každej názov veľkosti, cena veľkým písmom, zoznam toho, čo obsahuje, a tlačidlo „Objednať“. Strednú kartu zvýrazni (iná farba okraja, odznak „Najobľúbenejšia“). Navrchu navigačná lišta.</p>
+          </div>
+          <div class="task-card">
+            <h3 class="h5">Úloha 3 · Prihlásenie v modálnom okne</h3>
+            <p class="small mb-0">Na stránku z úlohy 2 pridaj do navigácie tlačidlo „Prihlásiť“, ktoré otvorí modálne okno s prihlasovacím formulárom (e-mail, heslo, „zapamätať si ma“, tlačidlo). <strong>Bonus:</strong> druhé modálne okno s obrázkom; časová os tvojho života alebo zoznam miest z dovoleniek s kartami a obrázkami.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lekcia 5 · Responzívny dizajn a Bootstrap · Dokumentácia: <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">Bootstrap 5.3</a> · <a href="https://getbootstrap.com/docs/5.3/layout/grid/">Grid</a> · <a href="https://getbootstrap.com/docs/5.3/layout/gutters/">Gutters</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/clamp">MDN – clamp()</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>
+  // ---------- 1 jednotky ----------
+  Lab.resizer(document.getElementById('unitResizer'), {
+    value: 800, max: 1200, height: 260,
+    doc: {
+      css: 'body{margin:0;padding:12px 16px;font-family:system-ui,sans-serif}h2{margin:.2em 0;line-height:1.15}small{display:block;font:12px monospace;color:#6b7280;margin-top:.6em}' +
+        '.px{font-size:32px}.vw{font-size:5vw}.cl{font-size:clamp(1.5rem,5vw,3rem)}.half{width:50vw;background:#ede9fe;font:12px monospace;padding:4px;margin-top:8px}',
+      html: '<small>font-size: 32px</small><h2 class="px">Výlet do hôr</h2><small>font-size: 5vw</small><h2 class="vw">Výlet do hôr</h2>' +
+        '<small>font-size: clamp(1.5rem, 5vw, 3rem)</small><h2 class="cl">Výlet do hôr</h2><div class="half">width: 50vw</div>'
+    }
+  });
+
+  // ---------- 4 breakpointy ----------
+  const bpDoc = {
+    bootstrap: 'css', nobase: true,
+    css: 'body{padding:10px 0}.box{padding:8px;margin-bottom:8px;font:600 12px ui-monospace,monospace;color:#3b0764}',
+    html: '<div class="container"><div class="box" style="background:#ddd6fe">.container</div></div>' +
+      '<div class="container-fluid"><div class="box" style="background:#fde68a">.container-fluid</div></div>' +
+      '<div class="container-md"><div class="box" style="background:#bbf7d0">.container-md</div></div>' +
+      '<div class="container"><span class="badge bg-dark d-sm-none">xs – menej ako 576px</span><span class="badge bg-dark d-none d-sm-inline d-md-none">sm</span>' +
+      '<span class="badge bg-dark d-none d-md-inline d-lg-none">md</span><span class="badge bg-dark d-none d-lg-inline d-xl-none">lg</span>' +
+      '<span class="badge bg-dark d-none d-xl-inline d-xxl-none">xl</span><span class="badge bg-dark d-none d-xxl-inline">xxl</span></div>'
+  };
+  Lab.resizer(document.getElementById('bpResizer'), {
+    doc: bpDoc, min: 320, max: 1500, value: 800, height: 200,
+    onWidth: w => {
+      const rows = Lab.$$('#bpTable tbody tr');
+      let cur = rows[0];
+      rows.forEach(r => { if (w >= Number(r.dataset.min)) cur = r; });
+      rows.forEach(r => r.classList.toggle('now', r === cur));
+    }
+  });
+
+  // ---------- 5 mriežka ----------
+  const box = (cls, label, color) => '    <div class="' + cls + '"><div class="cell" style="background:' + color + '">' + (label || cls) + '</div></div>\n';
+  const PRESETS = [
+    { name: '3 rovnaké stĺpce', note: 'col bez čísla – stĺpce si miesto rozdelia rovnako, nech ich je koľkokoľvek.',
+      rows: [['col', 'col', 'col']] },
+    { name: '2 nerovnaké', note: '8 + 4 = 12. Súčet v riadku by mal byť 12; ak je väčší, stĺpec sa zalomí na nový riadok.',
+      rows: [['col-8', 'col-4']] },
+    { name: 'Karty: mobil → PC', note: 'Mobil: každá karta na celú šírku (col-12). Od md (768 px) dve vedľa seba, od lg (992 px) štyri.',
+      rows: [['col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3', 'col-12 col-md-6 col-lg-3']] },
+    { name: 'team.html', note: 'Štruktúra firmy z úlohy 1: riaditeľ, 2 manažéri, 6 programátorov po 2 dieliky.',
+      rows: [['col-12', 'Riaditeľ'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']], team: true },
+    { name: 'Obsah + bočný panel', note: 'Na mobile pod sebou, od lg obsah 9 dielikov a bočný panel 3.',
+      rows: [['col-lg-9', 'col-lg-3']] }
+  ];
+  const COLORS = ['#c4b5fd', '#a5b4fc', '#93c5fd', '#99f6e4', '#fde68a', '#fecaca'];
+  const gridResizer = Lab.resizer(document.getElementById('gridResizer'), { min: 320, max: 1300, value: 1000, height: 230 });
+  function showPreset(i) {
+    const p = PRESETS[i];
+    let html = '<div class="container">\n';
+    p.rows.forEach((row, r) => {
+      html += '  <div class="row g-2 mb-2">\n';
+      if (p.team) {
+        const names = [['Riaditeľ'], ['Manažér 1', 'Manažér 2'], ['Prog. 1', 'Prog. 2', 'Prog. 3', 'Prog. 4', 'Prog. 5', 'Prog. 6']][r];
+        const cls = [['col-12'], ['col-6', 'col-6'], ['col-2', 'col-2', 'col-2', 'col-2', 'col-2', 'col-2']][r];
+        cls.forEach((c, k) => { html += box(c, names[k], COLORS[r]); });
+      } else {
+        row.forEach((c, k) => { html += box(c, c, COLORS[k % COLORS.length]); });
+      }
+      html += '  </div>\n';
+    });
+    html += '</div>';
+    Lab.setCode(document.getElementById('gridCode'), 'html', html.replace(/ style="background:#[0-9a-f]+"/g, ''));
+    document.getElementById('gridNote').textContent = p.note;
+    gridResizer.setDoc({ bootstrap: 'css', nobase: true, html: html, css: 'body{padding:12px 0}.cell{padding:14px 6px;border-radius:6px;font:600 12px ui-monospace,monospace;text-align:center;overflow-wrap:anywhere}' });
+    Lab.$$('#gridPresets .btn').forEach((b, k) => b.classList.toggle('active', k === i));
+  }
+  PRESETS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-sm btn-outline-secondary'; b.textContent = p.name;
+    b.addEventListener('click', () => showPreset(i));
+    document.getElementById('gridPresets').appendChild(b);
+  });
+  showPreset(2);
+
+  // ---------- 6 zarovnanie ----------
+  const al = { j: document.getElementById('alJustify'), i: document.getElementById('alItems'), g: document.getElementById('alGx'), s: document.getElementById('alSelf') };
+  function drawAlign() {
+    const rowCls = 'row justify-content-' + al.j.value + ' align-items-' + al.i.value + ' gx-' + al.g.value;
+    const self = al.s.value ? ' align-self-' + al.s.value : '';
+    document.getElementById('alGxV').textContent = ['0', '.25rem', '.5rem', '1rem', '1.5rem', '3rem'][al.g.value];
+    const html = '<div class="container">\n  <div class="' + rowCls + '">\n    <div class="col-3"><div class="cell">1</div></div>\n    <div class="col-3' + self + '"><div class="cell">2</div></div>\n    <div class="col-3"><div class="cell tall">3</div></div>\n  </div>\n</div>';
+    document.getElementById('alFrame').srcdoc = Lab.buildDoc({ bootstrap: 'css', nobase: true, html: html,
+      css: 'body{padding:10px 0}.row{min-height:190px;background:repeating-linear-gradient(90deg,#f5f3ff 0 8px,#fff 8px 16px);border:1px dashed #a78bfa}.cell{background:#7952b3;color:#fff;padding:10px;font:700 14px monospace;text-align:center;border-radius:6px}.tall{padding:40px 10px}' });
+    Lab.setCode(document.getElementById('alCode'), 'html', html);
+  }
+  Object.values(al).forEach(el => el.addEventListener('input', drawAlign));
+  drawAlign();
+
+  // ---------- 7 komponenty: kód z ukážky ----------
+  Lab.$$('.bs-render').forEach(render => {
+    // obrázky majú v ukážke data-img (súbory img/… na webe nie sú) – do kódu vrátime src="img/…"
+    const code = render.innerHTML.replace(/^\s*\n/, '').replace(/\s+$/, '').replace(/data-img="(\w+)"/g, 'src="img/$1.jpg"');
+    const pre = document.createElement('pre');
+    pre.className = 'code-inspector';
+    pre.setAttribute('data-copy', '');
+    Lab.setCode(pre, 'html', code);
+    render.parentNode.appendChild(pre);
+    Lab.$$('img[data-img]', render).forEach(img => { img.src = Lab.svgScene(img.dataset.img); });
+  });
+  // tlačidlá Kopírovať pre vygenerovaný kód
+  Lab.$$('.bs-demo pre[data-copy]').forEach(pre => {
+    const wrap = document.createElement('div');
+    wrap.className = 'copy-wrap';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'copy-btn'; btn.textContent = Lab.ui.copy;
+    btn.addEventListener('click', () => navigator.clipboard.writeText(pre.textContent).then(() => {
+      btn.textContent = Lab.ui.copied; setTimeout(() => { btn.textContent = Lab.ui.copy; }, 1500);
+    }));
+    wrap.appendChild(btn);
+  });
+
+  // ---------- 8 kvíz ----------
+  Lab.quiz('#quiz5', [
+    { q: 'Koľko stĺpcov má mriežka Bootstrapu?', o: ['10', '12', '16'], a: 1, e: '12 sa dá deliť 2, 3, 4 aj 6 – preto je taká praktická.', mono: false },
+    { q: 'Kam patrí <script src="…bootstrap.bundle.min.js">?', o: ['do <head> pred CSS', 'na koniec <body>', 'do súboru style.css'], a: 1, e: 'JavaScript dávame na koniec body; CSS (link) do hlavičky.' },
+    { q: 'Čo znamená col-12 col-md-6?', o: ['na mobile celá šírka, od 768 px polovica', 'vždy polovica', 'na mobile polovica, na PC celá šírka'], a: 0, e: 'Mobile-first: col-12 platí od najmenšej šírky, col-md-6 od md (768 px) vyššie.', mono: false },
+    { q: 'Ktorý kontajner má vždy 100 % šírky?', o: ['.container', '.container-fluid', '.container-md'], a: 1, e: '.container má na každom breakpointe maximálnu šírku, .container-fluid nie.' },
+    { q: 'Ktorá trieda dá padding 1.5rem vľavo aj vpravo?', o: ['px-4', 'px-6', 'p-1.5'], a: 0, e: 'Stupnica: 1 = .25rem, 2 = .5rem, 3 = 1rem, 4 = 1.5rem, 5 = 3rem.' },
+    { q: 'V starom návode je data-toggle="modal". Ako to bude v Bootstrape 5?', o: ['data-toggle="modal"', 'data-bs-toggle="modal"', 'onclick="modal()"'], a: 1, e: 'Bootstrap 5 pridal ku všetkým data atribútom predponu bs.' },
+    { q: 'Prečo pripájame vlastný style.css až za Bootstrap?', o: ['aby sa načítal rýchlejšie', 'aby moje pravidlá mohli prepísať Bootstrap', 'inak sa nenačíta'], a: 1, e: 'Pri rovnako silných selektoroch vyhráva pravidlo, ktoré je neskôr.', mono: false },
+    { q: 'Čo spraví font-size: clamp(1rem, 4vw, 2rem)?', o: ['vždy 4vw', '4vw, ale najmenej 1rem a najviac 2rem', 'náhodnú veľkosť medzi 1 a 2 rem'], a: 1, e: 'clamp(min, ideál, max) – ideálna hodnota v hraniciach.' }
+  ]);
+</script>
+</body>
+</html>

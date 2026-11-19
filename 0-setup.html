@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0 · Príprava prostredia – Zed a VS Code s lokálnym serverom</title>
+  <meta name="description" content="Lekcia 0 – ako si vo VS Code alebo v Zede nastaviť lokálny server (Live Server), aby sa stránka po uložení sama obnovila.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #0f766e; --accent-bg: #ccfbf1; }
+    .editor-tabs .btn { min-width: 9rem; }
+    .editor-tabs .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .mock-browser { border: 1px solid #d6dbe6; border-radius: .75rem; overflow: hidden; background: #fff; }
+    .mock-browser .bar { display: flex; align-items: center; gap: .5rem; background: #eef1f6; padding: .45rem .6rem; }
+    .mock-browser .dots span { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; background: #cbd2dd; margin-right: .2rem; }
+    .mock-browser .url { flex: 1; min-width: 0; background: #fff; border-radius: 1rem; padding: .2rem .8rem; font: .8rem ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    .mock-browser .url.local { color: #b45309; }
+    .mock-browser .url.server { color: #047857; }
+    .feature-list li { padding: .3rem 0; border-bottom: 1px solid #eef1f6; }
+    .feature-list .mark-ok { color: #047857; font-weight: 700; }
+    .feature-list .mark-no { color: #b91c1c; font-weight: 700; }
+    .tree { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; font: .85rem/1.6 ui-monospace, Menlo, Consolas, monospace; white-space: pre; overflow-x: auto; }
+    .tree .dir { color: #93c5fd; }
+    .tree .note { color: #9ca3af; font-style: italic; }
+    .checklist .form-check { padding: .5rem .75rem .5rem 2.25rem; border-radius: .5rem; background: #fff; border: 1px solid #e3e7f0; margin-bottom: .4rem; }
+    .checklist .form-check-input:checked + .form-check-label { text-decoration: line-through; color: #6b7280; }
+    .shot { border: 1px solid #d6dbe6; border-radius: .6rem; background: #1f2430; color: #d1d5db; font: .78rem/1.5 ui-monospace, Menlo, Consolas, monospace; overflow: hidden; }
+    .shot .shot-status { display: flex; justify-content: flex-end; gap: 1rem; background: #007acc; color: #fff; padding: .15rem .6rem; }
+    .shot .shot-status .golive { background: #ffffff26; padding: 0 .45rem; border-radius: .25rem; }
+    .shot .shot-body { padding: .6rem .8rem; min-height: 4rem; }
+    .shot.zed .shot-menu { background: #2b303b; border: 1px solid #3c4250; border-radius: .4rem; display: inline-block; padding: .25rem 0; margin-top: .4rem; }
+    .shot.zed .shot-menu div { padding: .1rem .8rem; }
+    .shot.zed .shot-menu .hl { background: #3b82f6; color: #fff; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lekcia 0</span>
+  <h1 class="display-5 fw-bold">Editor a lokálny server</h1>
+  <p class="lead col-lg-8">Skôr než napíšeme prvý riadok HTML, pripravíme si editor tak, aby sa stránka v prehliadači po každom uložení sama obnovila. Vyber si <strong>VS Code</strong> alebo <strong>Zed</strong> – obidva sú zadarmo a fungujú na Windows, macOS aj Linuxe.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#preco">1 · Prečo server</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#priecinok">2 · Priečinok projektu</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#editor">3 · Nastavenie editora</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#terminal">4 · Bez rozšírenia</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#problemy">5 · Keď to nejde</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kontrola">6 · Kontrola</a>
+  </div>
+  <div class="d-flex flex-wrap align-items-center gap-2 mt-4 small">
+    <span class="text-secondary">Klávesové skratky zobraziť pre:</span>
+    <div class="btn-group btn-group-sm" role="group" id="osSwitch">
+      <button type="button" class="btn btn-outline-dark" data-os="win">Windows / Linux</button>
+      <button type="button" class="btn btn-outline-dark" data-os="mac">macOS</button>
+    </div>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 1 PREČO SERVER -->
+  <section class="card section-card mb-4" id="preco">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Prečo nestačí dvojklik na súbor?</h2>
+      <p>Keď HTML súbor otvoríš dvojklikom, prehliadač ho načíta priamo z disku (adresa začína <code>file://</code>). Na prvé pokusy to stačí, no zmeny musíš zakaždým obnoviť ručne a niektoré veci, ktoré budeme robiť neskôr, takto nefungujú vôbec. <strong>Lokálny server</strong> je malý program, ktorý tvoj priečinok „podáva“ prehliadaču ako skutočná webová stránka – na adrese <code>http://127.0.0.1:…</code> (<code>127.0.0.1</code> alebo <code>localhost</code> = tvoj vlastný počítač).</p>
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap gap-2 mb-2" id="modeSwitch">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-mode="file">Otvoril som súbor dvojklikom</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-mode="server">Spustil som Live Server</button>
+          </div>
+          <div class="mock-browser">
+            <div class="bar"><span class="dots"><span></span><span></span><span></span></span><span class="url" id="mockUrl"></span></div>
+            <div class="p-3 small" id="mockNote"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <ul class="list-unstyled feature-list small mb-0" id="featureList">
+            <li data-file="no">Po uložení súboru sa stránka obnoví sama</li>
+            <li data-file="no">Načítanie iného súboru cez JavaScript (<code>fetch()</code>) – budeme potrebovať v lekcii XML</li>
+            <li data-file="no">JavaScriptové moduly (<code>&lt;script type="module"&gt;</code>)</li>
+            <li data-file="no">Cesty od koreňa webu, napr. <code>/img/logo.png</code></li>
+            <li data-file="yes">Bežné HTML, CSS a obrázky s relatívnou cestou (<code>img/logo.png</code>)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 PRIEČINOK -->
+  <section class="card section-card mb-4" id="priecinok">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Jeden projekt = jeden priečinok</h2>
+      <p>Editor aj server pracujú s <strong>celým priečinkom</strong>, nie s jedným súborom. Vytvor si preto na disku priečinok (napr. na Ploche) a v ňom súbor <code>index.html</code> – prehliadač ho otvorí ako úvodnú stránku. Ďalšie súbory si dáme do podpriečinkov.</p>
+      <div class="row g-4">
+        <div class="col-md-5">
+<div class="tree"><span class="dir">my-website/</span>
+├── index.html      <span class="note">← úvodná stránka</span>
+├── <span class="dir">css/</span>
+│   └── style.css   <span class="note">← lekcia 2</span>
+├── <span class="dir">img/</span>
+│   └── logo.png
+└── <span class="dir">js/</span>
+    └── app.js      <span class="note">← JS 1</span></div>
+        </div>
+        <div class="col-md-7">
+          <p class="small mb-2">Do <code>index.html</code> vlož túto kostru (vo VS Code ju napíše skratka <kbd>!</kbd> a <kbd>Tab</kbd>):</p>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Moja prvá stránka&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Ahoj, svet!&lt;/h1&gt;
+  &lt;p&gt;Ak to vidíš na adrese http://127.0.0.1, server funguje.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">Tip: v názvoch súborov a priečinkov nepoužívaj medzery ani diakritiku – <code>moja-stranka.html</code>, nie <code>Moja stránka.html</code>.</p>
+    </div>
+  </section>
+
+  <!-- 3 EDITOR -->
+  <section class="card section-card mb-4" id="editor">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Nastavenie editora krok za krokom</h2>
+      <p>Vyber si jeden editor. Na cvičeniach budeme ukazovať VS Code, ale všetko funguje rovnako aj v Zede.</p>
+      <div class="d-flex flex-wrap gap-2 mb-4 editor-tabs" data-tabs>
+        <button type="button" class="btn btn-outline-secondary active" data-tab="vscode">VS Code</button>
+        <button type="button" class="btn btn-outline-secondary" data-tab="zed">Zed</button>
+      </div>
+
+      <div id="vscode">
+        <ol class="steps">
+          <li>
+            <h3 class="h6 mb-1">Stiahni a nainštaluj VS Code</h3>
+            <p class="mb-0 small">Stiahni ho z <a href="https://code.visualstudio.com/Download">code.visualstudio.com/Download</a> pre svoj systém a nainštaluj. Na Windows nechaj zaškrtnuté <em>Add to PATH</em> a <em>Open with Code</em> – priečinok potom otvoríš pravým klikom.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Otvor priečinok projektu</h3>
+            <p class="mb-0 small">Menu <strong>File → Open Folder…</strong> a vyber priečinok <code>my-website</code> (nie samotný súbor). Ak sa VS Code opýta, či dôveruješ autorom súborov, klikni <em>Yes, I trust the authors</em>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Nainštaluj rozšírenia</h3>
+            <p class="small mb-2">Vľavo klikni na ikonu <strong>Extensions</strong> (štyri štvorčeky) alebo stlač <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>X</kbd>. Vyhľadaj a pri každom klikni <strong>Install</strong>:</p>
+            <div class="row g-2 small">
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Live Server</strong><br><span class="text-secondary">autor Ritwick Dey</span><br>lokálny server s automatickým obnovením</div></div>
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Auto Close Tag</strong><br><span class="text-secondary">autor Jun Han</span><br>sám dopíše uzatváraciu značku</div></div>
+              <div class="col-md-4"><div class="border rounded-3 p-2 h-100 bg-white"><strong>Prettier – Code formatter</strong><br><span class="text-secondary">autor Prettier</span><br>upraví odsadenie kódu</div></div>
+            </div>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Vytvor <code>index.html</code></h3>
+            <p class="mb-0 small">V paneli <em>Explorer</em> klikni na ikonu <em>New File</em>, napíš <code>index.html</code>. V prázdnom súbore napíš <kbd>!</kbd>, stlač <kbd>Tab</kbd> (Emmet vloží kostru stránky) a ulož <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>S</kbd>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Spusti server – <em>Go Live</em></h3>
+            <p class="small mb-2">Vpravo dole v modrom stavovom riadku klikni na <strong>Go Live</strong>. Ďalšie možnosti: pravý klik na <code>index.html</code> → <strong>Open with Live Server</strong>, alebo <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>L</kbd>, potom <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>O</kbd>. Otvorí sa prehliadač s adresou <code>http://127.0.0.1:5500/index.html</code>.</p>
+            <div class="shot" aria-hidden="true"><div class="shot-body">index.html — my-website</div><div class="shot-status"><span>Ln 9, Col 5</span><span>UTF-8</span><span>HTML</span><span class="golive">⦿ Go Live</span></div></div>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Uprav, ulož, pozri</h3>
+            <p class="mb-0 small">Zmeň text v <code>&lt;h1&gt;</code> a ulož. Prehliadač sa obnoví sám. Aby si nemusel stále ukladať, zapni <strong>File → Auto Save</strong>. Neporiadny kód upraví Prettier: pravý klik → <strong>Format Document</strong> (<kbd data-mac="⇧ Shift">Shift</kbd> + <kbd data-mac="⌥ Option">Alt</kbd> + <kbd>F</kbd>).</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Zastav server</h3>
+            <p class="mb-0 small">V stavovom riadku je teraz namiesto <em>Go Live</em> nápis <strong>Port : 5500</strong> – kliknutím server zastavíš (alebo <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>L</kbd>, <kbd data-mac="⌘ Cmd">Alt</kbd> + <kbd>C</kbd>).</p>
+          </li>
+        </ol>
+      </div>
+
+      <div id="zed" class="d-none">
+        <ol class="steps">
+          <li>
+            <h3 class="h6 mb-1">Stiahni a nainštaluj Zed</h3>
+            <p class="mb-0 small">Stiahni ho z <a href="https://zed.dev/download">zed.dev/download</a> (macOS, Linux aj Windows). Na Linuxe ho nainštaluješ aj príkazom <code>curl -f https://zed.dev/install.sh | sh</code>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Otvor priečinok projektu</h3>
+            <p class="mb-0 small">Menu <strong>File → Open…</strong> (<kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>O</kbd>) a vyber celý priečinok <code>my-website</code>. Súbory uvidíš vľavo v paneli <em>Project</em>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Nainštaluj rozšírenie LiveServer</h3>
+            <p class="mb-0 small">Otvor stránku rozšírení: <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>X</kbd>, alebo príkazová paleta <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd data-mac="⇧ Shift">Shift</kbd> + <kbd>P</kbd> → <code>zed: extensions</code>. Vyhľadaj <strong>LiveServer</strong> (autor frederik) a klikni <strong>Install</strong>. Podporu HTML si Zed doinštaluje sám pri prvom otvorení <code>.html</code> súboru. Ak chceš skratky ako vo VS Code, pridaj aj rozšírenie <strong>Emmet</strong>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Vytvor <code>index.html</code></h3>
+            <p class="mb-0 small">Pravý klik na priečinok v paneli <em>Project</em> → <strong>New File</strong>, napíš <code>index.html</code> a vlož kostru stránky z časti 2 (s rozšírením Emmet napíš <kbd>!</kbd> a vyber návrh z ponuky). Ulož <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>S</kbd>.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Otvor stránku v prehliadači – <em>Code Action</em></h3>
+            <p class="small mb-2">Klikni do textu súboru <code>index.html</code> pravým tlačidlom a vyber <strong>Code Actions</strong>, alebo stlač <kbd data-mac="⌘ Cmd">Ctrl</kbd> + <kbd>.</kbd> (bodka). V ponuke vyber akciu rozšírenia LiveServer – stránka sa otvorí v prehliadači a Zed ti ukáže, na akom porte server beží. Server beží stále, kým máš projekt otvorený, nič ďalšie nespúšťaš.</p>
+            <div class="shot zed" aria-hidden="true"><div class="shot-body">&lt;h1&gt;Ahoj, svet!&lt;/h1&gt;<br><div class="shot-menu"><div class="hl">⚡ LiveServer: open in browser</div><div>…</div></div></div></div>
+            <p class="small text-secondary mt-1 mb-0">Presný názov akcie sa môže podľa verzie rozšírenia trochu líšiť.</p>
+          </li>
+          <li>
+            <h3 class="h6 mb-1">Uprav a sleduj prehliadač</h3>
+            <p class="mb-0 small">Zmeny sa prejavia hneď – podľa nastavenia už počas písania alebo po uložení. Pri zmene CSS sa vymení len štýl, pri inej zmene sa stránka obnoví. Kód naformátuješ cez príkazovú paletu → <code>editor: format</code>.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 TERMINÁL -->
+  <section class="card section-card mb-4" id="terminal">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Záloha: server z terminálu</h2>
+      <p>Ak rozšírenie nejde nainštalovať (napr. na školskom počítači), spusti server z terminálu. Terminál otvoríš v oboch editoroch skratkou <kbd>Ctrl</kbd> + <kbd>`</kbd> a je už v priečinku projektu.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">Ak máš Node.js – s automatickým obnovením:</p>
+<pre class="code-inspector" data-lang="text" data-copy>npx live-server</pre>
+          <p class="small text-secondary mt-1 mb-0">Prvé spustenie si balík stiahne, otvorí prehliadač na <code>http://127.0.0.1:8080</code>.</p>
+        </div>
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">Ak máš Python – bez automatického obnovenia:</p>
+<pre class="code-inspector" data-lang="text" data-copy>python3 -m http.server 8000</pre>
+          <p class="small text-secondary mt-1 mb-0">Na Windows <code>py -m http.server 8000</code>. Potom otvor <code>http://localhost:8000</code>. Zastavíš ho <kbd>Ctrl</kbd> + <kbd>C</kbd>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 PROBLÉMY -->
+  <section class="card section-card mb-4" id="problemy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Keď to nejde</h2>
+      <div class="accordion" id="faq">
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">Vo VS Code nevidím tlačidlo Go Live</button></h3>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Otvoril si celý priečinok (<em>Open Folder</em>), nie iba súbor? Je rozšírenie Live Server nainštalované a zapnuté? Pomôže aj reštart VS Code. Server vieš spustiť aj pravým klikom na <code>index.html</code> → <em>Open with Live Server</em>.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">Stránka sa po zmene neobnoví</button></h3>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Skontroluj, či si súbor uložil – neuložený súbor má na karte bodku ●. Pozri adresu v prehliadači: ak začína <code>file://</code>, stránka nebeží cez server. Upravuješ súbor z toho istého priečinka, ktorý server podáva?</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">V Zede sa v ponuke Code Actions akcia LiveServer neobjaví</button></h3>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Kurzor musí byť v <code>.html</code> súbore, ktorý patrí do otvoreného priečinka. Over na stránke rozšírení, či je LiveServer nainštalovaný, a reštartuj Zed. Kým to vyriešiš, použi server z terminálu (časť 4).</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">Port je obsadený / otvorila sa iná stránka</button></h3>
+          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Na tom istom porte už beží iný server (napr. z iného okna editora). Zastav ho, alebo nechaj server zvoliť iný port – číslo vždy uvidíš v adrese.</div></div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">Obrázok sa nezobrazí</button></h3>
+          <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body small">Cesta je relatívna k HTML súboru a záleží na veľkých a malých písmenách: <code>img/Logo.PNG</code> nie je to isté ako <code>img/logo.png</code>. Na webovom serveri (aj na GitHub Pages) by takáto chyba nefungovala ani vtedy, keď to na Windows náhodou funguje.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 KONTROLA -->
+  <section class="card section-card mb-4" id="kontrola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Kontrola pred prvou hodinou</h2>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <p class="small">Odškrtni si, čo máš hotové (zapamätá si to tvoj prehliadač):</p>
+          <div class="checklist" id="checklist">
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c1"><label class="form-check-label" for="c1">Mám nainštalovaný VS Code alebo Zed</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c2"><label class="form-check-label" for="c2">Mám rozšírenie Live Server / LiveServer</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c3"><label class="form-check-label" for="c3">Mám priečinok projektu so súborom <code>index.html</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c4"><label class="form-check-label" for="c4">Adresa v prehliadači začína <code>http://</code>, nie <code>file://</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="c5"><label class="form-check-label" for="c5">Po uložení sa stránka obnoví sama</label></div>
+          </div>
+          <p class="small fw-semibold mt-2 mb-0 text-success d-none" id="allDone">Hotovo – môžeš pokračovať lekciou 1 · HTML.</p>
+        </div>
+        <div class="col-lg-7">
+          <div id="quiz0"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lekcia 0 · Príprava prostredia · Zdroje: <a href="https://code.visualstudio.com/docs">VS Code – dokumentácia</a> · <a href="https://zed.dev/extensions/live-server">Zed – rozšírenie LiveServer</a> · <a href="https://github.com/ritwickdey/vscode-live-server">Live Server pre VS Code</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>
+  // ---------- skratky podľa systému ----------
+  const keys = Lab.$$('kbd[data-mac]');
+  keys.forEach(k => { k.dataset.win = k.textContent; });
+  function setOS(os) {
+    keys.forEach(k => { k.textContent = os === 'mac' ? k.dataset.mac : k.dataset.win; });
+    Lab.$$('#osSwitch [data-os]').forEach(b => b.classList.toggle('active', b.dataset.os === os));
+  }
+  Lab.$$('#osSwitch [data-os]').forEach(b => b.addEventListener('click', () => setOS(b.dataset.os)));
+  setOS(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? 'mac' : 'win');
+
+  // ---------- file:// vs http:// ----------
+  const MODES = {
+    file: { url: 'file:///C:/Users/student/Desktop/my-website/index.html', cls: 'local',
+      note: 'Súbor je otvorený priamo z disku. Po každej zmene musíš stlačiť F5 a niektoré funkcie prehliadač z bezpečnostných dôvodov zablokuje.' },
+    server: { url: 'http://127.0.0.1:5500/index.html', cls: 'server',
+      note: 'Stránku podáva lokálny server, presne ako skutočný web. Po uložení súboru sa obnoví sama.' }
+  };
+  function setMode(mode) {
+    const m = MODES[mode];
+    const url = document.getElementById('mockUrl');
+    url.textContent = m.url;
+    url.className = 'url ' + m.cls;
+    document.getElementById('mockNote').textContent = m.note;
+    Lab.$$('#featureList li').forEach(li => {
+      const ok = mode === 'server' || li.dataset.file === 'yes';
+      let mark = li.querySelector('.mark');
+      if (!mark) { mark = document.createElement('span'); mark.className = 'mark me-2'; li.prepend(mark); }
+      mark.textContent = ok ? '✔' : '✖';
+      mark.classList.toggle('mark-ok', ok);
+      mark.classList.toggle('mark-no', !ok);
+    });
+    Lab.$$('#modeSwitch [data-mode]').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  }
+  Lab.$$('#modeSwitch [data-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  setMode('file');
+
+  // ---------- kontrolný zoznam (pamätá si ho prehliadač) ----------
+  const boxes = Lab.$$('#checklist input');
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('lab0-checklist') || '{}'); } catch (e) { saved = {}; }
+  function updateDone() {
+    document.getElementById('allDone').classList.toggle('d-none', !boxes.every(b => b.checked));
+  }
+  boxes.forEach(b => {
+    b.checked = !!saved[b.id];
+    b.addEventListener('change', () => {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem('lab0-checklist', JSON.stringify(saved)); } catch (e) { /* bez pamäte */ }
+      updateDone();
+    });
+  });
+  updateDone();
+
+  // ---------- kvíz ----------
+  Lab.quiz('#quiz0', [
+    { q: 'Na akej adrese sa otvorí stránka, keď vo VS Code klikneš na Go Live?', o: ['file:///C:/…/index.html', 'http://127.0.0.1:5500/index.html', 'https://github.com/index.html'], a: 1, e: 'Live Server beží na tvojom počítači (127.0.0.1) a predvolene používa port 5500.' },
+    { q: 'Ako v Zede otvoríš stránku v prehliadači cez rozšírenie LiveServer?', o: ['Dvojklikom na súbor v paneli Project', 'Pravý klik do súboru → Code Actions (alebo Ctrl + .) → akcia LiveServer', 'Tlačidlom Go Live v stavovom riadku'], a: 1, e: 'V Zede rozšírenie ponúka otvorenie stránky ako Code Action. Tlačidlo Go Live je vo VS Code.', mono: false },
+    { q: 'Čo vloží do prázdneho HTML súboru skratka ! a Tab?', o: ['Komentár', 'Kostru HTML dokumentu (doctype, head, body)', 'Výkričník'], a: 1, e: 'Je to skratka Emmetu – vo VS Code je zabudovaný, v Zede ho pridáš rozšírením.', mono: false },
+    { q: 'Stránka sa po zmene neobnovila. Čo skontroluješ ako prvé?', o: ['Či som súbor uložil a či adresa začína http://', 'Či mám rýchly internet', 'Či mám nainštalovaný Prettier'], a: 0, e: 'Server reaguje na uloženie súboru. Na adrese file:// sa stránka sama neobnoví nikdy.', mono: false },
+    { q: 'Ktorý príkaz spustí jednoduchý server bez rozšírenia (s nainštalovaným Pythonom)?', o: ['python3 -m http.server 8000', 'npm start server', 'http://localhost'], a: 0, e: 'Modul http.server je súčasťou Pythonu. Potom otvoríš http://localhost:8000.' }
+  ]);
+</script>
+</body>
+</html>

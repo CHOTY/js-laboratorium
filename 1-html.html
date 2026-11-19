@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1 · HTML – štruktúra stránky, texty, odkazy, tabuľky a formuláre</title>
+  <meta name="description" content="Lekcia 1 – HTML: párové a nepárové značky, hlavička, nadpisy a texty, odkazy, obrázky, zoznamy, tabuľky, formuláre a sémantické značky. Interaktívne ukážky a úlohy.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #c2410c; --accent-bg: #ffedd5; }
+    .anatomy { font: 1.05rem/2.2 ui-monospace, Menlo, Consolas, monospace; background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; overflow-wrap: anywhere; }
+    .anatomy [data-part] { cursor: pointer; border-radius: .3rem; padding: .1rem .15rem; transition: background .15s; }
+    .anatomy [data-part]:hover, .anatomy [data-part].on { background: #f59e0b55; }
+    .anatomy .p-tag { color: #93c5fd; } .anatomy .p-attr { color: #fcd34d; } .anatomy .p-val { color: #86efac; } .anatomy .p-text { color: #fff; }
+    .explain { min-height: 4.5rem; }
+    .tab-preview { background: #dee1e6; border-radius: .6rem .6rem 0 0; padding: .4rem .5rem 0; }
+    .tab-preview .tab { display: inline-flex; align-items: center; gap: .45rem; max-width: 100%; background: #fff; border-radius: .5rem .5rem 0 0; padding: .35rem .8rem; font-size: .8rem; }
+    .tab-preview .tab span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .serp { border: 1px solid #e3e7f0; border-top: 0; border-radius: 0 0 .6rem .6rem; padding: 1rem; background: #fff; }
+    .serp .s-url { color: #202124; font-size: .8rem; }
+    .serp .s-title { color: #1a0dab; font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .serp .s-desc { color: #4d5156; font-size: .85rem; }
+    .tag-table code { white-space: nowrap; }
+    .layout-map { display: grid; gap: .4rem; grid-template-columns: 1fr 1fr 1fr; grid-template-areas: "h h h" "n n n" "m m a" "m m a" "f f f"; }
+    .layout-map button { border: 2px dashed #cbd2dd; background: #fff; border-radius: .5rem; padding: .7rem .4rem; font: 600 .85rem ui-monospace, Menlo, Consolas, monospace; color: #374151; }
+    .layout-map button.on { border-style: solid; border-color: var(--accent); background: var(--accent-bg); }
+    .layout-map .lm-main { display: grid; gap: .4rem; align-content: start; padding: .4rem; }
+    .layout-map .lm-main button { width: 100%; }
+    .check-list li { list-style: none; padding: .15rem 0; }
+    .check-list li.ok::before { content: "✔ "; color: #047857; font-weight: 700; }
+    .check-list li.no::before { content: "✖ "; color: #b91c1c; font-weight: 700; }
+    .check-list li.ok { color: #047857; }
+    .sent-data { font: .82rem/1.5 ui-monospace, Menlo, Consolas, monospace; background: #0b1220; color: #86efac; border-radius: .6rem; padding: .7rem 1rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .img-demo img { max-width: 220px; border-radius: .5rem; }
+    .img-demo .broken { display: inline-flex; align-items: center; gap: .4rem; border: 1px dashed #9ca3af; padding: .4rem .6rem; border-radius: .4rem; font-size: .85rem; color: #374151; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lekcia 1</span>
+  <h1 class="display-5 fw-bold">HTML – kostra každej stránky</h1>
+  <p class="lead col-lg-8">HTML je značkovací jazyk: hovorí prehliadaču, <em>čo</em> na stránke je – nadpis, odsek, obrázok, odkaz, tabuľka, formulár. Ako to bude vyzerať, rieši až CSS (lekcia 2) a čo sa po kliknutí stane, JavaScript.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#znacky">1 · Značky a atribúty</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hlavicka">2 · Hlavička</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#texty">3 · Nadpisy a texty</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#odkazy">4 · Odkazy a obrázky</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#zoznamy">5 · Zoznamy</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#tabulky">6 · Tabuľky</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#formulare">7 · Formuláre</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#semantika">8 · Komentáre, DevTools, sémantika</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">9 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">10 · Úlohy</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 1 ZNAČKY -->
+  <section class="card section-card mb-4" id="znacky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Značky, atribúty a kostra dokumentu</h2>
+      <p>Stránka sa skladá zo <strong>značiek</strong> (tagov). Väčšina je <strong>párová</strong> – má začiatočnú a koncovú značku a medzi nimi obsah: <code>&lt;p&gt;…&lt;/p&gt;</code>. <strong>Nepárové</strong> značky obsah nemajú: <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>. Doplňujúce informácie zapisujeme do <strong>atribútov</strong> v začiatočnej značke: <code>názov="hodnota"</code>.</p>
+      <p class="small text-secondary mb-2">Klikni na ľubovoľnú časť riadku:</p>
+      <div class="anatomy" id="anatomy"><span data-part="open" class="p-tag">&lt;a</span> <span data-part="attr" class="p-attr">href</span>=<span data-part="value" class="p-val">"https://www.ukf.sk"</span> <span data-part="attr2" class="p-attr">target</span>=<span data-part="value2" class="p-val">"_blank"</span><span data-part="open" class="p-tag">&gt;</span><span data-part="text" class="p-text">Stránka UKF</span><span data-part="close" class="p-tag">&lt;/a&gt;</span></div>
+      <div class="explain alert alert-light border mt-2 mb-4 small" id="anatomyText">Vyber časť kódu vyššie.</div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">Kostra každej stránky</h3>
+<pre class="code-inspector" data-lang="html" data-copy>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+  &lt;head&gt;
+    &lt;!-- informácie o stránke – nie sú vidieť --&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Názov v karte prehliadača&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- všetko, čo je na stránke vidieť --&gt;
+    &lt;h1&gt;Ahoj, svet!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Súbory projektu</h3>
+          <ul class="small">
+            <li>Úvodná stránka sa vždy volá <code>index.html</code> – prehliadač ju otvorí, keď v adrese nie je uvedený konkrétny súbor.</li>
+            <li>Ďalšie stránky pomenuj podľa obsahu (<code>kontakt.html</code>) – názov súboru bude zároveň súčasťou adresy.</li>
+            <li>Obrázky si odkladaj do priečinka <code>img</code>.</li>
+            <li>Značky do seba vnárame ako krabičky: čo sa otvorí ako posledné, zatvára sa ako prvé – <code>&lt;p&gt;&lt;strong&gt;…&lt;/strong&gt;&lt;/p&gt;</code>.</li>
+            <li>Odsadenie kódu prehliadač ignoruje, ale tebe pomôže vidieť vnorenie.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 HLAVIČKA -->
+  <section class="card section-card mb-4" id="hlavicka">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Hlavička <code>&lt;head&gt;</code>: meta značky, titulok, odkazy</h2>
+      <p>Obsah hlavičky na stránke nevidno, ale číta ho prehliadač a vyhľadávače. Patria sem <strong>meta značky</strong> (kódovanie, popis, autor, viewport), <strong>titulok</strong> v karte prehliadača a <strong>odkazy</strong> na štýly, skripty a ikonku <em>favicon</em>. Vyskúšaj, ako sa titulok a popis prejavia:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <label class="form-label small fw-semibold" for="headTitle">&lt;title&gt;</label>
+          <input class="form-control mb-3" id="headTitle" value="Pekáreň U Rožka – čerstvý chlieb v Nitre">
+          <label class="form-label small fw-semibold" for="headDesc">&lt;meta name="description"&gt;</label>
+          <textarea class="form-control mb-3" id="headDesc" rows="3">Pečieme každý deň od 5:00. Kváskový chlieb, rožky a koláče z domácich surovín. Objednávky aj telefonicky.</textarea>
+          <label class="form-label small fw-semibold" for="headAuthor">&lt;meta name="author"&gt;</label>
+          <input class="form-control" id="headAuthor" value="Jana Nováková">
+        </div>
+        <div class="col-lg-7">
+          <div class="tiny-label mb-1">Karta prehliadača</div>
+          <div class="tab-preview"><div class="tab"><span>🥖</span><span id="tabTitle"></span></div></div>
+          <div class="serp mb-3">
+            <div class="tiny-label mb-1">Výsledok vo vyhľadávaní</div>
+            <div class="s-url">www.pekaren-urozka.sk</div>
+            <div class="s-title" id="serpTitle"></div>
+            <div class="s-desc" id="serpDesc"></div>
+          </div>
+          <pre class="code-inspector" id="headCode"></pre>
+        </div>
+      </div>
+      <ul class="small mt-3 mb-0">
+        <li><code>viewport</code> povie mobilu, aby stránku nezmenšoval na šírku počítača – bez neho bude responzívny dizajn (lekcia 4) fungovať zle.</li>
+        <li>Favicon je malá ikonka v karte, typicky súbor <code>.ico</code> alebo <code>.png</code>.</li>
+        <li>Popis sa zobrazí vo vyhľadávaní, keď ho vyhľadávač uzná za vhodný; dlhý text skráti (približne na 155 znakov).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3 TEXTY -->
+  <section class="card section-card mb-4" id="texty">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Nadpisy, odseky a formátovanie textu</h2>
+      <p>Nadpisy majú 6 úrovní, <code>&lt;h1&gt;</code> je najdôležitejší. Každá stránka by mala mať <strong>práve jeden</strong> <code>&lt;h1&gt;</code> – podľa neho vyhľadávače aj čítačky pre nevidiacich poznajú, o čom stránka je. Text píšeme do odsekov <code>&lt;p&gt;</code>. Uprav kód vľavo a sleduj výsledok:</p>
+      <div class="live mb-3" data-height="300">
+<textarea data-part="html" data-label="HTML">
+<h1>Nadpis prvej úrovne</h1>
+<h2>Nadpis druhej úrovne</h2>
+<h3>Nadpis tretej úrovne</h3>
+<p>Toto je odsek. Môže obsahovať viac viet.<br>Značka br zalomí riadok.</p>
+<p><b>Tučné</b> a <strong>dôležité</strong>, <i>kurzíva</i> a <em>dôraz</em>.</p>
+<p><mark>Zvýraznené</mark>, <u>podčiarknuté</u>, <del>preškrtnuté</del>, <small>malé</small>.</p>
+<p>Vzorec H<sub>2</sub>O a plocha 25 m<sup>2</sup>.</p>
+</textarea>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm small tag-table align-middle">
+          <thead><tr><th>Značka</th><th>Výsledok</th><th>Význam</th></tr></thead>
+          <tbody>
+            <tr><td><code>&lt;b&gt;</code> / <code>&lt;strong&gt;</code></td><td><b>tučné</b></td><td><code>b</code> je len vzhľad, <code>strong</code> hovorí „toto je dôležité“ – čítačka to zdôrazní (sémantická značka).</td></tr>
+            <tr><td><code>&lt;i&gt;</code> / <code>&lt;em&gt;</code></td><td><i>kurzíva</i></td><td><code>i</code> je len vzhľad, <code>em</code> znamená dôraz.</td></tr>
+            <tr><td><code>&lt;mark&gt;</code></td><td><mark>zvýraznené</mark></td><td>efekt zvýrazňovača</td></tr>
+            <tr><td><code>&lt;sub&gt;</code> / <code>&lt;sup&gt;</code></td><td>H<sub>2</sub>O, m<sup>2</sup></td><td>dolný a horný index</td></tr>
+            <tr><td><code>&lt;u&gt;</code> / <code>&lt;ins&gt;</code></td><td><u>podčiarknuté</u></td><td><code>ins</code> označuje vložený text</td></tr>
+            <tr><td><code>&lt;del&gt;</code></td><td><del>preškrtnuté</del></td><td>vymazaný text, napr. stará cena</td></tr>
+            <tr><td><code>&lt;small&gt;</code></td><td><small>malé</small></td><td>poznámka „pod čiarou“</td></tr>
+            <tr><td><code>&lt;br&gt;</code></td><td>zalomenie</td><td>nepárová značka – nový riadok v tom istom odseku</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="erratum">Pozor na zápisy: zalomenie riadku je <code>&lt;br&gt;</code> (nie <code>&lt;/br&gt;</code>) a každý nadpis treba zatvoriť lomkou – <code>&lt;h6&gt;…&lt;/h6&gt;</code>. Značka <code>&lt;big&gt;</code> je zastaraná; veľkosť písma nastavíme v CSS (<code>font-size</code>).</div>
+    </div>
+  </section>
+
+  <!-- 4 ODKAZY A OBRÁZKY -->
+  <section class="card section-card mb-4" id="odkazy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Odkazy a obrázky</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h3 class="h6">Odkaz <code>&lt;a&gt;</code></h3>
+          <ul class="small">
+            <li><code>href</code> – kam odkaz vedie (povinný). Celá adresa <code>https://www.ukf.sk</code>, iný súbor projektu <code>kontakt.html</code> alebo miesto na stránke <code>#formular</code>.</li>
+            <li><code>target="_blank"</code> – otvorí odkaz v novej karte.</li>
+            <li><code>href="tel:+421900123456"</code> – na mobile rovno vytočí číslo.</li>
+            <li><code>href="mailto:info@firma.sk"</code> – otvorí nový e-mail.</li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Obrázok <code>&lt;img&gt;</code> (nepárová značka)</h3>
+          <ul class="small">
+            <li><code>src</code> – cesta k súboru vrátane prípony (<code>.jpg</code>, <code>.png</code>, <code>.gif</code>, <code>.svg</code>). Povinný.</li>
+            <li><strong>Relatívna cesta</strong> <code>img/slnecnica.jpg</code> – súbor v tvojom projekte. Odporúčaný spôsob.</li>
+            <li><strong>Externá adresa</strong> <code>https://…/obrazok.jpg</code> – zaťažuje cudzí server a obrázok môže kedykoľvek zmiznúť.</li>
+            <li><code>alt</code> – textový popis. Prečíta ho čítačka a zobrazí sa, keď sa obrázok nenačíta.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row g-3 align-items-center img-demo mb-3">
+        <div class="col-auto"><img id="altImg" alt="fotografia slnečnice na lúke" width="220" height="143"></div>
+        <div class="col">
+          <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="breakImg">Pokaziť cestu k obrázku</button>
+          <pre class="code-inspector" id="altCode"></pre>
+        </div>
+      </div>
+      <div class="live" data-height="240">
+<textarea data-part="html" data-label="HTML">
+<p>Navštív <a href="https://www.ukf.sk" target="_blank">stránku UKF</a>.</p>
+<p>Zavolaj nám: <a href="tel:+421900123456">0900 123 456</a></p>
+<p>Napíš nám: <a href="mailto:info@firma.sk">info@firma.sk</a></p>
+<img src="img/slnecnica.jpg" alt="fotografia slnečnice" width="200">
+</textarea>
+      </div>
+      <div class="erratum mt-3">Externá adresa sa vždy začína protokolom: <code>https://www.stranka.sk/obrazok.jpg</code> (nie <code>http:www…</code>). Atribút <code>alt</code> môže obsahovať aj diakritiku – vďaka <code>&lt;meta charset="UTF-8"&gt;</code> ju čítačka prečíta správne.</div>
+    </div>
+  </section>
+
+  <!-- 5 ZOZNAMY -->
+  <section class="card section-card mb-4" id="zoznamy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Zoznamy</h2>
+      <p>Číslovaný zoznam <code>&lt;ol&gt;</code> (ordered list), nečíslovaný <code>&lt;ul&gt;</code> (unordered list) – položky sú vždy <code>&lt;li&gt;</code>. Definičný zoznam <code>&lt;dl&gt;</code> má pojmy <code>&lt;dt&gt;</code> a ich vysvetlenia <code>&lt;dd&gt;</code>. Skús zmeniť <code>ol</code> na <code>ul</code>:</p>
+      <div class="live" data-height="320">
+<textarea data-part="html" data-label="HTML">
+<ol>
+  <li>Prvá položka</li>
+  <li>Druhá položka</li>
+  <li>Tretia položka</li>
+</ol>
+
+<ul>
+  <li>Múka</li>
+  <li>Voda</li>
+  <li>Soľ</li>
+</ul>
+
+<dl>
+  <dt>HCl</dt>
+  <dd>kyselina chlorovodíková</dd>
+  <dt>HF</dt>
+  <dd>kyselina fluorovodíková</dd>
+</dl>
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 TABUĽKY -->
+  <section class="card section-card mb-4" id="tabulky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Tabuľky</h2>
+      <p>Tabuľka <code>&lt;table&gt;</code> sa skladá z riadkov <code>&lt;tr&gt;</code> (table row). Bunky hlavičky sú <code>&lt;th&gt;</code> (table header), ostatné bunky <code>&lt;td&gt;</code> (table data). Atribút <code>colspan="2"</code> spojí dve bunky vedľa seba. Pridaj riadok s ďalšou hodnotou:</p>
+      <div class="live" data-height="330">
+<textarea data-part="html" data-label="HTML">
+<table>
+  <tr>
+    <th>Nutričné hodnoty</th>
+    <th>na 100 g</th>
+  </tr>
+  <tr>
+    <td>Energia</td>
+    <td>250 kcal</td>
+  </tr>
+  <tr>
+    <td>Bielkoviny</td>
+    <td>9 g</td>
+  </tr>
+  <tr>
+    <td colspan="2">Zdroj: výrobca</td>
+  </tr>
+</table>
+</textarea>
+<textarea data-part="css" data-label="CSS">
+/* bez CSS by tabuľka nemala žiadne čiary */
+table { border-collapse: collapse; }
+th, td { border: 1px solid #999; padding: 6px 12px; }
+th { background: #ffedd5; }
+</textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 FORMULÁRE -->
+  <section class="card section-card mb-4" id="formulare">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Formuláre</h2>
+      <p>Formulár <code>&lt;form&gt;</code> zbiera údaje a po odoslaní ich pošle na adresu v atribúte <code>action</code>. Atribút <code>method</code> určuje spôsob: <code>GET</code> pridá údaje do adresy (napr. vyhľadávanie), <code>POST</code> ich pošle skryto (registrácia, objednávka). <code>target="_blank"</code> by odpoveď otvoril v novej karte.</p>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <form class="demo-area" id="orderForm" action="order.php" method="get" novalidate>
+            <div class="mb-2"><label class="form-label small" for="fName">Meno a priezvisko</label><input class="form-control form-control-sm" type="text" id="fName" name="name" required></div>
+            <div class="mb-2"><label class="form-label small" for="fEmail">E-mail</label><input class="form-control form-control-sm" type="email" id="fEmail" name="email" required></div>
+            <div class="mb-2"><label class="form-label small" for="fCount">Počet kusov</label><input class="form-control form-control-sm" type="number" id="fCount" name="count" min="1" max="10" value="1"></div>
+            <div class="mb-2"><label class="form-label small" for="fCountry">Štát</label>
+              <select class="form-select form-select-sm" id="fCountry" name="country"><option value="sk">Slovensko</option><option value="cz">Česko</option><option value="at">Rakúsko</option></select></div>
+            <div class="mb-2 small"><span class="d-block mb-1">Doprava</span>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="delivery" id="dPost" value="post" checked><label class="form-check-label" for="dPost">Pošta</label></div>
+              <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="delivery" id="dCourier" value="courier"><label class="form-check-label" for="dCourier">Kuriér</label></div>
+            </div>
+            <div class="mb-2"><label class="form-label small" for="fNote">Poznámka</label><textarea class="form-control form-control-sm" id="fNote" name="note" rows="2"></textarea></div>
+            <div class="form-check mb-3 small"><input class="form-check-input" type="checkbox" id="fAgree" name="agree" value="yes" required><label class="form-check-label" for="fAgree">Súhlasím so spracovaním údajov</label></div>
+            <input class="btn btn-primary btn-sm" type="submit" value="Odoslať">
+          </form>
+        </div>
+        <div class="col-lg-6">
+          <p class="small fw-semibold mb-1">Čo by sa odoslalo:</p>
+          <div class="sent-data mb-3" id="sentData">Vyplň formulár a klikni na Odoslať.</div>
+          <ul class="small mb-0">
+            <li><code>&lt;label for="fEmail"&gt;</code> patrí k poľu s <code>id="fEmail"</code> – klikni na popisok a kurzor skočí do poľa.</li>
+            <li>Odosiela sa dvojica <code>name=hodnota</code>. Pole bez atribútu <code>name</code> sa neodošle vôbec!</li>
+            <li><code>type="email"</code> skontroluje tvar adresy, <code>type="number"</code> pustí len čísla, <code>required</code> nedovolí pole vynechať.</li>
+            <li>Rádio tlačidlá s <strong>rovnakým</strong> <code>name</code> tvoria skupinu – vybrať ide len jedno. Zaškrtávacích políčok (checkbox) môžeš zaškrtnúť koľko chceš.</li>
+            <li><code>&lt;select&gt;</code> s atribútom <code>multiple</code> dovolí vybrať viac možností, <code>size</code> určí počet viditeľných riadkov.</li>
+          </ul>
+        </div>
+      </div>
+<pre class="code-inspector mt-3" data-lang="html" data-copy>
+&lt;form action="order.php" method="post"&gt;
+  &lt;label for="email"&gt;E-mail&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" required&gt;
+
+  &lt;input type="radio" id="post" name="delivery" value="post"&gt;
+  &lt;label for="post"&gt;Pošta&lt;/label&gt;
+  &lt;input type="radio" id="courier" name="delivery" value="courier"&gt;
+  &lt;label for="courier"&gt;Kuriér&lt;/label&gt;
+
+  &lt;textarea id="note" name="note"&gt;&lt;/textarea&gt;
+  &lt;input type="submit" value="Odoslať"&gt;
+&lt;/form&gt;
+</pre>
+    </div>
+  </section>
+
+  <!-- 8 SÉMANTIKA -->
+  <section class="card section-card mb-4" id="semantika">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Komentáre, nástroje vývojára a sémantické značky</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-6">
+          <h3 class="h6">Komentár</h3>
+          <p class="small">Poznámka pre programátora – prehliadač ju nezobrazí, ani keď je v <code>&lt;body&gt;</code>.</p>
+<pre class="code-inspector" data-lang="html">&lt;!-- Toto je komentár. Začína &lt;!-- a končí --&gt;</pre>
+          <p class="small text-secondary mt-1 mb-0">Na začiatku sú dve obyčajné pomlčky <code>&lt;!--</code>, nie dlhá pomlčka.</p>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Nástroje vývojára (DevTools)</h3>
+          <p class="small mb-0">Na ľubovoľnej stránke klikni pravým tlačidlom → <strong>Preskúmať</strong> (Inspect) alebo stlač <kbd>F12</kbd>. V karte <em>Elements</em> uvidíš HTML celej stránky, môžeš ho dočasne upraviť a pod ním vidíš aj CSS. Cez tri bodky ⋮ si nastavíš, na ktorej strane okna sa panel zobrazí. Vyskúšaj to na tejto stránke!</p>
+        </div>
+      </div>
+      <h3 class="h6">Zoskupovanie: sémantické značky</h3>
+      <p class="small">Obsah zoskupujeme do blokov, aby sme ich mohli farebne odlíšiť alebo rozdeliť do stĺpcov. <strong>Sémantické</strong> značky navyše hovoria, <em>čo</em> v nich je. Klikni na časť stránky:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="layout-map" id="layoutMap">
+            <button type="button" style="grid-area:h" data-tag="header">&lt;header&gt;</button>
+            <button type="button" style="grid-area:n" data-tag="nav">&lt;nav&gt;</button>
+            <div class="lm-main" style="grid-area:m;border:2px dashed #cbd2dd;border-radius:.5rem" >
+              <button type="button" data-tag="main">&lt;main&gt;</button>
+              <button type="button" data-tag="section">&lt;section&gt;</button>
+              <button type="button" data-tag="article">&lt;article&gt;</button>
+            </div>
+            <button type="button" style="grid-area:a" data-tag="aside">&lt;aside&gt;</button>
+            <button type="button" style="grid-area:f" data-tag="footer">&lt;footer&gt;</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-tag="div" id="divBtn">a čo &lt;div&gt;?</button>
+        </div>
+        <div class="col-lg-7">
+          <div class="alert alert-light border small explain" id="tagText">Vyber časť stránky vľavo.</div>
+          <pre class="code-inspector" id="tagCode"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Kvíz</h2>
+      <div id="quiz1"></div>
+    </div>
+  </section>
+
+  <!-- 10 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Úlohy na hodinu</h2>
+      <p>Každú úlohu rob v novom súbore v priečinku projektu (<code>uloha1.html</code>, <code>uloha2.html</code>, <code>uloha3.html</code>). Keď budeš hotový, vlož celý kód do kontroly pod zadaním – overí, či máš všetky požadované prvky.</p>
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 1 · Prvá stránka</h3>
+            <p class="small">Stránka o téme, ktorá ťa baví. Musí obsahovať:</p>
+            <ul class="small mb-2"><li>1× nadpis <code>h1</code>, 2× <code>h2</code>, 1× <code>h3</code></li><li>3 odseky</li><li>2 odkazy</li><li>zoznam</li><li>obrázok s atribútom <code>alt</code></li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="1" aria-label="Kód úlohy 1" placeholder="Sem vlož svoj HTML kód…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check1"></ul>
+          </div>
+        </div>
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 2 · Recept</h3>
+            <p class="small">Stránka s receptom. Musí obsahovať:</p>
+            <ul class="small mb-2"><li>nadpis receptu</li><li>obrázok jedla</li><li>aspoň jeden podnadpis</li><li>ingrediencie ako zoznam</li><li>tabuľku nutričných hodnôt (s hlavičkou <code>th</code>)</li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="2" aria-label="Kód úlohy 2" placeholder="Sem vlož svoj HTML kód…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check2"></ul>
+          </div>
+        </div>
+        <div class="col-xl-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 3 · Objednávka</h3>
+            <p class="small">Formulár s poľami:</p>
+            <ul class="small mb-2"><li>meno a priezvisko, mesto, adresa (<code>text</code>)</li><li>štát (<code>select</code>)</li><li>e-mail (<code>email</code>)</li><li>poznámka (<code>textarea</code>)</li><li>doprava (<code>radio</code>), súhlas (<code>checkbox</code>)</li><li>odoslať (<code>submit</code>), každé pole s <code>label</code></li></ul>
+            <textarea class="form-control form-control-sm font-monospace mb-2" rows="5" data-check="3" aria-label="Kód úlohy 3" placeholder="Sem vlož svoj HTML kód…"></textarea>
+            <ul class="check-list small ps-0 mb-0" id="check3"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lekcia 1 · HTML · Dokumentácia: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">MDN – zoznam HTML značiek</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input">MDN – typy polí input</a> · <a href="https://www.w3schools.com/html/">W3Schools – HTML</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>
+  // ---------- 1 anatómia značky ----------
+  const PARTS = {
+    open: 'Začiatočná značka <a> – „tu sa začína odkaz“. Názov značky píšeme hneď za <.',
+    attr: 'Názov atribútu href – adresa, kam odkaz vedie.',
+    value: 'Hodnota atribútu – vždy v úvodzovkách, za znakom =.',
+    attr2: 'Druhý atribút target – kde sa odkaz otvorí. Atribúty oddeľujeme medzerou.',
+    value2: 'Hodnota _blank = otvoriť v novej karte.',
+    text: 'Obsah medzi značkami – text, na ktorý sa klikne.',
+    close: 'Koncová značka – rovnaký názov s lomkou /.'
+  };
+  Lab.$$('#anatomy [data-part]').forEach(el => el.addEventListener('click', () => {
+    Lab.$$('#anatomy [data-part]').forEach(x => x.classList.toggle('on', x.dataset.part === el.dataset.part));
+    document.getElementById('anatomyText').textContent = PARTS[el.dataset.part];
+  }));
+
+  // ---------- 2 hlavička ----------
+  const headTitle = document.getElementById('headTitle');
+  const headDesc = document.getElementById('headDesc');
+  const headAuthor = document.getElementById('headAuthor');
+  function updateHead() {
+    const desc = headDesc.value.trim();
+    document.getElementById('tabTitle').textContent = headTitle.value;
+    document.getElementById('serpTitle').textContent = headTitle.value;
+    document.getElementById('serpDesc').textContent = desc.length > 155 ? desc.slice(0, 152) + '…' : desc;
+    Lab.setCode(document.getElementById('headCode'), 'html',
+      '<head>\n  <meta charset="UTF-8">\n  <meta name="description" content="' + desc + '">\n  <meta name="author" content="' + headAuthor.value + '">\n' +
+      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + headTitle.value + '</title>\n' +
+      '  <link rel="icon" type="image/x-icon" href="img/favicon.ico">\n  <link rel="stylesheet" href="css/style.css">\n</head>');
+  }
+  [headTitle, headDesc, headAuthor].forEach(el => el.addEventListener('input', updateHead));
+  updateHead();
+
+  // ---------- 4 alt ----------
+  const altImg = document.getElementById('altImg');
+  let broken = false;
+  function updateAlt() {
+    const src = broken ? 'img/slnecnicaa.jpg' : 'img/slnecnica.jpg';
+    altImg.src = broken ? 'img/slnecnicaa.jpg' : Lab.svgScene('slnecnica');
+    Lab.setCode(document.getElementById('altCode'), 'html', '<img src="' + src + '" alt="' + altImg.alt + '">');
+    document.getElementById('breakImg').textContent = broken ? 'Opraviť cestu k obrázku' : 'Pokaziť cestu k obrázku';
+  }
+  document.getElementById('breakImg').addEventListener('click', () => { broken = !broken; updateAlt(); });
+  updateAlt();
+
+  // ---------- 7 formulár ----------
+  const form = document.getElementById('orderForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const out = document.getElementById('sentData');
+    if (!form.checkValidity()) {
+      const bad = form.querySelector(':invalid');
+      out.style.color = '#fca5a5';
+      out.textContent = 'Prehliadač formulár neodošle: pole „' + form.querySelector('label[for="' + bad.id + '"]').textContent + '“ – ' + bad.validationMessage;
+      bad.focus();
+      return;
+    }
+    const params = new URLSearchParams(new FormData(form));
+    out.style.color = '';
+    out.textContent = 'GET ' + form.getAttribute('action') + '?' + params.toString() + '\n\n' +
+      Array.from(params.entries()).map(([k, v]) => k + ' = ' + v).join('\n');
+  });
+
+  // ---------- 8 sémantické značky ----------
+  const TAGS = {
+    header: ['Hlavička stránky – zvyčajne logo, názov a menu.', '<header>\n  <img src="img/logo.png" alt="logo">\n  <h1>Pekáreň U Rožka</h1>\n</header>'],
+    nav: ['Hlavná navigácia – zoznam odkazov na ďalšie stránky.', '<nav>\n  <a href="index.html">Domov</a>\n  <a href="kontakt.html">Kontakt</a>\n</nav>'],
+    main: ['Hlavný obsah stránky. Na stránke je len jeden.', '<main>\n  <section>…</section>\n  <article>…</article>\n</main>'],
+    section: ['Časť stránky, ktorá sa týka jednej témy – zvyčajne má vlastný nadpis.', '<section>\n  <h2>Naše produkty</h2>\n  <p>…</p>\n</section>'],
+    article: ['Samostatný článok – dal by sa prečítať aj vytrhnutý zo stránky (príspevok na blogu, novinka).', '<article>\n  <h2>Otvárame novú predajňu</h2>\n  <p>Od pondelka…</p>\n</article>'],
+    aside: ['Doplnkový obsah vedľa hlavného – bočný panel, reklama, súvisiace odkazy.', '<aside>\n  <h3>Otváracie hodiny</h3>\n  <p>Po – Pi 6:00 – 18:00</p>\n</aside>'],
+    footer: ['Päta stránky – kontakt, autor, autorské práva.', '<footer>\n  <p>&copy; 2026 Pekáreň U Rožka</p>\n</footer>'],
+    div: ['<div> je blok bez významu – použijeme ho, keď potrebujeme niečo zoskupiť len kvôli vzhľadu (napr. stĺpec). Ak má obsah jednu tému, je lepšia značka <section>.', '<div class="column">\n  …\n</div>']
+  };
+  Lab.$$('[data-tag]').forEach(btn => btn.addEventListener('click', () => {
+    Lab.$$('[data-tag]').forEach(b => b.classList.toggle('on', b === btn));
+    const t = TAGS[btn.dataset.tag];
+    document.getElementById('tagText').textContent = t[0];
+    Lab.setCode(document.getElementById('tagCode'), 'html', t[1]);
+  }));
+  document.querySelector('#layoutMap [data-tag="header"]').click();
+
+  // ---------- 9 kvíz ----------
+  Lab.quiz('#quiz1', [
+    { q: 'Ktorá značka je nepárová?', o: ['<p>', '<img>', '<h1>', '<a>'], a: 1, e: '<img> nemá obsah ani koncovú značku – všetko potrebné je v atribútoch src a alt.' },
+    { q: 'Koľko nadpisov <h1> by mala mať jedna stránka?', o: ['žiadny', 'práve jeden', 'koľko chceme'], a: 1, e: 'h1 hovorí, o čom je celá stránka. Ďalšie nadpisy sú h2, h3…' },
+    { q: 'Aký je rozdiel medzi <b> a <strong>?', o: ['žiadny', '<strong> navyše hovorí, že text je dôležitý', '<b> je hrubší'], a: 1, e: 'Vyzerajú rovnako, ale strong je sémantická značka – čítačka text zdôrazní.', mono: false },
+    { q: 'Ako otvoríš odkaz v novej karte?', o: ['<a href="…" new>', '<a href="…" target="_blank">', '<a href="…" open="tab">'], a: 1, e: 'Atribút target s hodnotou _blank.' },
+    { q: 'Ktorá bunka tabuľky patrí do hlavičky?', o: ['<td>', '<tr>', '<th>'], a: 2, e: 'th = table header, td = table data, tr = table row.' },
+    { q: 'Ako zabezpečíš, aby sa dalo vybrať iba jedno rádio tlačidlo zo skupiny?', o: ['rovnaký atribút id', 'rovnaký atribút name', 'atribút single'], a: 1, e: 'Rádiá s rovnakým name tvoria skupinu. id musí byť na stránke vždy jedinečné.', mono: false },
+    { q: 'Ktorý zápis komentára je správny?', o: ['// komentár', '<!-- komentár -->', '/* komentár */'], a: 1, e: '// a /* */ sú komentáre v JavaScripte (/* */ aj v CSS). V HTML je to <!-- … -->.' }
+  ]);
+
+  // ---------- 10 kontrola úloh ----------
+  const RULES = {
+    1: [
+      ['práve 1× h1', d => d.querySelectorAll('h1').length === 1],
+      ['aspoň 2× h2', d => d.querySelectorAll('h2').length >= 2],
+      ['aspoň 1× h3', d => d.querySelectorAll('h3').length >= 1],
+      ['aspoň 3 odseky p', d => d.querySelectorAll('p').length >= 3],
+      ['aspoň 2 odkazy s href', d => d.querySelectorAll('a[href]').length >= 2],
+      ['zoznam ul alebo ol s položkami li', d => d.querySelectorAll('ul li, ol li').length >= 1],
+      ['obrázok s neprázdnym alt', d => Array.from(d.querySelectorAll('img')).some(i => (i.getAttribute('alt') || '').trim() && i.getAttribute('src'))]
+    ],
+    2: [
+      ['nadpis h1', d => d.querySelectorAll('h1').length >= 1],
+      ['obrázok s alt', d => Array.from(d.querySelectorAll('img')).some(i => (i.getAttribute('alt') || '').trim())],
+      ['podnadpis h2 alebo h3', d => d.querySelectorAll('h2, h3').length >= 1],
+      ['ingrediencie v zozname', d => d.querySelectorAll('ul li, ol li').length >= 2],
+      ['tabuľka s bunkami th a td', d => d.querySelectorAll('table th').length >= 1 && d.querySelectorAll('table td').length >= 2]
+    ],
+    3: [
+      ['formulár form', d => !!d.querySelector('form')],
+      ['aspoň 3 textové polia', d => d.querySelectorAll('input[type="text"]').length >= 3],
+      ['select s možnosťami option', d => d.querySelectorAll('select option').length >= 2],
+      ['pole type="email"', d => !!d.querySelector('input[type="email"]')],
+      ['textarea', d => !!d.querySelector('textarea')],
+      ['aspoň 2 rádiá s rovnakým name', d => { const r = Array.from(d.querySelectorAll('input[type="radio"]')).map(x => x.name); return r.some((n, i) => n && r.indexOf(n) !== i); }],
+      ['checkbox', d => !!d.querySelector('input[type="checkbox"]')],
+      ['tlačidlo submit', d => !!d.querySelector('input[type="submit"], button[type="submit"], form button:not([type])')],
+      ['každé pole má label for', d => { const f = Array.from(d.querySelectorAll('input:not([type="submit"]), select, textarea')); return f.length > 0 && f.every(x => x.id && d.querySelector('label[for="' + x.id + '"]')); }]
+    ]
+  };
+  Lab.$$('[data-check]').forEach(area => {
+    const list = document.getElementById('check' + area.dataset.check);
+    function run() {
+      list.innerHTML = '';
+      if (!area.value.trim()) return;
+      const doc = new DOMParser().parseFromString(area.value, 'text/html');
+      RULES[area.dataset.check].forEach(([label, test]) => {
+        const li = document.createElement('li');
+        const ok = test(doc);
+        li.className = ok ? 'ok' : 'no';
+        li.textContent = label;
+        list.appendChild(li);
+      });
+    }
+    area.addEventListener('input', run);
+  });
+</script>
+</body>
+</html>

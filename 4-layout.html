@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4 · Pozícia prvkov, flexbox a media queries</title>
+  <meta name="description" content="Lekcia 4 – position static, relative, absolute a fixed, princípy responzívneho dizajnu, flexbox (display flex, gap, flex-direction, flex-wrap, justify-content, align-items, flex) a media queries.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #7e22ce; --accent-bg: #f3e8ff; }
+    .pos-frame { width: 100%; height: 330px; border: 1px solid #d6dbe6; border-radius: .75rem; background: #fff; }
+    .flex-stage { background: #fff; border: 2px dashed #a855f7; border-radius: .75rem; min-height: 260px; padding: .5rem; transition: all .2s; }
+    .flex-stage .fi { background: #e9d5ff; border: 2px solid #7e22ce; border-radius: .5rem; padding: .6rem .9rem; font: 700 .9rem ui-monospace, Menlo, Consolas, monospace; color: #581c87; min-width: 3rem; text-align: center; }
+    .flex-stage .fi:nth-child(2) { padding: 1.4rem .9rem; }
+    .flex-stage .fi:nth-child(3) { padding: .3rem 1.6rem; }
+    .flex-stage .fi.grow { background: #c084fc; color: #fff; }
+    .axis-note { font-size: .8rem; color: #6b7280; }
+    .mq-status { font: 600 .85rem ui-monospace, Menlo, Consolas, monospace; padding: .35rem .7rem; border-radius: .4rem; display: inline-block; }
+    .mq-status.on { background: #dcfce7; color: #166534; }
+    .mq-status.off { background: #f3f4f6; color: #6b7280; }
+    .rd-cards { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .rd-cards > div { flex: 1 1 200px; background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: .9rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Lekcia 4</span>
+  <h1 class="display-5 fw-bold">Pozícia, flexbox a media queries</h1>
+  <p class="lead col-lg-8">Ako prvok presne umiestniť, ako rozložiť prvky vedľa seba a pod seba a ako zariadiť, aby stránka dobre vyzerala na počítači aj na mobile.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#pozicia">1 · position</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#responzivny">2 · Responzívny dizajn</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#flexbox">3 · Flexbox</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#flexdeti">4 · flex pre potomkov</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#media">5 · Media queries</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">6 · Kvíz</a>
+    <a class="btn btn-sm btn-outline-success" href="#ulohy">7 · Úlohy</a>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <!-- 1 POSITION -->
+  <section class="card section-card mb-4" id="pozicia">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Vlastnosť <code>position</code></h2>
+      <p>Pri polohovaní si treba pamätať, že prvky sú do seba vnorené: <strong>rodič</strong> (nadradený prvok) a jeho <strong>potomkovia</strong>. V ukážke je fialový <em>potomok</em> vnútri sivého <em>rodiča</em>. Vyber typ pozície a posúvaj ho cez <code>top</code> a <code>left</code>:</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="btn-group btn-group-sm flex-wrap mb-3" role="group" id="posType">
+            <button type="button" class="btn btn-outline-secondary" data-pos="static">static</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="relative">relative</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="absolute">absolute</button>
+            <button type="button" class="btn btn-outline-secondary" data-pos="fixed">fixed</button>
+          </div>
+          <div class="pg-row mb-2"><label for="posTop">top</label><input type="range" class="form-range" id="posTop" min="0" max="120" value="0"><span class="pg-val" id="posTopV"></span></div>
+          <div class="pg-row mb-2"><label for="posLeft">left</label><input type="range" class="form-range" id="posLeft" min="0" max="200" value="30"><span class="pg-val" id="posLeftV"></span></div>
+          <div class="form-check form-switch small mb-3"><input class="form-check-input" type="checkbox" id="posParent"><label class="form-check-label" for="posParent">rodič má <code>position: relative</code></label></div>
+          <div class="alert alert-light border small mb-0" id="posText"></div>
+        </div>
+        <div class="col-lg-7">
+          <iframe class="pos-frame" id="posFrame" title="ukážka position"></iframe>
+          <pre class="code-inspector mt-2" id="posCode"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 RESPONZÍVNY DIZAJN -->
+  <section class="card section-card mb-4" id="responzivny">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Čo je responzívny dizajn</h2>
+      <p>Väčšina ľudí dnes prichádza na web z mobilu. <strong>Responzívny dizajn</strong> znamená, že sa stránka sama prispôsobí šírke obrazovky – nikto nemusí posúvať do strán ani si ju približovať prstami. Pri návrhu riešime najmä tri veci:</p>
+      <div class="rd-cards mb-3">
+        <div><strong>Veľkosť písma</strong><br>Nadpis so 60 px vyzerá na počítači dobre, na mobile je priveľký.</div>
+        <div><strong>Okraje</strong><br>Na veľkej obrazovke chceme väčšie <code>margin</code> a <code>padding</code> ako na malej.</div>
+        <div><strong>Rozloženie</strong><br>Na počítači 4 stĺpce vedľa seba, na mobile tie isté stĺpce pod sebou.</div>
+      </div>
+      <p class="small mb-0">Základ je značka <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> v hlavičke (lekcia 1). Bez nej by mobil zobrazil zmenšenú „počítačovú“ verziu a nasledujúce triky by nefungovali.</p>
+    </div>
+  </section>
+
+  <!-- 3 FLEXBOX -->
+  <section class="card section-card mb-4" id="flexbox">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Flexbox – vlastnosti rodiča</h2>
+      <p>Flexbox je celý modul na rozkladanie prvkov. Niektoré vlastnosti patria <strong>rodičovi</strong> (flex container), iné <strong>potomkom</strong> (flex items). Všetko sa začína tým, že rodičovi nastavíme <code>display: flex;</code> – jeho potomkovia sa hneď zoradia vedľa seba.</p>
+      <div class="row g-4" id="flexPg">
+        <div class="col-lg-5">
+          <div class="pg-controls"></div>
+          <div class="d-flex align-items-center gap-2 mt-3 small">
+            <span>počet potomkov:</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="flexLess">−</button>
+            <span class="fw-bold" id="flexCount">4</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="flexMore">+</button>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="flex-stage mb-1" id="flexStage"></div>
+          <div class="axis-note mb-2" id="axisNote"></div>
+          <pre class="code-inspector pg-code"></pre>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm small align-middle mb-0">
+          <thead><tr><th>Vlastnosť rodiča</th><th>Čo robí</th></tr></thead>
+          <tbody>
+            <tr><td><code>gap</code></td><td>medzera medzi potomkami; zvlášť sa dá nastaviť <code>row-gap</code> a <code>column-gap</code></td></tr>
+            <tr><td><code>flex-direction</code></td><td><code>row</code> (predvolené) – vedľa seba, <code>column</code> – pod sebou</td></tr>
+            <tr><td><code>flex-wrap</code></td><td><code>nowrap</code> (predvolené) – všetko na jednom riadku, <code>wrap</code> – zalomí na ďalší riadok, <code>wrap-reverse</code> – zalamuje zdola nahor</td></tr>
+            <tr><td><code>justify-content</code></td><td>zarovnanie na <strong>hlavnej osi</strong> (pri <code>row</code> vodorovne): <code>flex-start</code>, <code>center</code>, <code>flex-end</code>, <code>space-between</code>, <code>space-around</code>, <code>space-evenly</code></td></tr>
+            <tr><td><code>align-items</code></td><td>zarovnanie na <strong>priečnej osi</strong> (pri <code>row</code> zvislo): <code>stretch</code> (predvolené), <code>flex-start</code>, <code>center</code>, <code>flex-end</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small text-secondary mt-2 mb-0">Pri <code>flex-direction: column</code> sa osi vymenia – <code>justify-content</code> potom zarovnáva zvislo a <code>align-items</code> vodorovne. Podrobný ťahák: <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSS-Tricks – A Complete Guide to Flexbox</a>.</p>
+    </div>
+  </section>
+
+  <!-- 4 FLEX POTOMKOVIA -->
+  <section class="card section-card mb-4" id="flexdeti">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Vlastnosť potomkov: <code>flex</code></h2>
+      <p>Vlastnosť <code>flex</code> hovorí, <strong>koľko dielikov</strong> voľného miesta má potomok zabrať. Ak majú všetci <code>flex: 1</code>, rozdelia sa rovnako; potomok s <code>flex: 2</code> dostane dvakrát viac ako ten s <code>flex: 1</code>. Klikaj na čísla:</p>
+      <div class="d-flex gap-2 mb-2" id="flexKids"></div>
+      <div class="d-flex flex-wrap gap-2 small mb-2" id="flexKidsCtl"></div>
+      <pre class="code-inspector" id="flexKidsCode"></pre>
+    </div>
+  </section>
+
+  <!-- 5 MEDIA QUERIES -->
+  <section class="card section-card mb-4" id="media">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Media queries – iné CSS pre iné obrazovky</h2>
+      <p>Pravidlo <code>@media</code> obalí blok CSS, ktorý platí <strong>iba vtedy, keď je splnená podmienka</strong> – napríklad keď je okno užšie ako 600 px. Hlavička nižšie má logo a navigáciu vedľa seba (flex, <code>space-between</code>). Na úzkej obrazovke by sa rozbila, preto ich pod 600 px dáme pod seba s medzerou 15 px. Zmeň šírku „okna“:</p>
+      <div class="row g-4">
+        <div class="col-xl-5">
+<pre class="code-inspector" id="mqCode" data-lang="css">
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+</pre>
+          <div class="mt-2"><span class="mq-status" id="mqStatus"></span></div>
+          <p class="small text-secondary mt-2 mb-0"><code>max-width: 600px</code> = „najviac 600 px“, teda od 0 po 600 px. Opak je <code>min-width</code> – „aspoň“. To isté si vyskúšaš aj v DevTools: <kbd>F12</kbd> → ikona mobilu (<em>Toggle device toolbar</em>).</p>
+        </div>
+        <div class="col-xl-7"><div id="mqResizer"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 KVÍZ -->
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Kvíz</h2>
+      <div id="quiz4"></div>
+    </div>
+  </section>
+
+  <!-- 7 ÚLOHY -->
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Úlohy na hodinu</h2>
+      <p>Robte v jednom projekte (<code>index.html</code> + <code>css/style.css</code>) a priebežne kontrolujte v DevTools v režime mobilu.</p>
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 1 · Hlavička</h3>
+            <ul class="small mb-0">
+              <li><code>&lt;header&gt;</code> s logom (obrázok alebo text) a <code>&lt;nav&gt;</code> so 4 odkazmi.</li>
+              <li>Hlavička: <code>display: flex</code>, logo vľavo, menu vpravo (<code>space-between</code>), zvislo na stred.</li>
+              <li>Odkazy v menu tiež cez flex s medzerou <code>gap: 20px</code>.</li>
+              <li>Pod 600 px: logo a menu pod sebou, medzera 15 px.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 2 · Karty</h3>
+            <ul class="small mb-0">
+              <li>Sekcia s 3 kartami (obrázok, nadpis, text).</li>
+              <li>Na počítači vedľa seba, každá rovnako široká (<code>flex: 1</code>), medzera 20 px.</li>
+              <li>Pod 768 px pod sebou (<code>flex-direction: column</code>).</li>
+              <li>Bonus: prostredná karta je dvakrát širšia (<code>flex: 2</code>).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="task-card h-100">
+            <h3 class="h5">Úloha 3 · Pozícia</h3>
+            <ul class="small mb-0">
+              <li>Prvej karte pridaj štítok „NOVÉ“ v pravom hornom rohu (<code>position: absolute</code> – čo musí mať karta?).</li>
+              <li>Pridaj tlačidlo „↑ Hore“ (odkaz na <code>#top</code>), ktoré je stále vpravo dole – aj pri posúvaní stránky.</li>
+              <li>Hlavičku z úlohy 1 prilep k hornému okraju (<code>position: fixed</code> alebo <code>sticky</code>) a over, že neprekrýva obsah.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Lekcia 4 · Pozícia, flexbox, media queries · Dokumentácia: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">MDN – position</a> · <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSS-Tricks – flexbox</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries">MDN – media queries</a> · Hra na precvičenie: <a href="https://flexboxfroggy.com/">Flexbox Froggy</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>
+  // ---------- 1 position ----------
+  const POS_TEXT = {
+    static: 'static – predvolená hodnota. Prvok je v prirodzenom toku stránky a na top, left, bottom, right ani z-index nereaguje. Skús pohnúť posuvníkmi – nič sa nestane.',
+    relative: 'relative – prvok sa posunie oproti miestu, kde by bol normálne. Pôvodné miesto mu ostane rezervované (sivý text pod ním sa nepohne) a môže vyjsť aj mimo rodiča.',
+    absolute: 'absolute – prvok vypadne z toku stránky (ostatné prvky sa tvária, že neexistuje). Polohuje sa podľa najbližšieho predka, ktorý má nastavené position iné ako static – ak taký nie je, podľa celej stránky. Zapni rodičovi position: relative!',
+    fixed: 'fixed – prvok sa polohuje podľa okna prehliadača a pri posúvaní stránky ostáva na mieste. Posúvaj obsah ukážky. Takto sa robí navigácia, ktorá je stále viditeľná.'
+  };
+  const pos = { type: 'relative', top: 0, left: 30, parent: false };
+  const posTop = document.getElementById('posTop'), posLeft = document.getElementById('posLeft'), posParent = document.getElementById('posParent');
+  function drawPos() {
+    const childCss = 'position: ' + pos.type + ';' + (pos.type === 'static' ? '' : ' top: ' + pos.top + 'px; left: ' + pos.left + 'px;');
+    const css = 'body{margin:0;padding:16px;font:14px system-ui,sans-serif}' +
+      '.parent{background:#e5e7eb;border:2px solid #6b7280;padding:12px;margin:40px 0 10px 60px;width:60%;' + (pos.parent ? 'position:relative;' : '') + '}' +
+      '.child{background:#c084fc;border:2px solid #7e22ce;color:#fff;font-weight:700;padding:8px 12px;width:140px;' + childCss + '}' +
+      '.label{font:11px monospace;color:#4b5563}' +
+      'p{color:#6b7280;margin:6px 0}';
+    const html = '<span class="label">body</span><div class="parent"><span class="label">rodič' + (pos.parent ? ' (relative)' : '') + '</span><div class="child">potomok</div><p>Text za potomkom v rodičovi.</p></div>' +
+      Array.from({ length: pos.type === 'fixed' ? 10 : 2 }, (_, i) => '<p>Ďalší obsah stránky ' + (i + 1) + '.</p>').join('');
+    document.getElementById('posFrame').srcdoc = Lab.buildDoc({ html: html, css: css, nobase: true });
+    document.getElementById('posText').textContent = POS_TEXT[pos.type];
+    document.getElementById('posTopV').textContent = pos.top + 'px';
+    document.getElementById('posLeftV').textContent = pos.left + 'px';
+    Lab.$$('#posType [data-pos]').forEach(b => b.classList.toggle('active', b.dataset.pos === pos.type));
+    Lab.setCode(document.getElementById('posCode'), 'css', (pos.parent ? '.parent {\n  position: relative;\n}\n' : '') + '.child {\n  position: ' + pos.type + ';' + (pos.type === 'static' ? '' : '\n  top: ' + pos.top + 'px;\n  left: ' + pos.left + 'px;') + '\n}');
+  }
+  Lab.$$('#posType [data-pos]').forEach(b => b.addEventListener('click', () => { pos.type = b.dataset.pos; drawPos(); }));
+  posTop.addEventListener('input', () => { pos.top = Number(posTop.value); drawPos(); });
+  posLeft.addEventListener('input', () => { pos.left = Number(posLeft.value); drawPos(); });
+  posParent.addEventListener('change', () => { pos.parent = posParent.checked; drawPos(); });
+  drawPos();
+
+  // ---------- 3 flexbox ----------
+  let flexCount = 4;
+  const flexStage = document.getElementById('flexStage');
+  function drawItems() {
+    flexStage.innerHTML = Array.from({ length: flexCount }, (_, i) => '<div class="fi">' + (i + 1) + '</div>').join('');
+    document.getElementById('flexCount').textContent = flexCount;
+  }
+  drawItems();
+  document.getElementById('flexLess').addEventListener('click', () => { flexCount = Math.max(1, flexCount - 1); drawItems(); });
+  document.getElementById('flexMore').addEventListener('click', () => { flexCount = Math.min(12, flexCount + 1); drawItems(); });
+  Lab.playground(document.getElementById('flexPg'), {
+    target: flexStage, selector: '.container',
+    props: [
+      { prop: 'display', type: 'select', value: 'flex', options: ['block', 'flex'] },
+      { prop: 'flex-direction', type: 'select', value: 'row', options: ['row', 'column', 'row-reverse', 'column-reverse'] },
+      { prop: 'flex-wrap', type: 'select', value: 'nowrap', options: ['nowrap', 'wrap', 'wrap-reverse'] },
+      { prop: 'justify-content', type: 'select', value: 'flex-start', options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'] },
+      { prop: 'align-items', type: 'select', value: 'stretch', options: ['stretch', 'flex-start', 'center', 'flex-end'] },
+      { prop: 'gap', type: 'range', min: 0, max: 40, value: 10, unit: 'px' }
+    ],
+    onChange: v => {
+      const col = /column/.test(v['flex-direction']);
+      document.getElementById('axisNote').textContent = v.display !== 'flex'
+        ? 'display: block – potomkovia sú obyčajné bloky pod sebou, flex vlastnosti sa neuplatnia.'
+        : 'hlavná os: ' + (col ? 'zvislá ↓' : 'vodorovná →') + ' (justify-content) · priečna os: ' + (col ? 'vodorovná →' : 'zvislá ↓') + ' (align-items)';
+    }
+  });
+
+  // ---------- 4 flex potomkovia ----------
+  const kids = [1, 1, 1];
+  function drawKids() {
+    const box = document.getElementById('flexKids');
+    box.innerHTML = kids.map((f, i) => '<div class="flex-stage p-0" style="min-height:0;border:0;flex:' + f + '"><div class="fi grow">' + (i + 1) + ' · flex: ' + f + '</div></div>').join('');
+    const ctl = document.getElementById('flexKidsCtl');
+    ctl.innerHTML = kids.map((f, i) => '<span class="me-2">potomok ' + (i + 1) + ': ' + [1, 2, 3].map(n => '<button type="button" class="btn btn-sm ' + (n === f ? 'btn-dark' : 'btn-outline-secondary') + '" data-kid="' + i + '" data-flex="' + n + '">' + n + '</button>').join(' ') + '</span>').join('');
+    Lab.$$('#flexKidsCtl button').forEach(b => b.addEventListener('click', () => { kids[b.dataset.kid] = Number(b.dataset.flex); drawKids(); }));
+    const total = kids.reduce((a, b) => a + b, 0);
+    Lab.setCode(document.getElementById('flexKidsCode'), 'css', '.container {\n  display: flex;\n}\n' + kids.map((f, i) => '.item' + (i + 1) + ' { flex: ' + f + '; } /* ' + f + '/' + total + ' miesta */').join('\n'));
+  }
+  drawKids();
+
+  // ---------- 5 media queries ----------
+  const MQ_DOC = {
+    css: 'body{margin:0;font-family:system-ui,sans-serif}header{display:flex;justify-content:space-between;align-items:center;background:#3b0764;color:#fff;padding:12px 20px}' +
+      '.logo{font-weight:800;font-size:22px}nav{display:flex;gap:16px}nav a{color:#e9d5ff;text-decoration:none}main{padding:20px;color:#374151}' +
+      '@media (max-width: 600px){header{flex-direction:column;gap:15px}}',
+    html: '<header><div class="logo">🏔 Dobrodružstvo</div><nav><a href="#">Domov</a><a href="#">Výlety</a><a href="#">Galéria</a><a href="#">Kontakt</a></nav></header><main><h2>Vitajte</h2><p>Zmenšuj okno a sleduj hlavičku.</p></main>'
+  };
+  Lab.resizer(document.getElementById('mqResizer'), {
+    doc: MQ_DOC, value: 900, max: 1100, height: 240,
+    onWidth: w => {
+      const st = document.getElementById('mqStatus');
+      st.className = 'mq-status ' + (w <= 600 ? 'on' : 'off');
+      st.textContent = w <= 600 ? '@media (max-width: 600px) platí ✔' : '@media (max-width: 600px) neplatí – ' + w + ' px > 600 px';
+    }
+  });
+
+  // ---------- 6 kvíz ----------
+  Lab.quiz('#quiz4', [
+    { q: 'Ktorá hodnota position je predvolená a nereaguje na top a left?', o: ['static', 'relative', 'absolute'], a: 0, e: 'static = prirodzený tok stránky.' },
+    { q: 'Potomok má position: absolute; top: 0. Prečo skočil k vrchu stránky a nie rodiča?', o: ['rodič nemá nastavené position (je static)', 'chýba mu z-index', 'absolute vždy ide k vrchu stránky'], a: 0, e: 'absolute sa polohuje podľa najbližšieho predka s position iným ako static. Rodičovi pridaj position: relative.', mono: false },
+    { q: 'Ktorá pozícia ostane na mieste aj pri posúvaní stránky?', o: ['relative', 'absolute', 'fixed'], a: 2, e: 'fixed sa polohuje podľa okna prehliadača.' },
+    { q: 'Kam píšeš display: flex?', o: ['rodičovi, ktorého potomkov chceš rozložiť', 'každému potomkovi', 'do <body> vždy'], a: 0, e: 'display: flex patrí rodičovi (flex container). Potomkom dávame napr. flex: 1.', mono: false },
+    { q: 'Ako pri flex-direction: row rozložíš prvky tak, aby prvý bol úplne vľavo a posledný úplne vpravo?', o: ['align-items: center', 'justify-content: space-between', 'flex-wrap: wrap'], a: 1, e: 'justify-content zarovnáva na hlavnej osi; space-between dá voľné miesto medzi prvky.' },
+    { q: 'Dva potomkovia majú flex: 1 a flex: 3. Akú časť miesta zaberie druhý?', o: ['polovicu', 'tri štvrtiny', 'tretinu'], a: 1, e: 'Spolu 4 dieliky, druhý má 3 z nich = 3/4.' },
+    { q: 'Kedy platí @media (max-width: 600px)?', o: ['keď je okno širšie ako 600 px', 'keď je okno široké najviac 600 px', 'iba na mobiloch s Androidom'], a: 1, e: 'max-width = najviac. Pre „aspoň 600 px“ by sme použili min-width.', mono: false }
+  ]);
+</script>
+</body>
+</html>
