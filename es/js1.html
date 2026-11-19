@@ -1,0 +1,1905 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript – fundamentos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f7f8fc; }
+    code { color: #9a2878; }
+    .section-card { border: 0; border-radius: 1rem; box-shadow: 0 .25rem 1rem #1d2d5010; scroll-margin-top: 1rem; }
+    .section-number { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; padding: 0 .4rem; border-radius: 1rem; background: #e7edff; color: #2548a8; font-weight: 700; margin-right: .5rem; }
+    .demo-area { background: #fff; border: 1px dashed #aeb6c5; border-radius: .75rem; padding: 1rem; overflow: hidden; }
+    .tiny-label { font-size: .8rem; color: #657086; }
+    .demo-box { min-height: 60px; padding: .75rem; border: 2px solid #8aa8ff; border-radius: .6rem; background: #eaf0ff; color: #20366f; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600; }
+    .demo-box.alt { background: #e2f7ef; border-color: #76c9a7; color: #155b43; }
+    .demo-box.warm { background: #fff0dc; border-color: #f1bb74; color: #784b13; }
+
+    .code-inspector { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 0; font: .85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .code-inspector .kw { color: #c4b5fd; }
+    .code-inspector .str { color: #86efac; }
+    .code-inspector .com { color: #9ca3af; font-style: italic; }
+    .code-inspector .obj { color: #93c5fd; }
+    .code-inspector .num { color: #fdba74; }
+    .code-inspector .tag { color: #93c5fd; }
+    .code-inspector .attr { color: #fcd34d; }
+    .code-inspector .value { color: #86efac; }
+    .code-inspector .ln { display: block; min-height: 1.55em; margin: 0 -.5rem; padding: 0 .5rem; border-radius: .3rem; transition: background .15s, opacity .15s; }
+    .code-inspector .ln.active { background: #f59e0b40; box-shadow: inset 3px 0 #f59e0b; }
+    .code-inspector .ln.true { background: #22c55e33; box-shadow: inset 3px 0 #22c55e; }
+    .code-inspector .ln.false { background: #ef444426; box-shadow: inset 3px 0 #ef4444; }
+    .code-inspector .ln.skip { opacity: .4; }
+
+    .console-out { background: #0b1220; color: #e5e7eb; border-radius: .75rem; padding: .6rem 1rem; min-height: 3.2rem; max-height: 260px; overflow: auto; font: .82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .console-out .line { padding: .15rem 0; border-bottom: 1px solid #ffffff10; }
+    .console-out .line::before { content: "› "; color: #60a5fa; }
+    .console-out .line.err { color: #fca5a5; }
+    .console-out .line.err::before { content: "✖ "; color: #f87171; }
+    .console-out .line.warn { color: #fde68a; }
+    .console-out .line.warn::before { content: "⚠ "; color: #fbbf24; }
+    .console-out .line.hint { color: #fcd34d; font-family: system-ui, sans-serif; font-size: .8rem; }
+    .console-out .line.hint::before { content: "→ "; color: #fcd34d; }
+    .console-out .line.muted { color: #6b7280; }
+    .console-out .line.muted::before { content: ""; }
+
+    .inspect-target { outline: 3px solid #f59e0b !important; outline-offset: 2px; }
+    .code-btn { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .8rem; text-align: left; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+    .snippet { display: flex; flex-direction: column; gap: .5rem; height: 100%; }
+    .snippet .console-out { min-height: 2.6rem; }
+    .snippet-title { font-weight: 600; font-size: .95rem; }
+
+    .var-chip { display: inline-flex; align-items: center; gap: .35rem; background: #111827; color: #e5e7eb; border-radius: 2rem; padding: .25rem .8rem; font: .85rem ui-monospace, Menlo, Consolas, monospace; }
+    .var-chip b { color: #fdba74; font-weight: 600; }
+    .step-info { min-height: 3.2rem; }
+    .badge-true { background: #198754; }
+    .badge-false { background: #dc3545; }
+    .ops-table td, .ops-table th { vertical-align: middle; }
+    .result-cell { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 600; }
+
+    .machine { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .6rem; }
+    .machine .in, .machine .out { min-width: 3.2rem; padding: .5rem .8rem; border-radius: .6rem; text-align: center; font: 600 1.1rem ui-monospace, Menlo, Consolas, monospace; }
+    .machine .in { background: #eaf0ff; border: 2px solid #8aa8ff; }
+    .machine .out { background: #e2f7ef; border: 2px solid #76c9a7; }
+    .machine .fn { background: #111827; color: #c4b5fd; padding: .8rem 1rem; border-radius: .8rem; font: 600 1rem ui-monospace, Menlo, Consolas, monospace; }
+    .machine .arrow { color: #657086; font-size: 1.3rem; }
+
+    .obj-tree { white-space: normal; }
+    .obj-tree ul { list-style: none; margin: 0; padding-left: 1.2rem; border-left: 1px dashed #374151; }
+    .obj-tree > ul { border-left: 0; padding-left: 0; }
+    .obj-tree li { margin: .15rem 0; }
+    .obj-node { cursor: pointer; border-radius: .25rem; padding: 0 .3rem; color: #93c5fd; }
+    .obj-node:hover, .obj-node.active { background: #f59e0b33; }
+    .obj-node small { color: #9ca3af; }
+
+    .mouse-area { height: 180px; border-radius: .75rem; background: repeating-linear-gradient(45deg, #eef2ff, #eef2ff 12px, #e5ebff 12px, #e5ebff 24px); border: 2px solid #8aa8ff; position: relative; cursor: crosshair; user-select: none; }
+    .mouse-dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #f59e0b; transform: translate(-50%, -50%); pointer-events: none; display: none; }
+    .kbd-big { font-size: 2rem; font-weight: 700; font-family: ui-monospace, Menlo, Consolas, monospace; min-width: 3rem; }
+    .prop-table td:first-child { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85rem; color: #9a2878; white-space: nowrap; }
+    .prop-table td:last-child { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85rem; font-weight: 600; }
+    #zarovka { width: 110px; height: 150px; }
+    .mini-frame { width: 100%; border: 0; background: #fff; border-radius: .5rem; display: block; }
+
+    .feature { height: 100%; border-radius: .75rem; background: #fff; border: 1px solid #e3e7f0; padding: 1rem; }
+    .feature .icon { font-size: 1.4rem; }
+    .file-tree { font: .85rem/1.7 ui-monospace, Menlo, Consolas, monospace; }
+    .file-tree .dir { color: #2548a8; font-weight: 600; }
+
+    .checklist li { list-style: none; padding: .15rem 0; }
+    .checklist li::before { display: inline-block; width: 1.4rem; font-weight: 700; }
+    .checklist li.ok::before { content: "✔"; color: #198754; }
+    .checklist li.bad::before { content: "✖"; color: #dc3545; }
+
+    .quiz-question { margin-bottom: 1.25rem; }
+    .quiz-question .list-group-item { cursor: pointer; }
+    .quiz-question .list-group-item.vybrana { background: #e7edff; border-color: #8aa8ff; }
+
+    #playFrame { height: 170px; }
+    #playCode { min-height: 320px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85rem; tab-size: 2; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge text-bg-primary mb-3">JavaScript 1</span>
+  <h1 class="display-5 fw-bold">Fundamentos de JavaScript</h1>
+  <p class="lead col-lg-8">Variables, operadores, condiciones, bucles, funciones y objetos del navegador. Puedes ejecutar cada ejemplo de esta página y ver el resultado justo debajo, tal como lo mostraría la consola del navegador.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#js">1 · Qué es JS</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#umiestnenie">2 · Ubicación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hlasky">3 · Diálogos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#konzola">4 · Consola</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#premenne">5 · Variables</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#varlet">6 · var / let / const</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#operatory">7 · Operadores</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#porovnanie">8 · Comparación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#podmienky">9 · if / else</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#cykly">10 · Bucles</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#funkcie">11 · Funciones</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#window">12 · window</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#event">13 · event</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#document">14 · document</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#cvicenie">15 · Ejercicio</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#playground">16 · Playground</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kviz">17 · Cuestionario</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#ulohy">18 · Tareas</a>
+  </div>
+  <p class="tiny-label mt-3 mb-0">Consejo: la consola del navegador se abre con <kbd>F12</kbd> → la pestaña <strong>Consola</strong> (Console). También puedes copiar allí el código de esta página.</p>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="js">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>¿Qué es JavaScript?</h2>
+      <p>Un <strong>lenguaje de scripts</strong> que controla el <em>comportamiento</em> de la página: qué pasa al hacer clic, la validación de formularios, las ventanas emergentes… Puede cambiar el HTML y el CSS. Al principio solo funcionaba en el navegador (frontend); hoy también en el servidor (backend). Y ojo: <strong>JavaScript no es Java</strong>, solo se llaman parecido.</p>
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6 col-lg"><div class="feature"><div class="icon">⚡</div><strong>interpretado</strong><div class="small text-secondary">no hace falta compilarlo, el navegador lo ejecuta línea a línea</div></div></div>
+        <div class="col-sm-6 col-lg"><div class="feature"><div class="icon">🧩</div><strong>basado en objetos</strong><div class="small text-secondary">trabaja con objetos del navegador (<code>window</code>, <code>document</code>) y con los suyos propios</div></div></div>
+        <div class="col-sm-6 col-lg"><div class="feature"><div class="icon">🌐</div><strong>funciona en el navegador</strong><div class="small text-secondary">funciona en todos los navegadores modernos</div></div></div>
+        <div class="col-sm-6 col-lg"><div class="feature"><div class="icon">🔠</div><strong>case sensitive</strong><div class="small text-secondary">importan las mayúsculas y minúsculas</div></div></div>
+        <div class="col-sm-12 col-lg"><div class="feature"><div class="icon">{ }</div><strong>sintaxis como C / Java</strong><div class="small text-secondary">llaves, puntos y coma, <code>if</code>, <code>for</code>…</div></div></div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title">Pruébalo: case sensitive</div>
+<pre class="code-inspector js">let meno = "Jana";
+console.log(meno);  // funciona
+console.log(Meno);  // M ≠ m</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title">También los comandos y objetos</div>
+<pre class="code-inspector js">console.log("Esto funciona");
+Console.log("Esto no");</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="umiestnenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>¿Dónde escribir JavaScript?</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="demo-area h-100">
+            <div class="tiny-label mb-2">Estructura del proyecto</div>
+            <div class="file-tree">
+              <div class="dir">📁 mojweb</div>
+              <div class="ps-3"><span class="dir">📁 css</span></div>
+              <div class="ps-4">📄 style.css</div>
+              <div class="ps-3"><span class="dir">📁 img</span></div>
+              <div class="ps-3"><span class="dir">📁 js</span></div>
+              <div class="ps-4">📄 <strong>app.js</strong></div>
+              <div class="ps-3">📄 index.html</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <ul class="mb-2">
+            <li>en una etiqueta <code>&lt;script&gt;…&lt;/script&gt;</code> <strong>justo antes de</strong> <code>&lt;/body&gt;</code>, o</li>
+            <li><strong>en un archivo aparte</strong> (recomendado): HTML, CSS y JS quedan separados y varias páginas pueden usar el archivo <code>app.js</code></li>
+          </ul>
+<pre class="code-inspector html">&lt;!DOCTYPE html&gt;
+&lt;html lang="sk"&gt;
+&lt;head&gt;
+  &lt;link rel="stylesheet" href="css/style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1 id="nadpis"&gt;Mi página&lt;/h1&gt;
+
+  &lt;script src="js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">¿Por qué justo antes de &lt;/body&gt;? Pruébalo</h3>
+      <p class="small mb-2">El navegador lee el HTML de arriba abajo. Un script que está en <code>&lt;head&gt;</code> se ejecuta antes de que el navegador haya visto el título, y por eso no lo encuentra.</p>
+      <div class="btn-group mb-3" role="group" aria-label="Ubicación del script">
+        <input type="radio" class="btn-check" name="umiestnenie" id="umHead" value="head">
+        <label class="btn btn-outline-danger btn-sm" for="umHead">script en &lt;head&gt;</label>
+        <input type="radio" class="btn-check" name="umiestnenie" id="umBody" value="body" checked>
+        <label class="btn btn-outline-success btn-sm" for="umBody">script antes de &lt;/body&gt;</label>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-7"><pre class="code-inspector" id="umKod"></pre></div>
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Resultado</div>
+          <div class="demo-area p-1"><iframe class="mini-frame" id="umFrame" title="Ejemplo de ubicación del script" sandbox="allow-scripts" style="height:90px"></iframe></div>
+          <div class="tiny-label mt-2 mb-1">Consola</div>
+          <div class="console-out" id="umConsole"></div>
+        </div>
+      </div>
+      <p class="tiny-label mt-2 mb-0">Otra opción: <code>&lt;script src="js/app.js" defer&gt;&lt;/script&gt;</code> en <code>&lt;head&gt;</code>: la palabra <code>defer</code> le dice al navegador que ejecute el script cuando se haya cargado todo el HTML.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="hlasky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Diálogos: alert, prompt, confirm</h2>
+      <p>El navegador tiene tres ventanas de diálogo sencillas. Haz clic en un botón: se abre una ventana de verdad y debajo verás qué valor <strong>devolvió</strong> el comando.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0"><code>alert</code> – ventana con un mensaje</h3>
+<pre class="code-inspector js">alert("No están rellenos todos los campos del formulario");</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start" id="btnAlert">▶ Ejecutar</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0"><code>prompt</code> – ventana con un campo de entrada</h3>
+<pre class="code-inspector js">const meno = prompt("Escribe tu nombre", "");
+console.log(meno);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start" id="btnPrompt">▶ Ejecutar</button>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="demo-area h-100 d-flex flex-column gap-2">
+            <h3 class="h6 mb-0"><code>confirm</code> – Aceptar / Cancelar</h3>
+<pre class="code-inspector js">const suhlas = confirm("¿Seguro que quieres borrar?");
+console.log(suhlas);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start" id="btnConfirm">▶ Ejecutar</button>
+          </div>
+        </div>
+      </div>
+      <div class="console-out mt-3" id="hlaskyConsole"><div class="line muted">Consola</div></div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle mb-3">
+          <thead><tr><th>Comando</th><th>Qué devuelve</th></tr></thead>
+          <tbody>
+            <tr><td><code>alert("text")</code></td><td><code>undefined</code> – nada, solo muestra el mensaje</td></tr>
+            <tr><td><code>prompt("pregunta", "valor por defecto")</code></td><td>el <strong>texto</strong> escrito (string), o <code>null</code> si el usuario pulsa Cancelar</td></tr>
+            <tr><td><code>confirm("pregunta")</code></td><td><code>true</code> (Aceptar) o <code>false</code> (Cancelar)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary">Por qué no usar document.write</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <p class="small">La forma antigua de “escribir algo en la página” es <code>document.write()</code>. Solo funciona mientras la página se carga. Si lo llamas <strong>después</strong> (p. ej. tras un clic), <strong>borra toda la página</strong>. Pruébalo a la derecha.</p>
+          <p class="small mb-2">Lo correcto es preparar un elemento vacío en el HTML y meter el texto en él; lo veremos en detalle en JS 2:</p>
+<pre class="code-inspector js">const meno = prompt("Escribe tu nombre", "");
+document.getElementById("pozdrav").textContent = "Hola " + meno;</pre>
+        </div>
+        <div class="col-lg-6">
+          <div class="demo-area p-1"><iframe class="mini-frame" id="writeFrame" title="Ejemplo de document.write" sandbox="allow-scripts" style="height:170px"></iframe></div>
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="writeReset">Restaurar el ejemplo</button>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">Si no se abre ninguna ventana al hacer clic, el navegador está bloqueando los diálogos de esta página (p. ej. después de marcar “No permitir que esta página vuelva a preguntar”). Ayuda recargar la página.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="konzola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Escribir en la consola</h2>
+      <p><code>console.log()</code> es el ayudante más importante del programador: escribe un valor en la consola (<kbd>F12</kbd> → Consola). El usuario no lo ve, tú sí: así descubres qué pasa en el programa. El navegador también escribe en la consola cuando encuentra un <strong>error</strong> en el código.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-primary code-btn" data-con='console.log("Hola mundo");'>console.log("Hola mundo");</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-con='console.log("Suma:", 5 + 3);'>console.log("Suma:", 5 + 3);</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-con='const meno = "Jana";
+const vek = 17;
+console.log(`${meno} tiene ${vek} años`);'>console.log(`${meno} tiene ${vek} años`);</button>
+            <button type="button" class="btn btn-outline-warning code-btn" data-con='console.warn("Cuidado, esto es una advertencia");'>console.warn("Cuidado, esto es una advertencia");</button>
+            <button type="button" class="btn btn-outline-danger code-btn" data-con='console.error("Algo ha ido mal");'>console.error("Algo ha ido mal");</button>
+            <button type="button" class="btn btn-outline-danger code-btn" data-con='console.log(cislo);'>console.log(cislo);   ← la variable no existe</button>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="console-out h-100" id="conConsole" style="min-height: 200px"><div class="line muted">Consola: haz clic en alguno de los comandos</div></div>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">La tercera línea usa una <strong>plantilla de texto</strong>: texto entre comillas invertidas <code>`…`</code> y variables en <code>${…}</code>. Es más cómodo que unir con <code>"Hola " + meno + "!"</code>.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="premenne">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Variables y tipos de datos</h2>
+      <p>Una variable es una “caja” con nombre para un valor. La creamos con <code>let</code>, <code>const</code> (o el antiguo <code>var</code>). El tipo del valor no se fija de antemano: JavaScript lo averigua solo y la variable puede incluso cambiar de tipo. El tipo se consulta con el operador <code>typeof</code>.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="tiny-label mb-1">Haz clic en una línea: se ejecuta y a la derecha ves el valor y el tipo</div>
+          <div class="d-grid gap-1" id="typyRiadky"></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="var-chip">x = <b id="typHodnota">–</b></span>
+            <span class="var-chip">typeof x → <b id="typTyp">–</b></span>
+          </div>
+          <div class="console-out" id="typConsole" style="min-height: 150px"><div class="line muted">Consola</div></div>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle mb-3">
+          <thead><tr><th>Tipo</th><th>Ejemplo</th><th><code>typeof</code></th></tr></thead>
+          <tbody>
+            <tr><td>número</td><td><code>42</code>, <code>4.2</code>, <code>-7</code></td><td><code>"number"</code> – los enteros y los decimales son un mismo tipo</td></tr>
+            <tr><td>texto (cadena)</td><td><code>"Hola"</code>, <code>'Hola'</code>, <code>`Hola`</code></td><td><code>"string"</code></td></tr>
+            <tr><td>valor lógico</td><td><code>true</code>, <code>false</code></td><td><code>"boolean"</code></td></tr>
+            <tr><td>array</td><td><code>["auto", "motorka"]</code></td><td><code>"object"</code> – un array se comprueba con <code>Array.isArray(x)</code></td></tr>
+            <tr><td>sin valor</td><td><code>let y;</code></td><td><code>"undefined"</code></td></tr>
+            <tr><td>valor vacío</td><td><code>null</code></td><td><code>"object"</code> (un error histórico del lenguaje)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert-info small mb-0"><strong>Array:</strong> los elementos se numeran <strong>desde cero</strong>. <code>x[0]</code> es el primer elemento, <code>x.length</code> es el número de elementos y el último es <code>x[x.length - 1]</code>.</div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="varlet">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>var, let, const: ¿qué diferencia hay?</h2>
+      <p>Las tres crean una variable, pero se comportan de forma distinta. Ejecuta los ejemplos y compara los resultados.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>var</code> no ve el bloque <code>{ }</code></div>
+<pre class="code-inspector js">var x = 1;
+if (x == 1) {
+  var x = 2;
+  console.log(x);
+}
+console.log(x);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">El <code>var x</code> interior sobrescribió al exterior: los dos son la misma variable.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>let</code> solo vale dentro del bloque <code>{ }</code></div>
+<pre class="code-inspector js">let x = 1;
+if (x == 1) {
+  let x = 2;
+  console.log(x);
+}
+console.log(x);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">La <code>x</code> interior solo existe entre <code>{ }</code>; la exterior siguió valiendo 1. Esto se llama <em>block scope</em>.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>let</code> no se puede crear dos veces</div>
+<pre class="code-inspector js">let a = 10;
+let a = 20;
+console.log(a);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Con <code>var</code> pasaría sin error, y una errata en un nombre se perdería fácilmente.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>const</code> no se puede cambiar</div>
+<pre class="code-inspector js">const PI = 3.141592653589793;
+PI = 3.14;
+console.log(PI);</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Una <code>const</code> debe recibir su valor de inmediato: <code>const PI;</code> también es un error.</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-success small mt-3 mb-0">
+        <strong>La regla para el JavaScript actual:</strong>
+        <ul class="mb-0 mt-1">
+          <li><code>const</code> – siempre que el valor no vaya a cambiar (la mayoría de las variables),</li>
+          <li><code>let</code> – cuando el valor cambia (un contador, una suma, la <code>i</code> de un bucle),</li>
+          <li><code>var</code> – ya no lo usamos. Lo verás en código antiguo y en internet, así que hay que conocerlo.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="operatory">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">7</span>Operadores</h2>
+      <h3 class="h6 text-uppercase text-secondary mt-3">a) Aritméticos – cambia los números</h3>
+      <div class="row g-3 align-items-start">
+        <div class="col-md-3">
+          <label class="form-label small mb-0" for="opA">a</label>
+          <input type="number" class="form-control mb-2" id="opA" value="7">
+          <label class="form-label small mb-0" for="opB">b</label>
+          <input type="number" class="form-control" id="opB" value="3">
+        </div>
+        <div class="col-md-9">
+          <div class="table-responsive">
+            <table class="table table-sm ops-table mb-0">
+              <thead><tr><th>Operador</th><th>Significado</th><th>Código</th><th>Resultado</th></tr></thead>
+              <tbody id="opTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">b) Operadores de asignación, ++ y --</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <span class="var-chip">x = <b id="prirX">10</b></span>
+            <label class="small" for="prirY">y =</label>
+            <input type="number" class="form-control form-control-sm" id="prirY" value="3" style="width: 5rem">
+          </div>
+          <div class="d-flex flex-wrap gap-2" id="prirTlacidla"></div>
+        </div>
+        <div class="col-lg-6">
+          <div class="console-out" id="prirConsole" style="min-height: 150px"></div>
+        </div>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">c) Cuidado: + une textos</h3>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="table-responsive">
+            <table class="table table-sm ops-table mb-0">
+              <thead><tr><th>Código</th><th>Resultado</th><th>Tipo</th></tr></thead>
+              <tbody id="textTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="alert alert-warning small mb-0">Si al menos un lado de <code>+</code> es texto, JavaScript <strong>une</strong> los valores. Los demás operadores (<code>- * /</code>) convierten el texto en número. El valor de <code>prompt</code> o de un formulario siempre es <strong>texto</strong>: por eso <code>Number(...)</code>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="porovnanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">8</span>Operadores de comparación y lógicos</h2>
+      <p>El resultado de una comparación siempre es <code>true</code> o <code>false</code>. Son justo los valores que usan las condiciones y los bucles.</p>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area">
+            <div class="row g-2">
+              <div class="col-7"><label class="form-label small mb-0" for="porA">a</label><input class="form-control font-monospace" id="porA" value="5"></div>
+              <div class="col-5"><label class="form-label small mb-0" for="porAtyp">tipo</label><select class="form-select" id="porAtyp"><option value="num">número</option><option value="str">texto</option></select></div>
+              <div class="col-7"><label class="form-label small mb-0" for="porB">b</label><input class="form-control font-monospace" id="porB" value="5"></div>
+              <div class="col-5"><label class="form-label small mb-0" for="porBtyp">tipo</label><select class="form-select" id="porBtyp"><option value="num">número</option><option value="str" selected>texto</option></select></div>
+            </div>
+            <p class="tiny-label mt-2 mb-0">Prueba: <code>5</code> y <code>"5"</code>, <code>10</code> y <code>9</code>, el texto <code>"10"</code> y el texto <code>"9"</code> (¡los textos se comparan como en un diccionario!).</p>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="table-responsive">
+            <table class="table table-sm ops-table mb-0">
+              <thead><tr><th>Operador</th><th>Significado</th><th>Código</th><th>Resultado</th></tr></thead>
+              <tbody id="porTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-warning small mt-3"><code>==</code> convierte los tipos antes de comparar (<code>5 == "5"</code> es <code>true</code>); <code>===</code> compara el valor <strong>y el tipo</strong>. Usa <code>===</code> y <code>!==</code>: te ahorrarás sorpresas.</div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Operadores lógicos</h3>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area h-100">
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="logA" checked><label class="form-check-label font-monospace" for="logA">a = <span id="logAval">true</span></label></div>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="logB"><label class="form-check-label font-monospace" for="logB">b = <span id="logBval">false</span></label></div>
+            <table class="table table-sm ops-table mt-2 mb-0">
+              <tbody id="logTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="demo-area h-100">
+            <h4 class="h6">En la práctica: ¿se puede registrar?</h4>
+            <div class="row g-2 align-items-center mb-2">
+              <div class="col-sm-7"><label class="form-label small mb-0" for="regVek">vek = <strong id="regVekVal">17</strong></label><input type="range" class="form-range" id="regVek" min="10" max="30" value="17"></div>
+              <div class="col-sm-5"><div class="form-check"><input class="form-check-input" type="checkbox" id="regGdpr"><label class="form-check-label small" for="regGdpr">gdpr (consentimiento)</label></div></div>
+            </div>
+<pre class="code-inspector js" id="regKod"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td><code>a &amp;&amp; b</code></td><td>Y – <code>true</code> solo si se cumplen <strong>las dos</strong></td></tr>
+            <tr><td><code>a || b</code></td><td>O – <code>true</code> si se cumple <strong>al menos una</strong></td></tr>
+            <tr><td><code>!a</code></td><td>NO – invierte el valor</td></tr>
+            <tr><td><code>condición ? si_sí : si_no</code></td><td>el operador ternario: un <code>if / else</code> abreviado</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="podmienky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">9</span>Condiciones: if, else if, else</h2>
+      <p>Una condición decide qué parte del código se ejecuta. El navegador comprueba las condiciones <strong>de arriba abajo</strong> y ejecuta la <strong>primera</strong> que se cumple; las demás las salta. Mueve los puntos y observa qué rama se ejecuta.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <label class="form-label" for="ifBody">body = <strong id="ifBodyVal">72</strong></label>
+          <input type="range" class="form-range mb-2" id="ifBody" min="0" max="100" value="72">
+          <pre class="code-inspector" id="ifKod"></pre>
+        </div>
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Cómo ha ido</div>
+          <ol class="small" id="ifPriebeh"></ol>
+          <div class="tiny-label mb-1">Consola</div>
+          <div class="console-out" id="ifConsole"></div>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <div class="alert alert-warning small h-100 mb-0"><strong>Un error frecuente:</strong> <code>if (body = 100)</code>: un solo <code>=</code> <em>asigna</em> el valor, ¡no compara! Comparar es <code>===</code>.</div>
+        </div>
+        <div class="col-md-6">
+          <div class="alert alert-info small h-100 mb-0">Las condiciones se pueden combinar con operadores lógicos: <code>if (vek &gt;= 18 &amp;&amp; gdpr) { … }</code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="cykly">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">10</span>Bucles: for, for…of, while</h2>
+      <h3 class="h6 text-uppercase text-secondary mt-3">a) El bucle for, paso a paso</h3>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <label class="form-label small mb-1" for="forPolozky">Elementos del array (separados por comas)</label>
+          <input class="form-control form-control-sm mb-2" id="forPolozky" value="coche, moto, bicicleta">
+          <pre class="code-inspector" id="forKod"></pre>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <button type="button" class="btn btn-sm btn-primary" id="forKrok">Paso ▶</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="forPrehraj">Reproducir todo</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="forReset">Desde el principio</button>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="var-chip">i = <b id="forI">–</b></span>
+            <span class="var-chip">paso <b id="forKrokCislo">0</b> / <span id="forKrokSpolu">0</span></span>
+          </div>
+          <div class="alert alert-light border small step-info" id="forInfo">Haz clic en “Paso”.</div>
+          <div class="tiny-label mb-1">Consola</div>
+          <div class="console-out" id="forConsole"></div>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td><code>let i = 0</code></td><td>inicio – se ejecuta una vez, al principio</td></tr>
+            <tr><td><code>i &lt; pole.length</code></td><td>condición – se comprueba antes de cada vuelta; cuando es <code>false</code>, el bucle termina</td></tr>
+            <tr><td><code>i++</code></td><td>paso – se ejecuta al final de cada vuelta</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">b) for…of a for…in</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>for…of</code> – recorre los <strong>valores</strong> de un array</div>
+<pre class="code-inspector js">const dopravnyProstriedok = ["coche", "moto", "bicicleta"];
+for (const prostriedok of dopravnyProstriedok) {
+  console.log(prostriedok);
+}</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="snippet">
+            <div class="snippet-title"><code>for…in</code> – recorre los <strong>índices</strong> (como texto)</div>
+<pre class="code-inspector js">const dopravnyProstriedok = ["coche", "moto", "bicicleta"];
+for (const index in dopravnyProstriedok) {
+  console.log(index, typeof index, dopravnyProstriedok[index]);
+}</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+      </div>
+      <p class="small mt-2 mb-0">Para arrays usa <code>for…of</code> (o el <code>for</code> clásico). <code>for…in</code> está pensado para recorrer las propiedades de un objeto.</p>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">c) El bucle while: repite mientras se cumple la condición</h3>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <label class="form-label small mb-0" for="whileLimit">repetir mientras i &lt; <strong id="whileLimitVal">5</strong></label>
+          <input type="range" class="form-range" id="whileLimit" min="0" max="10" value="5">
+          <pre class="code-inspector js" id="whileKod"></pre>
+        </div>
+        <div class="col-lg-6">
+          <div class="console-out" id="whileConsole" style="min-height: 150px"></div>
+          <div class="alert alert-danger small mt-2 mb-0"><strong>Un bucle infinito:</strong> si olvidas <code>i++</code>, la condición se cumplirá siempre y la página se congelará. Solo ayuda cerrar la pestaña.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="funkcie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">11</span>Funciones</h2>
+      <p>Una función es un trozo de código con nombre que podemos ejecutar (<em>llamar</em>) una y otra vez. Recibe <strong>parámetros</strong> y con <code>return</code> devuelve un <strong>resultado</strong>. Imagínala como una máquina: entran valores y sale un resultado.</p>
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-5">
+<pre class="code-inspector js">// definición de la función – todavía no se ejecuta nada
+function vynasob(p1, p2) {
+  return p1 * p2;
+}
+
+// llamada a la función
+console.log(vynasob(5, 10));</pre>
+        </div>
+        <div class="col-lg-7">
+          <div class="demo-area">
+            <div class="row g-2 mb-3">
+              <div class="col-6"><label class="form-label small mb-0" for="fnP1">p1</label><input type="number" class="form-control" id="fnP1" value="5"></div>
+              <div class="col-6"><label class="form-label small mb-0" for="fnP2">p2</label><input type="number" class="form-control" id="fnP2" value="10"></div>
+            </div>
+            <div class="machine">
+              <div class="in" id="fnIn1">5</div>
+              <div class="in" id="fnIn2">10</div>
+              <div class="arrow">→</div>
+              <div class="fn">vynasob(p1, p2)<br><small class="text-secondary">return p1 * p2</small></div>
+              <div class="arrow">→</div>
+              <div class="out" id="fnOut">50</div>
+            </div>
+            <p class="text-center font-monospace small mt-2 mb-0" id="fnVolanie">vynasob(5, 10) → 50</p>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mt-1">
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">Una función, muchas llamadas</div>
+<pre class="code-inspector js">function pozdrav(meno) {
+  return "Hola " + meno + "!";
+}
+console.log(pozdrav("Jana"));
+console.log(pozdrav("Peter"));</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">Un <code>return</code> olvidado</div>
+<pre class="code-inspector js">function vynasob(p1, p2) {
+  p1 * p2;
+}
+console.log(vynasob(5, 10));</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary">Sin <code>return</code> la función devuelve <code>undefined</code>.</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="snippet">
+            <div class="snippet-title">Un parámetro que falta</div>
+<pre class="code-inspector js">function vynasob(p1, p2) {
+  return p1 * p2;
+}
+console.log(vynasob(5));</pre>
+            <button type="button" class="btn btn-sm btn-primary align-self-start run">▶ Ejecutar</button>
+            <div class="console-out"></div>
+            <div class="small text-secondary"><code>p2</code> es <code>undefined</code> y <code>5 * undefined</code> es <code>NaN</code> (Not a Number).</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="h6 text-uppercase text-secondary mt-4">Una función como reacción a un clic</h3>
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-7">
+<pre class="code-inspector js">&lt;button onclick="pocitaj()"&gt;Haz clic&lt;/button&gt;  ← en el HTML
+
+let pocet = 0;
+function pocitaj() {
+  pocet++;
+  console.log("Has hecho clic " + pocet + "×");
+}</pre>
+        </div>
+        <div class="col-lg-5">
+          <button type="button" class="btn btn-primary" id="fnKlik">Haz clic</button>
+          <div class="console-out mt-2" id="fnKlikConsole"><div class="line muted">Consola</div></div>
+        </div>
+      </div>
+      <p class="tiny-label mt-2 mb-0">Una función no se ejecuta cuando la escribimos, sino cuando alguien la llama: aquí el navegador, tras un clic. Más sobre eventos en JS 2.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="window">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">12</span>El modelo de objetos del navegador: window</h2>
+      <p>JavaScript trabaja con <strong>objetos</strong>. En la cima está <code>window</code>, la ventana del navegador. Todo lo demás son sus “subobjetos” y la palabra <code>window.</code> se puede omitir: <code>window.location</code> es lo mismo que <code>location</code>. Haz clic en un objeto: los valores son reales, de tu navegador.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="code-inspector obj-tree" id="objStrom">
+            <ul>
+              <li><span class="obj-node" data-obj="window">window <small>la ventana</small></span>
+                <ul>
+                  <li><span class="obj-node" data-obj="document">document <small>la página</small></span></li>
+                  <li><span class="obj-node" data-obj="location">location <small>la dirección</small></span></li>
+                  <li><span class="obj-node" data-obj="history">history <small>el historial</small></span></li>
+                  <li><span class="obj-node" data-obj="screen">screen <small>la pantalla</small></span></li>
+                  <li><span class="obj-node" data-obj="navigator">navigator <small>el navegador</small></span></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="h6" id="objNazov">window</h3>
+          <p class="small mb-2" id="objPopis"></p>
+          <div class="table-responsive">
+            <table class="table table-sm prop-table mb-0">
+              <thead><tr><th>Propiedad</th><th>Tu valor</th></tr></thead>
+              <tbody id="objTabulka"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <h3 class="h6 text-uppercase text-secondary mt-4">Comandos útiles</h3>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-2">
+          <thead><tr><th>Comando</th><th>Qué hace</th></tr></thead>
+          <tbody>
+            <tr><td><code>location.href = "dakujem.html";</code></td><td>redirige a otra página – lo usarás en el formulario</td></tr>
+            <tr><td><code>location.reload();</code></td><td>recarga la página (como <kbd>F5</kbd>) <button type="button" class="btn btn-sm btn-outline-secondary ms-2 py-0" id="btnReload">probar</button></td></tr>
+            <tr><td><code>location.replace("https://www.zoznam.sk");</code></td><td>carga otra página pero no guarda la actual en el historial (el botón Atrás no volverá a ella)</td></tr>
+            <tr><td><code>history.back();</code></td><td>una página atrás – como el botón Atrás</td></tr>
+            <tr><td><code>history.go(-3);</code></td><td>tres páginas atrás (<code>history.back()</code> no acepta ningún número)</td></tr>
+            <tr><td><code>history.forward();</code></td><td>una página adelante – solo funciona si antes fuimos atrás</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="event">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">13</span>El objeto event: ratón y teclado</h2>
+      <p>Cuando el usuario hace clic o pulsa una tecla, el navegador crea un objeto <code>event</code> con los detalles: qué botón, dónde estaba el ratón, qué tecla… Mueve el ratón sobre el área, haz clic con distintos botones y pulsa teclas.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="mouse-area" id="mysPlocha"><div class="mouse-dot" id="mysBod"></div></div>
+          <div class="table-responsive mt-2">
+            <table class="table table-sm prop-table mb-0">
+              <tbody>
+                <tr><td>event.button</td><td id="evButton">–</td><td class="small text-secondary">0 = izquierdo, 1 = central, 2 = derecho</td></tr>
+                <tr><td>event.clientX / clientY</td><td id="evClient">–</td><td class="small text-secondary">desde la esquina superior izquierda de la ventana</td></tr>
+                <tr><td>event.screenX / screenY</td><td id="evScreen">–</td><td class="small text-secondary">desde la esquina superior izquierda de la pantalla</td></tr>
+                <tr><td>event.offsetX / offsetY</td><td id="evOffset">–</td><td class="small text-secondary">desde la esquina superior izquierda del área</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <input class="form-control mb-2" id="klavesInput" placeholder="Haz clic aquí y pulsa teclas…">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="kbd-big" id="evKey">–</div>
+          </div>
+          <table class="table table-sm prop-table mb-2">
+            <tbody>
+              <tr><td>event.key</td><td id="evKeyVal">–</td></tr>
+              <tr><td>event.code</td><td id="evCode">–</td></tr>
+              <tr><td>event.shiftKey</td><td id="evShift">–</td></tr>
+              <tr><td>event.ctrlKey</td><td id="evCtrl">–</td></tr>
+              <tr><td>event.altKey</td><td id="evAlt">–</td></tr>
+              <tr><td class="text-decoration-line-through">event.keyCode</td><td id="evKeyCode">–</td></tr>
+            </tbody>
+          </table>
+          <p class="tiny-label mb-0"><code>keyCode</code> está obsoleto: usa <code>event.key</code> (p. ej. <code>"Enter"</code>, <code>"a"</code>, <code>"ArrowUp"</code>).</p>
+        </div>
+      </div>
+      <div class="tiny-label mt-3 mb-1">De dónde sale el event: así le pedimos al navegador que nos lo envíe (en detalle en JS 2):</div>
+<pre class="code-inspector js">const plocha = document.getElementById("plocha");
+plocha.addEventListener("mousemove", function (event) {
+  console.log(event.clientX, event.clientY);
+});</pre>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="document">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">14</span>El objeto document</h2>
+      <p><code>document</code> es el objeto más importante: contiene toda la página. A través de él encontramos los elementos (imágenes, formularios, títulos…) y los cambiamos.</p>
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="demo-area h-100 text-center">
+            <h3 class="h6">Una bombilla – cambiar el <code>src</code> de una imagen</h3>
+            <img id="zarovka" alt="bombilla">
+            <div class="d-flex gap-2 justify-content-center mt-2">
+              <button type="button" class="btn btn-sm btn-warning" id="zapni">Enciende la luz</button>
+              <button type="button" class="btn btn-sm btn-secondary" id="vypni">Apaga la luz</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <pre class="code-inspector js" id="zarovkaKod"></pre>
+          <p class="tiny-label mt-2 mb-0">Las imágenes <code>zarovka-on.svg</code> y <code>zarovka-off.svg</code> están en la carpeta <code>img</code> del proyecto.</p>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-lg-5">
+          <div class="demo-area" id="docStranka">
+            <h3 class="h5" id="titulok">Noticias</h3>
+            <p class="poznamka mb-1">Mañana no hay clase.</p>
+            <p class="poznamka mb-1">El jueves hay examen de JS.</p>
+            <p class="poznamka mb-2">El taller de programación es el viernes.</p>
+            <div class="demo-box warm" id="reklama">PUBLICIDAD</div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="d-grid gap-2 mb-2">
+            <button type="button" class="btn btn-outline-primary code-btn" data-doc="id">document.getElementById("titulok")</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-doc="class">document.getElementsByClassName("poznamka")</button>
+            <button type="button" class="btn btn-outline-primary code-btn" data-doc="length">document.getElementsByClassName("poznamka").length</button>
+            <button type="button" class="btn btn-outline-danger code-btn" data-doc="skry">document.getElementById("reklama").style.display = "none";</button>
+            <button type="button" class="btn btn-outline-success code-btn" data-doc="ukaz">document.getElementById("reklama").style.display = "flex";</button>
+          </div>
+          <div class="console-out" id="docConsole"><div class="line muted">Consola</div></div>
+        </div>
+      </div>
+      <div class="alert alert-warning small mt-3">El estilo se define en <strong>un elemento concreto</strong>: <code>prvok.style.display = "none"</code>. Escribir <code>document.style</code> no funciona: <code>document</code> es toda la página, no un elemento. El antiguo <code>document.all</code> ya no se usa.</div>
+
+      <h3 class="h6 text-uppercase text-secondary mt-4">Un valor de un formulario</h3>
+      <div class="row g-3">
+        <div class="col-lg-5">
+          <div class="demo-area">
+            <label class="form-label small mb-0" for="docMeno">Nombre</label>
+            <div class="input-group">
+              <input class="form-control" id="docMeno" placeholder="p. ej. Jana">
+              <button type="button" class="btn btn-primary" id="docPozdrav">Salúdame</button>
+            </div>
+            <p class="lead mt-2 mb-0" id="docVystup">&nbsp;</p>
+          </div>
+        </div>
+        <div class="col-lg-7">
+<pre class="code-inspector js">function pozdrav() {
+  const meno = document.getElementById("docMeno").value;
+  if (meno === "") {
+    alert("Primero escribe un nombre.");
+    return;
+  }
+  document.getElementById("docVystup").textContent = "Hola " + meno + "!";
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="cvicenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">15</span>Ejercicio: un formulario de registro</h2>
+      <p>Crea un formulario (puedes usar Bootstrap) con los campos <strong>nombre</strong> (text), <strong>edad</strong> (number), <strong>género</strong> (radio), <strong>correo</strong>, <strong>país</strong> (select), <strong>contraseña</strong>, <strong>contraseña repetida</strong>, <strong>consentimiento RGPD</strong> (checkbox) y un botón de envío. Al hacer clic en enviar, comprueba los datos en JavaScript:</p>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Campo</th><th>Regla</th></tr></thead>
+          <tbody>
+            <tr><td>Nombre</td><td>no puede estar vacío</td></tr>
+            <tr><td>Edad</td><td>al menos 18</td></tr>
+            <tr><td>Correo</td><td>no puede estar vacío y debe tener el formato correcto</td></tr>
+            <tr><td>Contraseña</td><td>no puede estar vacía, al menos 8 caracteres, al menos 1 minúscula, 1 mayúscula y 1 número</td></tr>
+            <tr><td>Contraseña repetida</td><td>debe coincidir con la contraseña</td></tr>
+            <tr><td>RGPD</td><td>debe estar marcado</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Informa al usuario de los errores con <code>alert</code>. Si todo está bien, redirígelo a una segunda página con un agradecimiento y un botón para volver.</p>
+
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <h3 class="h6">Pistas</h3>
+          <details class="mb-2">
+            <summary class="fw-semibold">1. Cómo capturar el envío del formulario</summary>
+<pre class="code-inspector js mt-2">const formular = document.getElementById("registracia");
+
+formular.addEventListener("submit", function (event) {
+  event.preventDefault(); // el formulario no se envía hasta que lo comprobemos
+  // ...comprobaciones...
+});</pre>
+          </details>
+          <details class="mb-2">
+            <summary class="fw-semibold">2. Cómo leer los valores</summary>
+<pre class="code-inspector js mt-2">const meno = document.getElementById("meno").value;
+const vek = Number(document.getElementById("vek").value);
+const gdpr = document.getElementById("gdpr").checked; // true / false</pre>
+          </details>
+          <details class="mb-2">
+            <summary class="fw-semibold">3. Cómo comprobar la contraseña</summary>
+<pre class="code-inspector js mt-2">heslo.length &gt;= 8      // longitud
+/[a-z]/.test(heslo)     // contiene una minúscula
+/[A-Z]/.test(heslo)     // contiene una mayúscula
+/[0-9]/.test(heslo)     // contiene un número</pre>
+            <p class="small mt-2 mb-0"><code>/…/</code> es una <strong>expresión regular</strong>: un patrón que buscamos en un texto. <code>[a-z]</code> significa “cualquier letra de la a a la z”. El método <code>.test()</code> devuelve <code>true</code> si el texto contiene el patrón.</p>
+          </details>
+          <details class="mb-2">
+            <summary class="fw-semibold">4. Cómo comprobar el correo</summary>
+<pre class="code-inspector js mt-2">const tvar = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!tvar.test(email)) { ... }</pre>
+            <p class="small mt-2 mb-0">Léelo así: algo sin espacios ni @, después <code>@</code>, después algo, un punto y algo. <code>^</code> es el principio y <code>$</code> el final del texto.</p>
+          </details>
+          <details>
+            <summary class="fw-semibold">5. Redirección y vuelta</summary>
+<pre class="code-inspector js mt-2">window.location.href = "dakujem.html";   // en el formulario
+window.location.href = "formular.html";  // el botón de la página dakujem.html</pre>
+          </details>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Probador de reglas: prueba qué pasa</h3>
+          <div class="demo-area">
+            <label class="form-label small mb-0" for="tEmail">Correo</label>
+            <input class="form-control form-control-sm mb-2" id="tEmail" placeholder="jana@skola.sk">
+            <label class="form-label small mb-0" for="tHeslo">Contraseña</label>
+            <input class="form-control form-control-sm mb-2" id="tHeslo" placeholder="p. ej. Secreta123">
+            <label class="form-label small mb-0" for="tHeslo2">Contraseña repetida</label>
+            <input class="form-control form-control-sm mb-2" id="tHeslo2">
+            <ul class="checklist small ps-0 mb-0" id="tZoznam"></ul>
+          </div>
+        </div>
+      </div>
+      <p class="tiny-label mt-3 mb-0">Archivos preparados: <code>formular.html</code>, <code>js/formular.js</code> y <code>dakujem.html</code> en el proyecto inicial.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="playground">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">16</span>Zona de pruebas de JavaScript</h2>
+      <p>Escribe tu propio código o elige un ejemplo y ejecútalo. También funcionan <code>alert</code> y <code>prompt</code>. La página de ejemplo de la derecha tiene un título <code>#nadpis</code> y un párrafo vacío <code>#vystup</code>.</p>
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <select class="form-select form-select-sm w-auto" id="playPreset" aria-label="Ejemplos preparados"></select>
+            <button type="button" class="btn btn-sm btn-primary" id="playRun">▶ Ejecutar</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="playReset">Restaurar el ejemplo</button>
+          </div>
+          <textarea class="form-control" id="playCode" spellcheck="false"></textarea>
+          <p class="tiny-label mt-1 mb-0">Atajo: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> ejecuta el código. <kbd>Tab</kbd> sangra una línea.</p>
+        </div>
+        <div class="col-lg-5">
+          <div class="tiny-label mb-1">Página de ejemplo</div>
+          <div class="demo-area p-1"><iframe class="mini-frame" id="playFrame" title="Página de ejemplo de la zona de pruebas" sandbox="allow-scripts allow-modals"></iframe></div>
+          <div class="tiny-label mt-2 mb-1">Consola</div>
+          <div class="console-out" id="playConsole" style="min-height: 160px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kviz">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">17</span>Cuestionario rápido</h2>
+      <p>Intenta responder sin ayuda. Al comprobar verás también una explicación.</p>
+      <div data-quiz="kviz"></div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="ulohy">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">18</span>Minitareas</h2>
+      <p class="small text-secondary">Escribe en el archivo <code>js/app.js</code> y mira el resultado en la consola (<kbd>F12</kbd>), o pruébalo en la zona de pruebas de arriba.</p>
+      <ol class="mb-0">
+        <li class="mb-2"><strong>Saludo:</strong> pregunta el nombre con <code>prompt</code> y saluda al usuario con <code>alert</code>. Si pulsa Cancelar o no escribe nada, muestra “No has escrito ningún nombre”.</li>
+        <li class="mb-2"><strong>Variables:</strong> crea <code>const meno</code> (nombre) y <code>let vek</code> (edad). Suma 1 a la edad y muestra las dos con su tipo (<code>typeof</code>).</li>
+        <li class="mb-2"><strong>Rectángulo:</strong> escribe las funciones <code>obsah(a, b)</code> (área) y <code>obvod(a, b)</code> (perímetro) que devuelvan el resultado. Pruébalas con 3 y 5.</li>
+        <li class="mb-2"><strong>Par / impar:</strong> recorre con un bucle los números del 1 al 20 y muestra para cada uno si es par (te ayuda <code>%</code>).</li>
+        <li class="mb-2"><strong>Tabla de multiplicar:</strong> muestra la tabla del 7 con la forma <code>7 × 1 = 7</code> … <code>7 × 10 = 70</code>.</li>
+        <li class="mb-2"><strong>Lista de la compra:</strong> del array <code>["pan", "leche", "mantequilla"]</code> muestra <code>1. pan</code>, <code>2. leche</code>, <code>3. mantequilla</code>.</li>
+        <li class="mb-2"><strong>El número mayor:</strong> lee dos números con dos <code>prompt</code> y muestra el mayor. Cuidado: ¡<code>prompt</code> devuelve texto!</li>
+        <li class="mb-2"><strong>Nota:</strong> escribe una función <code>znamka(body)</code> que devuelva una nota del 1 al 5 según los puntos (como en la sección 9).</li>
+        <li class="mb-2"><strong>Adivina el número (extra):</strong> el programa “piensa” un número del 1 al 10 (<code>Math.floor(Math.random() * 10) + 1</code>). Con un bucle <code>while</code> pregunta hasta que el usuario lo adivine y da pistas “más” / “menos”.</li>
+        <li><strong>El formulario de registro</strong> de la sección 15.</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  JavaScript 1 · Fundamentos · Documentación: <a href="https://developer.mozilla.org/es/docs/Web/JavaScript">MDN – JavaScript</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ============================================================
+     Pomocné funkcie
+     ============================================================ */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  function esc(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightJS(src) {
+    const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|of|in|while|new|true|false|null|undefined|typeof)\b|\b(document|console|window|location|history|screen|navigator|Number|Math)\b|\b(\d+(?:\.\d+)?)\b/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      const cls = m[1] ? 'com' : m[2] ? 'str' : m[3] ? 'kw' : m[4] ? 'obj' : 'num';
+      out += `<span class="${cls}">${esc(m[0])}</span>`;
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  function setCode(el, text) { el.innerHTML = highlightJS(text); }
+
+  function highlightHTML(src) {
+    return esc(src).replace(/(&lt;\/?)([a-zA-Z0-9!]+)((?:\s+[a-zA-Z-]+(?:="[^"]*")?)*)(\s*\/?&gt;)/g, (m, open, tag, attrs, close) =>
+      `<span class="tag">${open}${tag}</span>` +
+      attrs.replace(/([a-zA-Z-]+)(="[^"]*")?/g, (mm, name, val) => `<span class="attr">${name}</span>` + (val ? `=<span class="value">${val.slice(1)}</span>` : '')) +
+      `<span class="tag">${close}</span>`);
+  }
+
+  // kód rozdelený na riadky, aby sa dali zvýrazňovať
+  function renderLines(pre, lines) {
+    pre.innerHTML = lines.map(l => `<span class="ln">${highlightJS(l)}</span>`).join('');
+    return $$('.ln', pre);
+  }
+
+  // hodnota tak, ako ju ukáže konzola
+  function fmt(v, nested = false) {
+    if (typeof v === 'string') return nested ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (typeof v === 'number' || typeof v === 'boolean' || typeof v === 'bigint') return String(v);
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anónima') + '()';
+    if (Array.isArray(v)) return '[' + v.map(x => fmt(x, true)).join(', ') + ']';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ` id="${v.id}"` : '') + (v.classList.length ? ` class="${[...v.classList].filter(c => c !== 'inspect-target').join(' ')}"` : '') + '>';
+    if (v instanceof HTMLCollection || v instanceof NodeList) return (v instanceof HTMLCollection ? 'HTMLCollection' : 'NodeList') + '(' + v.length + ') [' + [...v].map(e => fmt(e)).join(', ') + ']';
+    try { return '{ ' + Object.entries(v).map(([k, x]) => k + ': ' + fmt(x, true)).join(', ') + ' }'; } catch (e) { return String(v); }
+  }
+
+  // chybové hlášky po slovensky
+  const CHYBY = [
+    [/is not defined/, 'no existe ninguna variable o función con este nombre: revisa si hay una errata y las mayúsculas/minúsculas'],
+    [/Assignment to constant variable/, 'no se puede asignar un valor nuevo a una constante (const)'],
+    [/has already been declared/, 'ya existe una variable con este nombre: let y const no se pueden crear dos veces'],
+    [/Missing initializer in const/, 'const debe recibir su valor al crearla'],
+    [/is not a function/, 'esto no es una función: ¿hay una errata en el nombre?'],
+    [/Cannot (read|set) properties of null/, 'no se encontró el elemento (es null): ¿existe ese id? ¿Se ha cargado ya el HTML?'],
+    [/Unexpected token|Unexpected end of input|missing \) after|Invalid or unexpected token|Unexpected identifier/, 'error de sintaxis: revisa los paréntesis, las comillas y las comas']
+  ];
+  const preloz = msg => (CHYBY.find(([re]) => re.test(msg)) || [, ''])[1];
+
+  function logTo(box, text, cls = '') {
+    $$('.line.muted', box).forEach(l => l.remove());
+    const line = document.createElement('div');
+    line.className = 'line ' + cls;
+    line.textContent = text;
+    box.append(line);
+    box.scrollTop = box.scrollHeight;
+  }
+  function logError(box, name, message) {
+    logTo(box, (name ? name + ': ' : '') + message, 'err');
+    const sk = preloz(message);
+    if (sk) logTo(box, sk, 'hint');
+  }
+  function clearConsole(box) { box.innerHTML = ''; }
+
+  // spustí kód a výstup console.log presmeruje do boxu
+  function runSnippet(code, box) {
+    clearConsole(box);
+    const out = cls => (...args) => logTo(box, args.map(a => fmt(a)).join(' '), cls);
+    const fakeConsole = { log: out(''), info: out(''), warn: out('warn'), error: out('err'), table: out('') };
+    try {
+      new Function('console', code)(fakeConsole);
+    } catch (e) {
+      logError(box, e.name, e.message);
+    }
+    if (!box.children.length) logTo(box, '(no se ha mostrado nada)', 'muted');
+  }
+
+  function highlight(elements, scope) {
+    $$('.inspect-target', scope).forEach(e => e.classList.remove('inspect-target'));
+    elements.forEach(e => e && e.classList && e.classList.add('inspect-target'));
+  }
+
+  // ---------- iframe ukážky: konzola z iframe sa posiela sem ----------
+  const frameBoxes = [];
+  window.addEventListener('message', e => {
+    const f = frameBoxes.find(x => x.frame.contentWindow === e.source);
+    if (!f || !e.data || !e.data.__lab) return;
+    if (e.data.type === 'error') logError(f.box, '', e.data.text);
+    else logTo(f.box, e.data.text, e.data.type === 'warn' ? 'warn' : '');
+  });
+  function bridge(offset = 0) {
+    return `<script>(function () {
+  function fmt(v, n) {
+    if (typeof v === 'string') return n ? JSON.stringify(v) : v;
+    if (v === undefined) return 'undefined';
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return '[' + v.map(function (x) { return fmt(x, true); }).join(', ') + ']';
+    if (typeof v === 'function') return 'ƒ ' + (v.name || 'anónima') + '()';
+    if (v instanceof Element) return '<' + v.tagName.toLowerCase() + (v.id ? ' id="' + v.id + '"' : '') + '>';
+    if (typeof v === 'object') { try { return JSON.stringify(v); } catch (e) { return String(v); } }
+    return String(v);
+  }
+  ['log', 'info', 'warn', 'error', 'table'].forEach(function (k) {
+    console[k] = function () {
+      parent.postMessage({ __lab: true, type: k, text: Array.prototype.map.call(arguments, function (a) { return fmt(a); }).join(' ') }, '*');
+    };
+  });
+  window.addEventListener('error', function (e) {
+    var riadok = e.lineno && ${offset} ? ' (riadok ' + (e.lineno - ${offset}) + ')' : '';
+    parent.postMessage({ __lab: true, type: 'error', text: e.message.replace(/^Uncaught /, '') + riadok }, '*');
+  });
+})();<\/script>`;
+  }
+  const FRAME_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{padding:.75rem 1rem;font-size:15px}h1{font-size:1.6rem}</style>';
+
+  // statické bloky kódu zafarbíme
+  $$('pre.code-inspector.js').forEach(pre => setCode(pre, pre.textContent));
+  $$('pre.code-inspector.html').forEach(pre => { pre.innerHTML = highlightHTML(pre.textContent); });
+
+  // všetky .snippet bloky s tlačidlom Spustiť
+  $$('.snippet').forEach(sn => {
+    const pre = $('pre', sn), box = $('.console-out', sn), btn = $('.run', sn);
+    if (!box.children.length) logTo(box, 'Consola: haz clic en Ejecutar', 'muted');
+    if (btn) btn.addEventListener('click', () => runSnippet(pre.textContent, box));
+  });
+
+  /* ============================================================
+     Kvíz
+     ============================================================ */
+  const QUIZZES = {
+    kviz: [
+      { q: '¿Dónde es mejor colocar <script src="js/app.js"><\/script>?', o: ['al principio de <head> (sin defer)', 'justo antes de </body>', 'después de </html>'], a: 1, e: 'Justo antes de </body> ya se ha cargado todo el HTML, así que el script encuentra todos los elementos. En <head> solo funciona con el atributo defer.' },
+      { q: '¿Qué muestra console.log(typeof 4.2)?', o: ['"double"', '"float"', '"number"'], a: 2, e: 'JavaScript tiene un único tipo para enteros y decimales: number.' },
+      { q: 'let x = 1; if (true) { let x = 2; } console.log(x); – ¿qué se muestra?', o: ['1', '2', 'un error'], a: 0, e: 'let solo vale en su propio bloque { }. La x interior es otra variable; la exterior siguió valiendo 1.' },
+      { q: '¿Cuál es el resultado de "5" + 3?', o: ['8', '"53"', 'un error'], a: 1, e: 'Si un lado de + es texto, los valores se unen. Un número lo obtendríamos con Number("5") + 3.' },
+      { q: '¿Cuál es el resultado de 17 % 5?', o: ['3.4', '2', '3'], a: 1, e: '% es el resto de la división: 17 = 3 · 5 + 2.' },
+      { q: '¿Qué devuelve 5 == "5" y qué devuelve 5 === "5"?', o: ['true y true', 'true y false', 'false y false'], a: 1, e: '== convierte los tipos antes de comparar; === compara el valor y el tipo.' },
+      { q: 'const ovocie = ["manzana", "pera"]; for (const kus of ovocie) console.log(kus); – ¿qué se muestra?', o: ['0 y 1', 'manzana y pera', 'un error, const no se puede usar en un bucle'], a: 1, e: 'for…of recorre los valores del array. Los índices 0 y 1 los mostraría for…in. const está bien: en cada vuelta se crea una variable nueva.' },
+      { q: 'Una función no tiene return. ¿Qué devuelve?', o: ['0', 'un texto vacío ""', 'undefined'], a: 2, e: 'Sin return la función devuelve undefined.' },
+      { q: 'El usuario pulsa Cancelar en una ventana prompt. ¿Qué devuelve prompt?', o: ['null', 'un texto vacío ""', 'false'], a: 0, e: 'Cancelar → null. Si pulsa Aceptar sin escribir, obtenemos un texto vacío "".' },
+      { q: '¿Cómo vuelves 3 páginas atrás?', o: ['history.back(3)', 'history.go(-3)', 'location.back(3)'], a: 1, e: 'history.back() siempre retrocede una sola página. Para moverse más páginas se usa history.go(-3).' }
+    ]
+  };
+
+  $$('[data-quiz]').forEach(holder => {
+    const questions = QUIZZES[holder.dataset.quiz];
+    const answers = new Array(questions.length).fill(null);
+    const wrap = document.createElement('div');
+    questions.forEach((item, qi) => {
+      const box = document.createElement('div');
+      box.className = 'quiz-question';
+      const title = document.createElement('p');
+      title.className = 'fw-semibold mb-2';
+      title.textContent = `${qi + 1}. ${item.q}`;
+      const list = document.createElement('div');
+      list.className = 'list-group';
+      item.o.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-group-item list-group-item-action font-monospace small';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+          if (holder.classList.contains('quiz-done')) return;
+          answers[qi] = oi;
+          $$('.list-group-item', list).forEach(b => b.classList.remove('vybrana'));
+          btn.classList.add('vybrana');
+        });
+        list.append(btn);
+      });
+      const fb = document.createElement('div');
+      fb.className = 'small mt-2';
+      box.append(title, list, fb);
+      wrap.append(box);
+    });
+    const controls = document.createElement('div');
+    controls.className = 'd-flex flex-wrap align-items-center gap-2';
+    controls.innerHTML = '<button type="button" class="btn btn-primary">Comprobar</button><button type="button" class="btn btn-outline-secondary">Borrar respuestas</button><span class="fw-semibold ms-2"></span>';
+    const [evalBtn, resetBtn, score] = controls.children;
+    evalBtn.addEventListener('click', () => {
+      let good = 0;
+      $$('.quiz-question', wrap).forEach((box, qi) => {
+        const opts = $$('.list-group-item', box);
+        opts[questions[qi].a].classList.add('list-group-item-success');
+        const fb = box.lastElementChild;
+        if (answers[qi] === questions[qi].a) { good++; fb.className = 'small mt-2 text-success'; fb.textContent = '✔ Correcto. ' + questions[qi].e; }
+        else {
+          if (answers[qi] !== null) opts[answers[qi]].classList.add('list-group-item-danger');
+          fb.className = 'small mt-2 text-danger';
+          fb.textContent = (answers[qi] === null ? '– Sin respuesta. ' : '✖ Incorrecto. ') + questions[qi].e;
+        }
+      });
+      holder.classList.add('quiz-done');
+      score.textContent = `Resultado: ${good} / ${questions.length}`;
+    });
+    resetBtn.addEventListener('click', () => {
+      answers.fill(null);
+      holder.classList.remove('quiz-done');
+      $$('.list-group-item', wrap).forEach(b => b.classList.remove('vybrana', 'list-group-item-success', 'list-group-item-danger'));
+      $$('.quiz-question > div:last-child', wrap).forEach(fb => { fb.textContent = ''; });
+      score.textContent = '';
+    });
+    holder.append(wrap, controls);
+  });
+
+  /* ============================================================
+     2 Umiestnenie skriptu
+     ============================================================ */
+  (() => {
+    const frame = $('#umFrame'), box = $('#umConsole'), kod = $('#umKod');
+    frameBoxes.push({ frame, box });
+    const skript = [
+      '  <script>',
+      '    const nadpis = document.getElementById("nadpis");',
+      '    nadpis.textContent = "¡JavaScript funciona!";',
+      '    nadpis.style.color = "seagreen";',
+      '  <\/script>'
+    ];
+    function ukaz() {
+      const vHead = $('#umHead').checked;
+      const lines = ['<!DOCTYPE html>', '<html lang="sk">', '<head>'];
+      if (vHead) lines.push(...skript);
+      lines.push('</head>', '<body>', '  <h1 id="nadpis">Mi página</h1>');
+      if (!vHead) lines.push(...skript);
+      lines.push('</body>', '</html>');
+      kod.innerHTML = highlightHTML(lines.join('\n'));
+      clearConsole(box);
+      logTo(box, 'La consola está vacía: todo se ejecutó sin errores.', 'muted');
+      const js = skript.slice(1, 4).join('\n');
+      const head = FRAME_CSS + bridge() + (vHead ? `<script>${js}<\/script>` : '');
+      const body = '<h1 id="nadpis">Mi página</h1>' + (vHead ? '' : `<script>${js}<\/script>`);
+      frame.srcdoc = `<!doctype html><html lang="sk"><head><meta charset="utf-8">${head}</head><body>${body}</body></html>`;
+    }
+    $$('input[name="umiestnenie"]').forEach(r => r.addEventListener('change', ukaz));
+    ukaz();
+  })();
+
+  /* ============================================================
+     3 Hlášky
+     ============================================================ */
+  (() => {
+    const box = $('#hlaskyConsole');
+    $('#btnAlert').addEventListener('click', () => {
+      const v = alert('No están rellenos todos los campos del formulario');
+      logTo(box, 'alert(…) devolvió: ' + fmt(v));
+    });
+    $('#btnPrompt').addEventListener('click', () => {
+      const meno = prompt('Escribe tu nombre', '');
+      logTo(box, 'prompt(…) devolvió: ' + (meno === null ? 'null (pulsaste Cancelar)' : JSON.stringify(meno) + '  (typ: ' + typeof meno + ')'));
+    });
+    $('#btnConfirm').addEventListener('click', () => {
+      const s = confirm('¿Seguro que quieres borrar?');
+      logTo(box, 'confirm(…) devolvió: ' + s);
+    });
+
+    const frame = $('#writeFrame');
+    function nacitaj() {
+      frame.srcdoc = `<!doctype html><html lang="sk"><head><meta charset="utf-8">${FRAME_CSS}</head><body>
+<h1>Mi página</h1>
+<p class="mb-2">Menú · Imágenes · Artículo… <script>document.write("<b>(este texto lo escribió document.write durante la carga)<\/b>");<\/script></p>
+<button class="btn btn-sm btn-danger" onclick='document.write("¡Hola!")'>Haz clic: document.write("¡Hola!")</button>
+</body></html>`;
+    }
+    $('#writeReset').addEventListener('click', nacitaj);
+    nacitaj();
+  })();
+
+  /* ============================================================
+     4 Konzola
+     ============================================================ */
+  (() => {
+    const box = $('#conConsole');
+    $$('[data-con]').forEach(btn => btn.addEventListener('click', () => {
+      const out = cls => (...a) => logTo(box, a.map(x => fmt(x)).join(' '), cls);
+      try {
+        new Function('console', btn.dataset.con)({ log: out(''), warn: out('warn'), error: out('err') });
+      } catch (e) { logError(box, 'Uncaught ' + e.name, e.message); }
+    }));
+  })();
+
+  /* ============================================================
+     5 Premenné a typy
+     ============================================================ */
+  (() => {
+    const holder = $('#typyRiadky'), box = $('#typConsole');
+    const riadky = [
+      ['let x = 42;', 42],
+      ['x = 4.2;', 4.2],
+      ['x = "Hola";', 'Hola'],
+      ['x = true;', true],
+      ['x = ["coche", "moto", "bicicleta"];', ['auto', 'motorka', 'bicykel']],
+      ['x = undefined;', undefined],
+      ['x = null;', null]
+    ];
+    riadky.forEach(([kod, hodnota]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-outline-primary code-btn';
+      b.textContent = kod;
+      b.addEventListener('click', () => {
+        $$('button', holder).forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        $('#typHodnota').textContent = fmt(hodnota, true);
+        $('#typTyp').textContent = '"' + typeof hodnota + '"';
+        clearConsole(box);
+        logTo(box, '> ' + kod, 'muted');
+        logTo(box, 'console.log(x)        → ' + fmt(hodnota));
+        logTo(box, 'console.log(typeof x) → ' + typeof hodnota);
+        if (Array.isArray(hodnota)) {
+          logTo(box, 'Array.isArray(x)      → true');
+          logTo(box, 'x.length              → ' + hodnota.length);
+          logTo(box, 'x[0]                  → ' + hodnota[0]);
+          logTo(box, 'x[x.length - 1]       → ' + hodnota[hodnota.length - 1]);
+        }
+        if (typeof hodnota === 'number') logTo(box, 'Los enteros y los decimales son de tipo number.', 'hint');
+        if (hodnota === null) logTo(box, 'typeof null es "object": un error conocido del lenguaje de 1995.', 'hint');
+      });
+      holder.append(b);
+    });
+  })();
+
+  /* ============================================================
+     7 Operátory
+     ============================================================ */
+  (() => {
+    const a = $('#opA'), b = $('#opB'), tab = $('#opTabulka');
+    const ops = [
+      ['+', 'suma', (x, y) => x + y],
+      ['-', 'resta', (x, y) => x - y],
+      ['*', 'multiplicación', (x, y) => x * y],
+      ['**', 'umocnenie', (x, y) => x ** y],
+      ['/', 'delenie', (x, y) => x / y],
+      ['%', 'resto de la división', (x, y) => x % y]
+    ];
+    function prepocitaj() {
+      const x = Number(a.value), y = Number(b.value);
+      tab.innerHTML = '';
+      ops.forEach(([op, vyznam, f]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><code>${esc(op)}</code></td><td class="small">${vyznam}</td><td><code>${x} ${esc(op)} ${y}</code></td><td class="result-cell"></td>`;
+        tr.lastChild.textContent = fmt(f(x, y));
+        tab.append(tr);
+      });
+    }
+    a.addEventListener('input', prepocitaj);
+    b.addEventListener('input', prepocitaj);
+    prepocitaj();
+
+    // asignación
+    let x = 10;
+    const box = $('#prirConsole'), yIn = $('#prirY'), holder = $('#prirTlacidla');
+    const zobraz = () => { $('#prirX').textContent = fmt(x); };
+    logTo(box, 'let x = 10;', 'muted');
+    const akcie = [
+      ['x = y', y => y], ['x += y', y => x + y], ['x -= y', y => x - y], ['x *= y', y => x * y],
+      ['x /= y', y => x / y], ['x %= y', y => x % y], ['x **= y', y => x ** y],
+      ['x++', () => x + 1], ['x--', () => x - 1]
+    ];
+    akcie.forEach(([kod, f]) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-sm btn-outline-primary font-monospace';
+      btn.textContent = kod;
+      btn.addEventListener('click', () => {
+        const y = Number(yIn.value);
+        const pred = x;
+        x = f(y);
+        zobraz();
+        const ako = kod.endsWith('++') ? `x = x + 1` : kod.endsWith('--') ? `x = x - 1` : kod === 'x = y' ? `x = ${y}` : `x = x ${kod.slice(2, -3)} y`;
+        logTo(box, `${kod.replace('y', y)}   (${ako.replace(/\by\b/, y).replace(/x(?= [^=])/, pred)}) → x vale ${fmt(x)}`);
+      });
+      holder.append(btn);
+    });
+    const reset = document.createElement('button');
+    reset.type = 'button';
+    reset.className = 'btn btn-sm btn-outline-secondary';
+    reset.textContent = 'x = 10 (restaurar)';
+    reset.addEventListener('click', () => { x = 10; zobraz(); clearConsole(box); logTo(box, 'let x = 10;', 'muted'); });
+    holder.append(reset);
+
+    // + con texto
+    const riadky = [
+      ['5 + 3', 5 + 3],
+      ['"5" + 3', '5' + 3],
+      ['"5" - 3', '5' - 3],
+      ['"5" * 3', '5' * 3],
+      ['Number("5") + 3', Number('5') + 3],
+      ['"Hola " + "mundo"', 'Hola ' + 'mundo'],
+      ['"Tengo " + 10 + 5 + " años"', 'Tengo ' + 10 + 5 + ' años'],
+      ['"Tengo " + (10 + 5) + " años"', 'Tengo ' + (10 + 5) + ' años']
+    ];
+    const tt = $('#textTabulka');
+    riadky.forEach(([kod, v]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><code></code></td><td class="result-cell"></td><td><code>${typeof v}</code></td>`;
+      tr.children[0].firstChild.textContent = kod;
+      tr.children[1].textContent = fmt(v, true);
+      tt.append(tr);
+    });
+  })();
+
+  /* ============================================================
+     8 Porovnanie a logika
+     ============================================================ */
+  (() => {
+    const A = $('#porA'), At = $('#porAtyp'), B = $('#porB'), Bt = $('#porBtyp'), tab = $('#porTabulka');
+    const ops = [
+      ['==', 'igual (convierte tipos)', (a, b) => a == b],
+      ['===', 'igual en valor y tipo', (a, b) => a === b],
+      ['!=', 'distinto', (a, b) => a != b],
+      ['!==', 'distinto en valor o tipo', (a, b) => a !== b],
+      ['>', 'mayor', (a, b) => a > b],
+      ['<', 'menor', (a, b) => a < b],
+      ['>=', 'mayor o igual', (a, b) => a >= b],
+      ['<=', 'menor o igual', (a, b) => a <= b]
+    ];
+    const hodnota = (inp, typ) => typ.value === 'num' ? Number(inp.value) : inp.value;
+    const zapis = (v) => typeof v === 'string' ? JSON.stringify(v) : String(v);
+    function prepocitaj() {
+      const a = hodnota(A, At), b = hodnota(B, Bt);
+      tab.innerHTML = '';
+      ops.forEach(([op, vyznam, f]) => {
+        const r = f(a, b);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><code>${esc(op)}</code></td><td class="small">${vyznam}</td><td><code></code></td><td><span class="badge ${r ? 'badge-true' : 'badge-false'}">${r}</span></td>`;
+        tr.children[2].firstChild.textContent = `${zapis(a)} ${op} ${zapis(b)}`;
+        tab.append(tr);
+      });
+    }
+    [A, At, B, Bt].forEach(el => el.addEventListener('input', prepocitaj));
+    prepocitaj();
+
+    const la = $('#logA'), lb = $('#logB'), lt = $('#logTabulka');
+    const badge = v => `<span class="badge ${v ? 'badge-true' : 'badge-false'}">${v}</span>`;
+    function logika() {
+      const a = la.checked, b = lb.checked;
+      $('#logAval').textContent = a;
+      $('#logBval').textContent = b;
+      lt.innerHTML = `<tr><td><code>a &amp;&amp; b</code></td><td>${badge(a && b)}</td></tr><tr><td><code>a || b</code></td><td>${badge(a || b)}</td></tr><tr><td><code>!a</code></td><td>${badge(!a)}</td></tr><tr><td><code>!b</code></td><td>${badge(!b)}</td></tr>`;
+    }
+    la.addEventListener('change', logika);
+    lb.addEventListener('change', logika);
+    logika();
+
+    const vek = $('#regVek'), gdpr = $('#regGdpr');
+    function registracia() {
+      const v = Number(vek.value), g = gdpr.checked;
+      $('#regVekVal').textContent = v;
+      const moze = v >= 18 && g;
+      setCode($('#regKod'), [
+        `const vek = ${v};`,
+        `const gdpr = ${g};`,
+        '',
+        `const mozeRegistrovat = vek >= 18 && gdpr;`,
+        `// ${v >= 18} && ${g} → ${moze}`,
+        '',
+        `const stav = vek >= 18 ? "adulto" : "menor";`,
+        `// → "${v >= 18 ? 'adulto' : 'menor'}"`
+      ].join('\n'));
+    }
+    vek.addEventListener('input', registracia);
+    gdpr.addEventListener('change', registracia);
+    registracia();
+  })();
+
+  /* ============================================================
+     9 Podmienky
+     ============================================================ */
+  (() => {
+    const slider = $('#ifBody'), pre = $('#ifKod'), priebeh = $('#ifPriebeh'), box = $('#ifConsole');
+    const hranice = [90, 75, 50, 30];
+    function vyhodnot() {
+      const body = Number(slider.value);
+      $('#ifBodyVal').textContent = body;
+      const lines = [
+        `const body = ${body};`,
+        'if (body >= 90) {', '  console.log("Nota 1");',
+        '} else if (body >= 75) {', '  console.log("Nota 2");',
+        '} else if (body >= 50) {', '  console.log("Nota 3");',
+        '} else if (body >= 30) {', '  console.log("Nota 4");',
+        '} else {', '  console.log("Nota 5");',
+        '}'
+      ];
+      const ln = renderLines(pre, lines);
+      let hit = hranice.findIndex(h => body >= h);
+      if (hit === -1) hit = 4;
+      priebeh.innerHTML = '';
+      ln.forEach((l, i) => { if (i > 0 && i < 11) l.classList.add('skip'); });
+      for (let k = 0; k < hit; k++) {
+        ln[1 + 2 * k].classList.replace('skip', 'false');
+        const li = document.createElement('li');
+        li.innerHTML = `<code>${body} &gt;= ${hranice[k]}</code> → <span class="badge badge-false">false</span>, seguimos`;
+        priebeh.append(li);
+      }
+      ln[1 + 2 * hit].classList.replace('skip', 'true');
+      ln[2 + 2 * hit].classList.replace('skip', 'active');
+      const li = document.createElement('li');
+      li.innerHTML = hit < 4
+        ? `<code>${body} &gt;= ${hranice[hit]}</code> → <span class="badge badge-true">true</span> – se ejecuta esta rama, el resto se salta`
+        : 'no se cumplió ninguna condición → se ejecuta: <code>else</code>';
+      priebeh.append(li);
+      clearConsole(box);
+      logTo(box, 'Nota ' + (hit + 1));
+    }
+    slider.addEventListener('input', vyhodnot);
+    vyhodnot();
+  })();
+
+  /* ============================================================
+     10 Cykly
+     ============================================================ */
+  (() => {
+    const input = $('#forPolozky'), pre = $('#forKod'), info = $('#forInfo'), box = $('#forConsole');
+    let items = [], steps = [], idx = -1, timer = null, ln = [];
+    function polozky() {
+      return input.value.split(',').map(s => s.trim()).filter(Boolean).slice(0, 8);
+    }
+    function buildSteps(items) {
+      const n = items.length;
+      const s = [{ line: 0, i: null, text: `Se crea un array con ${n} elementos. Su longitud (length) es ${n}.` }];
+      s.push({ line: 1, i: 0, text: 'Inicio del bucle: se crea la variable i = 0 (solo se ejecuta una vez).' });
+      for (let i = 0; ; i++) {
+        const ok = i < n;
+        s.push({ line: 1, i, cond: ok, text: `Condición: i < dopravnyProstriedok.length → ${i} < ${n} → ${ok}` + (ok ? ' → entramos en el cuerpo del bucle.' : ' → el bucle termina.') });
+        if (!ok) break;
+        s.push({ line: 2, i, out: items[i], text: `Se muestra dopravnyProstriedok[${i}] → "${items[i]}"` });
+        s.push({ line: 1, i: i + 1, text: `Fin de la vuelta: i++ → ahora i vale ${i + 1}. Volvemos a comprobar la condición.` });
+      }
+      s.push({ line: 4, i: undefined, out: 'Fin del bucle', text: 'El programa continúa después del bucle. La variable i ya no existe: let solo vale dentro del bucle.' });
+      return s;
+    }
+    function reset() {
+      clearInterval(timer); timer = null;
+      $('#forPrehraj').textContent = 'Reproducir todo';
+      items = polozky();
+      steps = buildSteps(items);
+      idx = -1;
+      ln = renderLines(pre, [
+        `const dopravnyProstriedok = [${items.map(x => JSON.stringify(x)).join(', ')}];`,
+        'for (let i = 0; i < dopravnyProstriedok.length; i++) {',
+        '  console.log(dopravnyProstriedok[i]);',
+        '}',
+        'console.log("Fin del bucle");'
+      ]);
+      $('#forKrokSpolu').textContent = steps.length;
+      vykresli();
+    }
+    function vykresli() {
+      ln.forEach(l => l.classList.remove('active', 'true', 'false'));
+      clearConsole(box);
+      if (idx < 0) {
+        $('#forI').textContent = '–';
+        $('#forKrokCislo').textContent = 0;
+        info.textContent = 'Haz clic en “Paso”.';
+        logTo(box, 'Consola', 'muted');
+        $('#forKrok').disabled = false;
+        return;
+      }
+      const st = steps[idx];
+      ln[st.line].classList.add(st.cond === undefined ? 'active' : st.cond ? 'true' : 'false');
+      $('#forI').textContent = st.i === null ? 'todavía no existe' : st.i === undefined ? 'ya no existe' : st.i;
+      $('#forKrokCislo').textContent = idx + 1;
+      info.textContent = st.text;
+      steps.slice(0, idx + 1).forEach(x => { if (x.out !== undefined) logTo(box, x.out); });
+      if (!box.children.length) logTo(box, 'Consola', 'muted');
+      $('#forKrok').disabled = idx >= steps.length - 1;
+    }
+    function krok() {
+      if (idx < steps.length - 1) { idx++; vykresli(); }
+      if (idx >= steps.length - 1 && timer) { clearInterval(timer); timer = null; $('#forPrehraj').textContent = 'Reproducir todo'; }
+    }
+    $('#forKrok').addEventListener('click', krok);
+    $('#forReset').addEventListener('click', reset);
+    $('#forPrehraj').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; $('#forPrehraj').textContent = 'Reproducir todo'; return; }
+      if (idx >= steps.length - 1) { idx = -1; }
+      $('#forPrehraj').textContent = 'Pausa';
+      krok();
+      timer = setInterval(krok, 900);
+    });
+    input.addEventListener('input', reset);
+    reset();
+
+    // while
+    const limit = $('#whileLimit'), wbox = $('#whileConsole');
+    function spustWhile() {
+      const n = Number(limit.value);
+      $('#whileLimitVal').textContent = n;
+      const kod = `let i = 0;\nwhile (i < ${n}) {\n  const text = "i vale " + i;\n  i++;\n  console.log(text);\n}\nconsole.log("Listo, i vale " + i);`;
+      setCode($('#whileKod'), kod);
+      runSnippet(kod, wbox);
+    }
+    limit.addEventListener('input', spustWhile);
+    spustWhile();
+  })();
+
+  /* ============================================================
+     11 Funkcie
+     ============================================================ */
+  (() => {
+    function vynasob(p1, p2) { return p1 * p2; }
+    const p1 = $('#fnP1'), p2 = $('#fnP2');
+    function prepocitaj() {
+      const a = Number(p1.value), b = Number(p2.value);
+      $('#fnIn1').textContent = a;
+      $('#fnIn2').textContent = b;
+      $('#fnOut').textContent = fmt(vynasob(a, b));
+      $('#fnVolanie').textContent = `vynasob(${a}, ${b}) → ${fmt(vynasob(a, b))}`;
+    }
+    p1.addEventListener('input', prepocitaj);
+    p2.addEventListener('input', prepocitaj);
+    prepocitaj();
+
+    let pocet = 0;
+    const box = $('#fnKlikConsole');
+    function pocitaj() {
+      pocet++;
+      logTo(box, 'Has hecho clic ' + pocet + '×');
+    }
+    $('#fnKlik').addEventListener('click', pocitaj);
+  })();
+
+  /* ============================================================
+     12 window
+     ============================================================ */
+  (() => {
+    const strom = $('#objStrom'), tab = $('#objTabulka');
+    const skrat = (s, n = 70) => s.length > n ? s.slice(0, n) + '…' : s;
+    const OBJ = {
+      window: ['La ventana del navegador: la cima de todos los objetos. También contiene alert, prompt y console.', () => [
+        ['window.innerWidth', innerWidth + ' px'], ['window.innerHeight', innerHeight + ' px'], ['window.scrollY', Math.round(scrollY) + ' px'], ['typeof window.alert', typeof window.alert]]],
+      document: ['La página cargada: a través de él accedemos a los elementos HTML (sección 14).', () => [
+        ['document.title', JSON.stringify(document.title)], ['document.images.length', document.images.length], ['document.forms.length', document.forms.length], ['document.getElementById("top")', fmt(document.getElementById('top'))]]],
+      location: ['La URL de la página cargada. Asignando un valor a location.href redirigimos a otra página.', () => [
+        ['location.href', skrat(location.href)], ['location.protocol', JSON.stringify(location.protocol)], ['location.hostname', JSON.stringify(location.hostname)], ['location.pathname', skrat(JSON.stringify(location.pathname))]]],
+      history: ['El historial de navegación de esta pestaña, como los botones Atrás y Adelante.', () => [
+        ['history.length', history.length + ' (número de páginas en el historial de la pestaña)']]],
+      screen: ['Información sobre la pantalla (el monitor), no sobre la ventana.', () => [
+        ['screen.width', screen.width + ' px'], ['screen.height', screen.height + ' px'], ['screen.colorDepth', screen.colorDepth + ' bitov']]],
+      navigator: ['Información sobre el navegador.', () => [
+        ['navigator.language', JSON.stringify(navigator.language)], ['navigator.onLine', navigator.onLine], ['navigator.userAgent', skrat(navigator.userAgent, 90)]]]
+    };
+    let aktualny = 'window';
+    function ukaz(meno) {
+      aktualny = meno;
+      $$('.obj-node', strom).forEach(n => n.classList.toggle('active', n.dataset.obj === meno));
+      $('#objNazov').textContent = meno;
+      $('#objPopis').textContent = OBJ[meno][0];
+      tab.innerHTML = '';
+      OBJ[meno][1]().forEach(([k, v]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td></td><td></td>';
+        tr.children[0].textContent = k;
+        tr.children[1].textContent = String(v);
+        tab.append(tr);
+      });
+    }
+    $$('.obj-node', strom).forEach(n => n.addEventListener('click', () => ukaz(n.dataset.obj)));
+    window.addEventListener('resize', () => { if (aktualny === 'window') ukaz('window'); });
+    ukaz('window');
+    $('#btnReload').addEventListener('click', () => location.reload());
+  })();
+
+  /* ============================================================
+     13 event
+     ============================================================ */
+  (() => {
+    const plocha = $('#mysPlocha'), bod = $('#mysBod');
+    plocha.addEventListener('mousemove', e => {
+      bod.style.display = 'block';
+      bod.style.left = e.offsetX + 'px';
+      bod.style.top = e.offsetY + 'px';
+      $('#evClient').textContent = `${e.clientX}, ${e.clientY}`;
+      $('#evScreen').textContent = `${e.screenX}, ${e.screenY}`;
+      $('#evOffset').textContent = `${e.offsetX}, ${e.offsetY}`;
+    });
+    plocha.addEventListener('mouseleave', () => { bod.style.display = 'none'; });
+    plocha.addEventListener('mousedown', e => {
+      e.preventDefault();
+      $('#evButton').textContent = e.button + ' (' + (['izquierdo', 'central', 'derecho'][e.button] || '?') + ')';
+    });
+    plocha.addEventListener('contextmenu', e => e.preventDefault());
+    $('#klavesInput').addEventListener('keydown', e => {
+      $('#evKey').textContent = e.key === ' ' ? '␣' : e.key;
+      $('#evKeyVal').textContent = JSON.stringify(e.key);
+      $('#evCode').textContent = JSON.stringify(e.code);
+      $('#evShift').textContent = e.shiftKey;
+      $('#evCtrl').textContent = e.ctrlKey;
+      $('#evAlt').textContent = e.altKey;
+      $('#evKeyCode').textContent = e.keyCode;
+    });
+  })();
+
+  /* ============================================================
+     14 document
+     ============================================================ */
+  (() => {
+    const bulbSVG = on => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170">${on ? '<g stroke="#ffc107" stroke-width="5" stroke-linecap="round"><line x1="60" y1="22" x2="60" y2="8"/><line x1="82" y1="28" x2="89" y2="16"/><line x1="38" y1="28" x2="31" y2="16"/><line x1="98" y1="44" x2="110" y2="37"/><line x1="22" y1="44" x2="10" y2="37"/><line x1="104" y1="66" x2="117" y2="66"/><line x1="16" y1="66" x2="3" y2="66"/></g>' : ''}<path d="M60 28a38 38 0 0 0-22 69c6 5 9 11 9 18v5h26v-5c0-7 3-13 9-18A38 38 0 0 0 60 28z" fill="${on ? '#ffe066' : '#e9ecef'}" stroke="${on ? '#f0a500' : '#adb5bd'}" stroke-width="3"/><path d="M52 106l4-20 4 9 4-9 4 20" fill="none" stroke="${on ? '#b8860b' : '#adb5bd'}" stroke-width="2.5" stroke-linejoin="round"/><rect x="45" y="122" width="30" height="8" rx="3" fill="#adb5bd"/><rect x="45" y="132" width="30" height="8" rx="3" fill="#adb5bd"/><path d="M50 142h20l-4 10h-12z" fill="#6c757d"/></svg>`;
+    const uri = on => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(bulbSVG(on));
+    const zarovka = $('#zarovka'), kod = $('#zarovkaKod');
+    function nastav(on) {
+      zarovka.src = uri(on);
+      setCode(kod, `function ${on ? 'zapni' : 'vypni'}() {\n  document.getElementById("zarovka").src = "img/zarovka-${on ? 'on' : 'off'}.svg";\n}\n\n// v HTML:\n// <button onclick="${on ? 'zapni' : 'vypni'}()">${on ? 'Zapni' : 'Vypni'} svetlo</button>`);
+    }
+    $('#zapni').addEventListener('click', () => nastav(true));
+    $('#vypni').addEventListener('click', () => nastav(false));
+    zarovka.src = uri(false);
+    setCode(kod, '// haz clic en el botón de debajo de la bombilla');
+
+    const stranka = $('#docStranka'), box = $('#docConsole');
+    const akcie = {
+      id: () => { const el = document.getElementById('titulok'); highlight([el], stranka); return el; },
+      class: () => { const els = document.getElementsByClassName('poznamka'); highlight([...els], stranka); return els; },
+      length: () => { highlight([...document.getElementsByClassName('poznamka')], stranka); return document.getElementsByClassName('poznamka').length; },
+      skry: () => { const el = document.getElementById('reklama'); el.style.display = 'none'; highlight([], stranka); return undefined; },
+      ukaz: () => { const el = document.getElementById('reklama'); el.style.display = 'flex'; highlight([el], stranka); return undefined; }
+    };
+    $$('[data-doc]').forEach(btn => btn.addEventListener('click', () => {
+      const v = akcie[btn.dataset.doc]();
+      logTo(box, '> ' + btn.textContent, 'muted');
+      if (v !== undefined) logTo(box, fmt(v));
+      else logTo(box, 'hecho: mira el anuncio de la izquierda');
+    }));
+
+    function pozdrav() {
+      const meno = document.getElementById('docMeno').value;
+      if (meno === '') {
+        alert('Primero escribe un nombre.');
+        return;
+      }
+      document.getElementById('docVystup').textContent = 'Hola ' + meno + '!';
+    }
+    $('#docPozdrav').addEventListener('click', pozdrav);
+    $('#docMeno').addEventListener('keydown', e => { if (e.key === 'Enter') pozdrav(); });
+  })();
+
+  /* ============================================================
+     15 Cvičenie – tester pravidiel
+     ============================================================ */
+  (() => {
+    const email = $('#tEmail'), heslo = $('#tHeslo'), heslo2 = $('#tHeslo2'), zoznam = $('#tZoznam');
+    function over() {
+      const e = email.value.trim(), h = heslo.value, h2 = heslo2.value;
+      const pravidla = [
+        ['el correo no está vacío', e !== ''],
+        ['el correo tiene el formato correcto', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)],
+        ['la contraseña tiene al menos 8 caracteres', h.length >= 8],
+        ['la contraseña contiene una minúscula /[a-z]/', /[a-z]/.test(h)],
+        ['la contraseña contiene una mayúscula /[A-Z]/', /[A-Z]/.test(h)],
+        ['la contraseña contiene un número /[0-9]/', /[0-9]/.test(h)],
+        ['las contraseñas coinciden', h !== '' && h === h2]
+      ];
+      zoznam.innerHTML = '';
+      pravidla.forEach(([text, ok]) => {
+        const li = document.createElement('li');
+        li.className = ok ? 'ok' : 'bad';
+        li.textContent = text;
+        zoznam.append(li);
+      });
+    }
+    [email, heslo, heslo2].forEach(i => i.addEventListener('input', over));
+    over();
+  })();
+
+  /* ============================================================
+     16 Playground
+     ============================================================ */
+  (() => {
+    const PRESETS = [
+      ['Variables y tipos', `const meno = "Jana";
+let vek = 17;
+vek = vek + 1;
+const zaplatene = true;
+const zaujmy = ["música", "deporte", "juegos"];
+
+console.log(meno, vek, zaplatene);
+console.log(typeof meno, typeof vek, typeof zaplatene);
+console.log(zaujmy, zaujmy.length, zaujmy[0]);`],
+      ['Texto y números', `console.log(5 + 3);
+console.log("5" + 3);
+console.log("5" - 3);
+console.log(Number("5") + 3);
+
+const meno = "Peter";
+const vek = 16;
+console.log("Me llamo " + meno + " y tengo " + vek + " años.");
+console.log(\`Me llamo \${meno} y tengo \${vek} años.\`);`],
+      ['if / else', `const vek = 16;
+
+if (vek >= 18) {
+  console.log("Puedes registrarte.");
+} else {
+  console.log("Todavía no tienes 18 años.");
+}
+
+const stav = vek >= 18 ? "adulto" : "menor";
+console.log(stav);`],
+      ['El bucle for', `const dopravnyProstriedok = ["coche", "moto", "bicicleta"];
+
+for (let i = 0; i < dopravnyProstriedok.length; i++) {
+  console.log(i, dopravnyProstriedok[i]);
+}`],
+      ['for…of y for…in', `const ovocie = ["manzana", "pera", "slivka"];
+
+for (const kus of ovocie) {
+  console.log("for…of:", kus);
+}
+
+for (const index in ovocie) {
+  console.log("for…in:", index, ovocie[index]);
+}`],
+      ['El bucle while', `let i = 0;
+while (i < 10) {
+  const text = "i vale " + i;
+  i++;
+  console.log(text);
+}`],
+      ['Funciones', `function vynasob(p1, p2) {
+  return p1 * p2;
+}
+
+function jeParne(cislo) {
+  return cislo % 2 === 0;
+}
+
+console.log(vynasob(5, 10));
+console.log(jeParne(4), jeParne(7));`],
+      ['prompt y alert', `const meno = prompt("Escribe tu nombre", "");
+
+if (meno === null || meno === "") {
+  alert("No has escrito ningún nombre.");
+} else {
+  alert("Hola " + meno + "!");
+  document.getElementById("vystup").textContent = "Hola " + meno + "!";
+}`],
+      ['El objeto window', `console.log("okno:", window.innerWidth, "×", window.innerHeight);
+console.log("obrazovka:", screen.width, "×", screen.height);
+console.log("jazyk:", navigator.language);
+console.log("adresa:", location.href);`],
+      ['Cambiar la página', `const nadpis = document.getElementById("nadpis");
+nadpis.textContent = "¡Hola desde JavaScript!";
+nadpis.style.color = "crimson";
+
+document.getElementById("vystup").textContent = "Hoy es " + new Date().toLocaleDateString("es");`],
+      ['Código vacío', `// Escribe aquí tu código
+`]
+    ];
+    const frame = $('#playFrame'), code = $('#playCode'), box = $('#playConsole'), preset = $('#playPreset');
+    frameBoxes.push({ frame, box });
+    PRESETS.forEach(([name], i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = name;
+      preset.append(o);
+    });
+    function run() {
+      clearConsole(box);
+      const userCode = code.value.replace(/<\/script/gi, '<\\/script');
+      const pred = `<!doctype html><html lang="sk"><head><meta charset="utf-8">${FRAME_CSS}`;
+      const body = '</head><body><h1 id="nadpis">Mi página</h1><p id="vystup" class="lead"></p>\n<script>\n';
+      // riadok, na ktorom začína kód (aby čísla riadkov v chybách sedeli)
+      const offset = (pred + bridge(1) + body).split('\n').length - 1;
+      frame.srcdoc = pred + bridge(offset) + body + userCode + '\n<\/script></body></html>';
+      setTimeout(() => { if (!box.children.length) logTo(box, '(no se ha mostrado nada)', 'muted'); }, 600);
+    }
+    function load(i) { code.value = PRESETS[i][1]; run(); }
+    preset.addEventListener('change', () => load(preset.value));
+    $('#playReset').addEventListener('click', () => load(preset.value));
+    $('#playRun').addEventListener('click', run);
+    code.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        code.setRangeText('  ', code.selectionStart, code.selectionEnd, 'end');
+      }
+    });
+    load(0);
+  })();
+</script>
+</body>
+</html>
