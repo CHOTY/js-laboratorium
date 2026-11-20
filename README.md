@@ -18,6 +18,7 @@ Interaktívne lekcie ku cvičeniam z predmetu Jazyky webu – od nastavenia edit
 | JS 2 | [`js2.html`](https://choty.github.io/js-laboratorium/js2.html) | strom DOM, selektovanie, `createElement`, `innerText` / `innerHTML`, atribúty, `classList`, `style`, `addEventListener`, inputy, `try` / `catch`, kalkulačka |
 | JS 3 | [`js3.html`](https://choty.github.io/js-laboratorium/js3.html) | typy funkcií, anonymné a arrow funkcie, udalosti, `onclick` vs. `addEventListener`, navigácia, akordeón, úlohy |
 | XML | [`xml.html`](https://choty.github.io/js-laboratorium/xml.html) | syntax a kontrola well-formed, CDATA, entity, menné priestory, DOM, XML + CSS, DTD s validátorom, XPath tester, XSLT |
+| Projekt | [`project.html`](https://choty.github.io/js-laboratorium/project.html) | záverečný projekt: požiadavky, štruktúra priečinkov, bodovanie, kontrola .zip v prehliadači, výpočet známky (EN/ES: hodnotenie pre Erasmus bez autotestov) |
 
 Každá lekcia má na konci **kvíz** s vysvetleniami a **úlohy** na hodinu.
 
@@ -36,4 +37,5 @@ Slovenská verzia je v koreni, anglická v [`en/`](en) a španielska v [`es/`](e
 - spoločné súbory: [`assets/nav.js`](assets/nav.js) (lišta s lekciami a jazykmi), [`assets/lab.css`](assets/lab.css) a [`assets/lab.js`](assets/lab.js) (živé editory, ihriská, kvízy)
 - [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/) sa načítava z CDN, stránky preto potrebujú internet
 - XSLT v lekcii XML: ak prehliadač nemá zabudovaný XSLT procesor (Chrome 158+), načíta sa [xslt-polyfill](https://github.com/mfreed7/xslt_polyfill)
+- Kontrola projektu (project.html) číta .zip priamo v prehliadači cez [JSZip](https://stuk.github.io/jszip/) – súbor sa nikam neodosiela
 - hosting: GitHub Pages z vetvy `main`

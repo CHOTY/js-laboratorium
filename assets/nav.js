@@ -22,7 +22,8 @@
     { file: 'js1.html', num: 'JS 1', sk: 'Základy JavaScriptu', en: 'JavaScript basics', es: 'Fundamentos de JavaScript' },
     { file: 'js2.html', num: 'JS 2', sk: 'Manipulácia s DOM', en: 'DOM manipulation', es: 'Manipulación del DOM' },
     { file: 'js3.html', num: 'JS 3', sk: 'Funkcie a udalosti', en: 'Functions and events', es: 'Funciones y eventos' },
-    { file: 'xml.html', num: 'XML', sk: 'XML, DTD, XPath a XSLT', en: 'XML, DTD, XPath and XSLT', es: 'XML, DTD, XPath y XSLT' }
+    { file: 'xml.html', num: 'XML', sk: 'XML, DTD, XPath a XSLT', en: 'XML, DTD, XPath and XSLT', es: 'XML, DTD, XPath y XSLT' },
+    { file: 'project.html', num: '★', sk: 'Záverečný projekt', en: 'Final project', es: 'Proyecto final' }
   ];
 
   var T = {

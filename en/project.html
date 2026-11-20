@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Final project · Web Languages</title>
+  <meta name="description" content="The final project for the Web Languages course: requirements, scoring, folder structure, a project check before you submit and how the final grade is calculated.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #be123c; --accent-bg: #ffe4e6; }
+    .stat { background: #fff; border-radius: 1rem; padding: .9rem 1.1rem; box-shadow: 0 .25rem 1rem #1d2d5010; height: 100%; }
+    .stat b { display: block; font-size: 1.5rem; line-height: 1.15; color: var(--accent); }
+    .stat span { font-size: .85rem; color: #4b5563; }
+    .req-list .form-check { padding: .5rem .75rem .5rem 2.25rem; border-radius: .5rem; background: #fff; border: 1px solid #e3e7f0; margin-bottom: .4rem; }
+    .req-list .form-check-input:checked + .form-check-label { color: #6b7280; text-decoration: line-through; }
+    .ftree { font: .9rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: 1rem 1.2rem; white-space: pre; overflow-x: auto; margin: 0; }
+    .ftree .dim { color: #9ca3af; }
+    .path-table td:first-child { white-space: nowrap; color: #4b5563; }
+    .score-top { position: sticky; top: .5rem; z-index: 5; background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: .7rem 1rem; box-shadow: 0 .25rem 1rem #1d2d5014; }
+    .score-top .progress { height: .6rem; position: relative; overflow: visible; }
+    .score-top .min-mark { position: absolute; left: 40%; top: -.25rem; bottom: -.25rem; width: 2px; background: #111827; }
+    .score-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; transition: border-color .15s, background .15s; }
+    .score-card.complete { border-color: #86efac; background: #f0fdf4; }
+    .score-card h3 { font-size: 1rem; margin: 0; }
+    .score-pts { font-size: .78rem; font-weight: 700; background: var(--accent-bg); color: var(--accent); border-radius: 1rem; padding: .15rem .55rem; white-space: nowrap; }
+    .score-card .form-check { font-size: .88rem; margin-bottom: .25rem; }
+    .score-links a { font-size: .75rem; text-decoration: none; border: 1px solid #e3e7f0; border-radius: .4rem; padding: .05rem .4rem; margin-right: .25rem; color: #374151; }
+    .zip-drop { display: block; border: 2px dashed #cbd5e1; border-radius: 1rem; padding: 1.6rem 1rem; text-align: center; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; }
+    .zip-drop:hover, .zip-drop.over { border-color: var(--accent); background: var(--accent-bg); }
+    .zip-drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .zip-list { list-style: none; padding: 0; margin: 0; }
+    .zip-list li { display: flex; gap: .6rem; padding: .45rem .7rem; border-radius: .5rem; margin-bottom: .3rem; font-size: .88rem; background: #fff; border: 1px solid #eef0f5; }
+    .zip-list .zl-icon { font-weight: 700; width: 1rem; flex-shrink: 0; text-align: center; }
+    .zl-ok .zl-icon { color: #16a34a; }
+    .zl-warn { background: #fffbeb !important; } .zl-warn .zl-icon { color: #d97706; }
+    .zl-err { background: #fef2f2 !important; } .zl-err .zl-icon { color: #dc2626; }
+    .zl-unknown { color: #4b5563; } .zl-unknown .zl-icon { color: #9ca3af; }
+    .zl-detail { white-space: pre-wrap; font-size: .8rem; color: #4b5563; margin-top: .2rem; overflow-wrap: anywhere; }
+    .formula { background: var(--accent); color: #fff; border-radius: 1rem; padding: 1.3rem 1rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem 1rem; font-weight: 600; text-align: center; }
+    .frac { display: inline-flex; flex-direction: column; align-items: center; }
+    .frac .fnum { border-bottom: 2px solid #fff; padding: 0 .4rem .25rem; }
+    .frac .fden { padding-top: .25rem; }
+    .formula .fres { font-size: 1.4rem; font-weight: 700; }
+    .band-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .example-card { background: #fff7ed; border: 1px solid #fed7aa; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .calc-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; }
+    .calc-row { display: grid; grid-template-columns: 1fr 5.5rem; gap: .4rem .75rem; align-items: center; margin-bottom: .6rem; }
+    .calc-row label { grid-column: 1 / -1; font-size: .85rem; font-weight: 600; margin: 0; }
+    .calc-grade { display: inline-flex; align-items: center; justify-content: center; min-width: 4.5rem; height: 4.5rem; border-radius: 1rem; font-size: 2.2rem; font-weight: 800; color: #fff; padding: 0 .6rem; }
+    .grade-a { background: #15803d; } .grade-b { background: #4d7c0f; } .grade-c { background: #a16207; }
+    .grade-d { background: #c2410c; } .grade-e { background: #b45309; } .grade-fx { background: #b91c1c; }
+    #calc-lines { font-size: .85rem; color: #374151; padding-left: 1.1rem; }
+    #grade-scale td, #grade-scale th { padding: .3rem .6rem; }
+    .completion li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Final project</span>
+  <h1 class="display-5 fw-bold">Final project</h1>
+  <p class="lead col-lg-9">Your own website on any topic: a home page and three subpages linked by a navigation menu. This page lists what the project must include, what you get points for, how the folder should look and how your course grade is calculated. Before you submit, you can check your project right here.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#poziadavky">1 · Requirements</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#struktura">2 · Folder structure</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bodovanie">3 · Scoring</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kontrola">4 · Project check</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hodnotenie">5 · Course assessment</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#odovzdanie">6 · Submission</a>
+  </div>
+  <div class="row g-3 mt-3">
+    <div class="col-6 col-md-3"><div class="stat"><b>25 pts</b><span>maximum</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>10 pts</b><span>minimum for the project</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>1 + 3</b><span>home page and subpages</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>topic</b><span>your choice</span></div></div>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="poziadavky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Project requirements</h2>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <p class="small mb-2">Tick off what you have done. This browser remembers the list. <span class="badge text-bg-light border" id="req-count"></span></p>
+          <div class="req-list" id="req-list">
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req1"><label class="form-check-label small" for="req1">1 home page (<code>index.html</code>) and 3 subpages (e.g. <code>contact.html</code>) linked in the navigation</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req2"><label class="form-check-label small" for="req2">the website is responsive (<a href="4-layout.html#media">media queries</a> or the <a href="5-bootstrap.html#mriezka">Bootstrap grid</a>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req3"><label class="form-check-label small" for="req3">plain HTML/CSS/JS, or HTML/CSS/JS + the Bootstrap framework</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req4"><label class="form-check-label small" for="req4">file paths are relative (<code>img/hills.jpg</code>, not <code>C:\Users\…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req5"><label class="form-check-label small" for="req5">styles and JavaScript are in separate files (<code>css/…</code>, <code>js/…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req6"><label class="form-check-label small" for="req6">a suitable colour scheme</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req7"><label class="form-check-label small" for="req7">a suitable <code>font-family</code> for the topic</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req8"><label class="form-check-label small" for="req8">images are in a separate <code>img/</code> folder</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req9"><label class="form-check-label small" for="req9">different layouts (e.g. a grid of cards, two columns, a full-width banner)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req10"><label class="form-check-label small" for="req10">comments in the code to keep it readable</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req11"><label class="form-check-label small" for="req11">meta tags <code>description</code>, <code>keywords</code> and <code>author</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req12"><label class="form-check-label small" for="req12">every page checked on <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a></label></div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <h3 class="h6">Meta tags for the head of every page</h3>
+          <pre class="code-inspector" data-lang="html" data-copy>&lt;meta name="description" content="A short description of the page"&gt;
+&lt;meta name="keywords" content="keywords, of, the, topic"&gt;
+&lt;meta name="author" content="First name Surname"&gt;</pre>
+          <div class="alert alert-danger small mt-3 mb-2"><strong>Not allowed:</strong> CMSs, site generators or any website-building platforms (e.g. WordPress, Wix). You write all the code yourself.</div>
+          <p class="small text-secondary mb-0">Pay attention to how the website looks: colours, fonts, spacing and images should work together.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="struktura">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Folder structure</h2>
+      <p class="small">You hand in one <code>.zip</code> file. Inside it there is one folder with the same name, and the whole website is in that folder. Use lowercase letters without accents, e.g. <code>novak_project.zip</code>.</p>
+      <div class="row g-4">
+        <div class="col-md-5">
+          <pre class="ftree" aria-label="surname_project">📚 surname_project.zip
+ └ 📁 surname_project
+     └ 📁 css
+         └ 📄 style.css
+     └ 📁 js
+         └ 📄 app.js
+     └ 📁 img
+         └ 🖼️ imageXY.jpeg
+     └ 📄 about.html
+     └ 📄 blog.html
+     └ 📄 contact.html
+     └ 📄 gallery.html
+     └ 📄 index.html</pre>
+        </div>
+        <div class="col-md-7">
+          <ul class="small mb-3">
+            <li class="mb-1">This is an example: name the subpages after your topic, but <code>index.html</code> is required.</li>
+            <li class="mb-1">The form also needs a thank-you page (e.g. <code>thank-you.html</code>) that it redirects to after sending.</li>
+            <li class="mb-1">If Bootstrap is downloaded into your project, its files also go into <code>css/</code> and <code>js/</code>.</li>
+            <li class="mb-1">Name files in lowercase without spaces or accents. On a server <code>Photo.JPG</code> and <code>photo.jpg</code> are two different files.</li>
+          </ul>
+          <h3 class="h6">Relative paths</h3>
+          <table class="table table-sm small path-table mb-0"><tbody>
+            <tr><td>page → page</td><td><code>href="contact.html"</code></td></tr>
+            <tr><td>page → image</td><td><code>src="img/hills.jpg"</code></td></tr>
+            <tr><td>page → styles</td><td><code>href="css/style.css"</code></td></tr>
+            <tr><td>CSS → image</td><td><code>url("../img/hills.jpg")</code></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="bodovanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Project scoring</h2>
+      <p class="small">The maximum is <strong>25 points</strong> and the minimum is <strong>10 points</strong>. Tick what your project already has to see a rough total. The final points are given by the teacher.</p>
+      <div class="score-top mb-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <strong>Rough total: <span id="score-sum">0</span> / 25</strong>
+          <span id="score-status" class="small"></span>
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="score-reset">Clear</button>
+        </div>
+        <div class="progress" role="presentation"><div class="progress-bar" id="score-bar" style="width:0%"></div><span class="min-mark" title="10"></span></div>
+      </div>
+      <div class="row g-3" id="score-grid">
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Different headings</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nadpisy-1" data-pts="1"><label class="form-check-label" for="s-nadpisy-1">different heading levels (h1, h2, h3…)</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#texty">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Formatting</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-format-1" data-pts="1"><label class="form-check-label" for="s-format-1">text formatting</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#texty">L1</a><a href="2-css-text.html#texty">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Navigation</h3><span class="score-pts"><span class="score-got">0</span> / 4 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-1" data-pts="1"><label class="form-check-label" for="s-nav-1">navigation with at least 3 pages (e.g. Home, About, Blog, Gallery, Contact)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-2" data-pts="1"><label class="form-check-label" for="s-nav-2">a hamburger menu on mobile</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-3" data-pts="1"><label class="form-check-label" for="s-nav-3">a logo in the navigation</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-4" data-pts="1"><label class="form-check-label" for="s-nav-4">navigation stays visible while scrolling</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="4-layout.html#pozicia">L4</a><a href="5-bootstrap.html#komponenty">L5</a><a href="js3.html#navigacia">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Footer</h3><span class="score-pts"><span class="score-got">0</span> / 2 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-1" data-pts="1"><label class="form-check-label" for="s-footer-1">several columns with information about the site</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-2" data-pts="1"><label class="form-check-label" for="s-footer-2">copyright</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="4-layout.html#flexbox">L4</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Form</h3><span class="score-pts"><span class="score-got">0</span> / 5 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-1" data-pts="1"><label class="form-check-label" for="s-form-1">fields: name, e-mail, textarea, consent to personal data processing, submit</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-2" data-pts="1"><label class="form-check-label" for="s-form-2">e-mail address check</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-3" data-pts="1"><label class="form-check-label" for="s-form-3">consent to personal data processing</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-4" data-pts="1"><label class="form-check-label" for="s-form-4">redirect to a thank-you page</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-5" data-pts="1"><label class="form-check-label" for="s-form-5">validation</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#formulare">L1</a><a href="js2.html#inputy">JS 2</a><a href="js3.html#ulohy">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Images</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-img-1" data-pts="1"><label class="form-check-label" for="s-img-1">images from <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">free sources</a>, a suitable number per page</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Button linking to another page</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-btn-1" data-pts="1"><label class="form-check-label" for="s-btn-1">an <code>&lt;a&gt;</code> tag styled as a button</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>E-mail and phone links</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-contact-1" data-pts="1"><label class="form-check-label" for="s-contact-1"><code>mailto:</code> and <code>tel:</code></label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>List</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-list-1" data-pts="1"><label class="form-check-label" for="s-list-1">a <code>ul</code> or <code>ol</code> list</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#zoznamy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Table</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-table-1" data-pts="1"><label class="form-check-label" for="s-table-1">a table</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="1-html.html#tabulky">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Banner with text</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-banner-1" data-pts="1"><label class="form-check-label" for="s-banner-1">a banner with text</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="2-css-text.html#pozadie">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Slideshow (carousel)</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-carousel-1" data-pts="1"><label class="form-check-label" for="s-carousel-1">an image slideshow</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="https://getbootstrap.com/docs/5.3/components/carousel/">Bootstrap</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Accordion</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-accordion-1" data-pts="1"><label class="form-check-label" for="s-accordion-1">an accordion</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="js3.html#akordeon">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Alert</h3><span class="score-pts"><span class="score-got">0</span> / 1 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-alert-1" data-pts="1"><label class="form-check-label" for="s-alert-1">an alert box</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Creative points</h3><span class="score-pts"><span class="score-got">0</span> / 3 pts</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-1" data-pts="1"><label class="form-check-label" for="s-creative-1">creative element 1</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-2" data-pts="1"><label class="form-check-label" for="s-creative-2">creative element 2</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-3" data-pts="1"><label class="form-check-label" for="s-creative-3">creative element 3</label></div>
+            <p class="tiny-label mt-2 mb-2">For example a lightbox gallery, pagination, a popup, a cookie bar or anything else that uses JavaScript. Put the comment <code>&lt;!-- creative point --&gt;</code> before each of these elements.</p>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Where we learn it:</span><a href="js2.html">JS 2</a><a href="js3.html">JS 3</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kontrola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Check your project before you submit</h2>
+      <p class="small">Choose your <code>.zip</code>. The check runs only in your browser and the file is not sent anywhere. It checks the name and folders, file paths, meta tags, separate CSS and JS, and tries to find the scored elements.</p>
+      <div class="row g-3 align-items-stretch mb-3">
+        <div class="col-md-8">
+          <label class="zip-drop h-100" id="zip-drop"><input type="file" id="zip-input" accept=".zip,application/zip" class="visually-hidden"><span class="d-block fs-2" aria-hidden="true">📦</span><span class="small">Drop your <strong>.zip</strong> here or click to choose a file</span></label>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          <button type="button" class="btn btn-outline-secondary w-100" id="zip-demo">Try it on a sample project</button>
+        </div>
+      </div>
+      <div id="zip-result" aria-live="polite"></div>
+      <p class="tiny-label mt-3 mb-0">The check is a helper, not a grade. Check the look, the functionality and the validity (<a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>) yourself; the teacher gives the points.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="hodnotenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Course assessment for Erasmus students</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-7">
+          <h3 class="h6">Conditions for passing</h3>
+          <ul class="small mb-2"><li>hand in the final project</li><li>pass the theory test from the lectures with at least 60 %</li></ul>
+          <p class="small mb-0"><strong>Erasmus students do not write the autotests, so they are not part of the grade.</strong></p>
+        </div>
+        <div class="col-lg-5">
+          <div class="alert alert-warning small mb-0">At most <strong>2 absences</strong> from the seminars are allowed, otherwise the student automatically gets FX. Arriving more than 5 minutes late counts as an absence.</div>
+        </div>
+      </div>
+      <div class="formula mb-4"><span class="frac"><span class="fnum">Final project + Final test</span><span class="fden">2</span></span><span>+</span><span>Average of assignments</span><span>=</span><span class="fres">Final result</span></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="band-card"><h3 class="h6">Average of assignments</h3><table class="table table-sm small mb-0"><tbody><tr><td>100 – 92 %</td><td class="text-end fw-semibold">= 5 %</td></tr><tr><td>91 – 75 %</td><td class="text-end fw-semibold">= 4 %</td></tr><tr><td>74 – 60 %</td><td class="text-end fw-semibold">= 3 %</td></tr></tbody></table></div>
+        </div>
+        <div class="col-md-12 col-lg-9">
+          <div class="example-card"><h3 class="h6">Example</h3><table class="table table-sm small mb-0 bg-transparent"><tbody><tr><td class="bg-transparent">Test</td><td class="text-end text-nowrap bg-transparent">65 %</td></tr><tr><td class="bg-transparent">Project</td><td class="text-end text-nowrap bg-transparent">92 % (23 of 25 pts)</td></tr><tr><td class="bg-transparent">(92 % + 65 %) / 2</td><td class="text-end text-nowrap bg-transparent">78.5 %</td></tr><tr><td class="bg-transparent">Average of assignments during the semester 92 %</td><td class="text-end text-nowrap bg-transparent">+ 5 %</td></tr><tr><td class="bg-transparent fw-bold">78.5 % + 5 %</td><td class="text-end text-nowrap fw-bold bg-transparent">83.5 % → D</td></tr></tbody></table></div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4 col-lg-3">
+          <h3 class="h6">Grading scale</h3>
+          <table class="table table-sm small" id="grade-scale"><thead><tr><th>Grade</th><th>Percent</th></tr></thead><tbody><tr data-g="A"><td class="fw-bold">A</td><td>100 – 95 %</td></tr><tr data-g="B"><td class="fw-bold">B</td><td>94 – 90 %</td></tr><tr data-g="C"><td class="fw-bold">C</td><td>89 – 85 %</td></tr><tr data-g="D"><td class="fw-bold">D</td><td>84 – 80 %</td></tr><tr data-g="E"><td class="fw-bold">E</td><td>79 – 70 %</td></tr><tr data-g="FX"><td class="fw-bold">FX</td><td>69 – 0 %</td></tr></tbody></table>
+        </div>
+        <div class="col-md-8 col-lg-9">
+          <h3 class="h6">Calculate your grade</h3>
+          <div class="calc-card" id="calc">
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <div class="calc-row"><label for="c-project">Final project (points)</label><input type="range" class="form-range" min="0" max="25" step="0.5" value="23" data-calc="project" aria-label="Final project (points)"><input type="number" class="form-control form-control-sm" id="c-project" min="0" max="25" step="0.5" value="23" data-calc="project"></div>
+                <div class="calc-row"><label for="c-test">Final test (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="65" data-calc="test" aria-label="Final test (%)"><input type="number" class="form-control form-control-sm" id="c-test" min="0" max="100" step="1" value="65" data-calc="test"></div>
+                <div class="calc-row"><label for="c-tasks">Average of assignments (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="92" data-calc="tasks" aria-label="Average of assignments (%)"><input type="number" class="form-control form-control-sm" id="c-tasks" min="0" max="100" step="1" value="92" data-calc="tasks"></div>
+              </div>
+              <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-3 mb-2"><span class="calc-grade" id="calc-grade">–</span><div><div class="tiny-label">Result</div><div class="fs-3 fw-bold" id="calc-total">–</div></div></div>
+                <ul id="calc-lines" class="mb-2"></ul>
+                <p id="calc-note" class="small mb-0"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="odovzdanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Submission</h2>
+      <p class="small">Upload one file, <code>surname_project.zip</code>, to the <strong>final project</strong> folder on the course Google Drive. The README in the course folder explains the details.</p>
+      <div class="row g-4">
+        <div class="col-lg-9">
+          <ol class="steps small mb-0"><li>Check every page on <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>.</li><li>Zip the whole <code>surname_project</code> folder (not only the files inside it) and check the zip in <a href="#kontrola">part 4</a>.</li><li>Upload the <code>.zip</code> to the final project folder.</li></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Final project · Web Languages · Validator: <a href="https://validator.w3.org/">validator.w3.org</a> · <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">Free image sources</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>window.PROJECT_I18N = {"decimalComma": false, "reqCount": "Done {done} of {all}", "scoreLow": "below the minimum – {missing} pts missing", "scoreOk": "the 10-point minimum is reached", "calcProject": "project: {pts} of 25 pts = {pct} %", "calcBase": "({p} % + {t} %) / 2 = {r} %", "calcAuto": "", "calcTasks": "assignments {v} % → + {b} %", "calcTestLow": "Test below 60 % – the course is not passed.", "calcProjectLow": "Project below 10 points – the course is not passed.", "calcOk": "This is only an estimate. Below 60 % nothing is added for the assignments.", "zipWord": "project", "zipExample": "novak_project.zip", "groups": {"files": "File and folders", "pages": "Pages and files", "features": "Scored elements (automatic guess)"}, "zipNameOk": "The name {name} is fine.", "zipNameBad": "The name {name} does not match surname_project.zip (lowercase without accents, e.g. {example}).", "rootOk": "The zip contains one folder, {root}.", "rootName": "The folder in the zip is called {root}; it should have the same name as the zip ({base}).", "rootMissing": "The files are directly in the zip. Zip the whole surname_project folder, not only what is inside it.", "rootMany": "The zip contains several folders ({list}). There should be a single folder with the whole website.", "indexOk": "index.html exists.", "indexMissing": "The home page index.html is missing (exactly this name, in lowercase).", "pagesOk": "Subpages: {n} (at least 3 needed).", "pagesFew": "Subpages: {n}, at least 3 are needed.", "cssOk": "Folder css/: {n} file(s).", "cssMissing": "The css/ folder with a .css file is missing.", "jsOk": "Folder js/: {n} file(s).", "jsMissing": "The js/ folder with a .js file is missing.", "imgOk": "Folder img/: {n} image(s).", "imgMissing": "The img/ folder with images is missing.", "imgOutside": "Images outside the img/ folder:", "badNames": "Names with capital letters, spaces or accents:", "bigImages": "Images larger than 1 MB (make them smaller):", "noComments": "I found no comments in the code.", "comments": "Comments in the code: {n}.", "noDoctype": "<!DOCTYPE html> is missing at the start", "noLang": "the lang attribute on <html> is missing", "noTitle": "<title> is missing", "noViewport": "<meta name=\"viewport\"> is missing (without it the page is not responsive on phones)", "metaMissing": "<meta name=\"{name}\"> is missing", "styleBlock": "CSS inside the HTML (<style>: {n}×) – styles belong in css/", "styleAttr": "style=\"…\" attribute on {n} elements – better to move the styles to css/", "scriptInline": "JavaScript inside the HTML ({n}×) – it belongs in js/", "handlers": "onclick and similar attributes: {n}× – better to use addEventListener in js/", "noLocalCss": "no CSS file of your own is linked", "refAbsolute": "absolute path {ref} ({where}) – it will not work on another computer", "refRoot": "the path {ref} starts with a slash ({where}) – use a relative path without / at the start", "refCase": "{ref} ({where}): the file is called {real} – capital and small letters must match", "refMissing": "{ref} ({where}): the file is not in the project", "navFew": "links to other pages of the project: {n} (the navigation needs at least 3)", "pageOk": "{page}: no problems", "pageIssues": "{page}: errors {e}, warnings {w}", "features": {"headings": "different headings", "hamburger": "hamburger menu", "logo": "logo", "sticky": "navigation visible while scrolling (sticky/fixed)", "footerCopy": "footer with copyright", "form": "form with e-mail, textarea, consent and a button", "thanks": "redirect to a thank-you page", "images": "images", "button": "link styled as a button", "mailtel": "mailto: and tel: links", "list": "list", "table": "table", "banner": "banner", "carousel": "slideshow (carousel)", "accordion": "accordion", "alert": "alert", "creative": "<!-- creative point --> comments"}, "featureHint": "not found – if your project has it, that is fine", "featureNote": "I look for these by common class and tag names (e.g. carousel, accordion, alert). If yours have other names, the check may not find them.", "warnings": "warnings", "errors": "errors", "checking": "Checking…", "zipError": "The file could not be opened as a .zip ({msg}).", "noJszip": "The library for reading .zip files did not load. Check your internet connection.", "demo": {"root": "novak_project", "zipName": "novak_project.zip", "lang": "en", "thanks": "thank-you.html", "creative": "creative point", "navComment": "navigation", "cssComment": "main styles", "jsComment": "hamburger menu", "pages": [["index.html", "Home"], ["about.html", "About"], ["gallery.html", "Gallery"], ["contact.html", "Contact"]]}};</script>
+<script src="../assets/project.js"></script>
+</body>
+</html>

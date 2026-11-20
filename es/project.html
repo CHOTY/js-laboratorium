@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proyecto final · Lenguajes web</title>
+  <meta name="description" content="El proyecto final de la asignatura Lenguajes web: requisitos, puntuación, estructura de carpetas, revisión del proyecto antes de entregarlo y cálculo de la nota.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #be123c; --accent-bg: #ffe4e6; }
+    .stat { background: #fff; border-radius: 1rem; padding: .9rem 1.1rem; box-shadow: 0 .25rem 1rem #1d2d5010; height: 100%; }
+    .stat b { display: block; font-size: 1.5rem; line-height: 1.15; color: var(--accent); }
+    .stat span { font-size: .85rem; color: #4b5563; }
+    .req-list .form-check { padding: .5rem .75rem .5rem 2.25rem; border-radius: .5rem; background: #fff; border: 1px solid #e3e7f0; margin-bottom: .4rem; }
+    .req-list .form-check-input:checked + .form-check-label { color: #6b7280; text-decoration: line-through; }
+    .ftree { font: .9rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: 1rem 1.2rem; white-space: pre; overflow-x: auto; margin: 0; }
+    .ftree .dim { color: #9ca3af; }
+    .path-table td:first-child { white-space: nowrap; color: #4b5563; }
+    .score-top { position: sticky; top: .5rem; z-index: 5; background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: .7rem 1rem; box-shadow: 0 .25rem 1rem #1d2d5014; }
+    .score-top .progress { height: .6rem; position: relative; overflow: visible; }
+    .score-top .min-mark { position: absolute; left: 40%; top: -.25rem; bottom: -.25rem; width: 2px; background: #111827; }
+    .score-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; transition: border-color .15s, background .15s; }
+    .score-card.complete { border-color: #86efac; background: #f0fdf4; }
+    .score-card h3 { font-size: 1rem; margin: 0; }
+    .score-pts { font-size: .78rem; font-weight: 700; background: var(--accent-bg); color: var(--accent); border-radius: 1rem; padding: .15rem .55rem; white-space: nowrap; }
+    .score-card .form-check { font-size: .88rem; margin-bottom: .25rem; }
+    .score-links a { font-size: .75rem; text-decoration: none; border: 1px solid #e3e7f0; border-radius: .4rem; padding: .05rem .4rem; margin-right: .25rem; color: #374151; }
+    .zip-drop { display: block; border: 2px dashed #cbd5e1; border-radius: 1rem; padding: 1.6rem 1rem; text-align: center; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; }
+    .zip-drop:hover, .zip-drop.over { border-color: var(--accent); background: var(--accent-bg); }
+    .zip-drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .zip-list { list-style: none; padding: 0; margin: 0; }
+    .zip-list li { display: flex; gap: .6rem; padding: .45rem .7rem; border-radius: .5rem; margin-bottom: .3rem; font-size: .88rem; background: #fff; border: 1px solid #eef0f5; }
+    .zip-list .zl-icon { font-weight: 700; width: 1rem; flex-shrink: 0; text-align: center; }
+    .zl-ok .zl-icon { color: #16a34a; }
+    .zl-warn { background: #fffbeb !important; } .zl-warn .zl-icon { color: #d97706; }
+    .zl-err { background: #fef2f2 !important; } .zl-err .zl-icon { color: #dc2626; }
+    .zl-unknown { color: #4b5563; } .zl-unknown .zl-icon { color: #9ca3af; }
+    .zl-detail { white-space: pre-wrap; font-size: .8rem; color: #4b5563; margin-top: .2rem; overflow-wrap: anywhere; }
+    .formula { background: var(--accent); color: #fff; border-radius: 1rem; padding: 1.3rem 1rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem 1rem; font-weight: 600; text-align: center; }
+    .frac { display: inline-flex; flex-direction: column; align-items: center; }
+    .frac .fnum { border-bottom: 2px solid #fff; padding: 0 .4rem .25rem; }
+    .frac .fden { padding-top: .25rem; }
+    .formula .fres { font-size: 1.4rem; font-weight: 700; }
+    .band-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .example-card { background: #fff7ed; border: 1px solid #fed7aa; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .calc-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; }
+    .calc-row { display: grid; grid-template-columns: 1fr 5.5rem; gap: .4rem .75rem; align-items: center; margin-bottom: .6rem; }
+    .calc-row label { grid-column: 1 / -1; font-size: .85rem; font-weight: 600; margin: 0; }
+    .calc-grade { display: inline-flex; align-items: center; justify-content: center; min-width: 4.5rem; height: 4.5rem; border-radius: 1rem; font-size: 2.2rem; font-weight: 800; color: #fff; padding: 0 .6rem; }
+    .grade-a { background: #15803d; } .grade-b { background: #4d7c0f; } .grade-c { background: #a16207; }
+    .grade-d { background: #c2410c; } .grade-e { background: #b45309; } .grade-fx { background: #b91c1c; }
+    #calc-lines { font-size: .85rem; color: #374151; padding-left: 1.1rem; }
+    #grade-scale td, #grade-scale th { padding: .3rem .6rem; }
+    .completion li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="../assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Proyecto final</span>
+  <h1 class="display-5 fw-bold">Proyecto final</h1>
+  <p class="lead col-lg-9">Tu propio sitio web sobre el tema que quieras: una página principal y tres subpáginas enlazadas con un menú de navegación. Aquí encontrarás qué debe incluir el proyecto, por qué recibes puntos, cómo debe ser la carpeta y cómo se calcula la nota de la asignatura. Antes de entregarlo puedes revisar tu proyecto en esta misma página.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#poziadavky">1 · Requisitos</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#struktura">2 · Estructura de carpetas</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bodovanie">3 · Puntuación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kontrola">4 · Revisión del proyecto</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hodnotenie">5 · Evaluación</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#odovzdanie">6 · Entrega</a>
+  </div>
+  <div class="row g-3 mt-3">
+    <div class="col-6 col-md-3"><div class="stat"><b>25 p</b><span>puntuación máxima</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>10 p</b><span>mínimo del proyecto</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>1 + 3</b><span>página principal y subpáginas</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>tema</b><span>libre</span></div></div>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="poziadavky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Requisitos del proyecto</h2>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <p class="small mb-2">Marca lo que ya tienes hecho. Este navegador recordará la lista. <span class="badge text-bg-light border" id="req-count"></span></p>
+          <div class="req-list" id="req-list">
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req1"><label class="form-check-label small" for="req1">1 página principal (<code>index.html</code>) y 3 subpáginas (p. ej. <code>contacto.html</code>) enlazadas en la navegación</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req2"><label class="form-check-label small" for="req2">el sitio es responsive (<a href="4-layout.html#media">media queries</a> o la <a href="5-bootstrap.html#mriezka">rejilla de Bootstrap</a>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req3"><label class="form-check-label small" for="req3">HTML/CSS/JS puro, o HTML/CSS/JS + el framework Bootstrap</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req4"><label class="form-check-label small" for="req4">las rutas a los archivos son relativas (<code>img/montes.jpg</code>, no <code>C:\Users\…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req5"><label class="form-check-label small" for="req5">los estilos y el JavaScript están en archivos separados (<code>css/…</code>, <code>js/…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req6"><label class="form-check-label small" for="req6">una combinación de colores adecuada</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req7"><label class="form-check-label small" for="req7">una <code>font-family</code> adecuada para el tema</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req8"><label class="form-check-label small" for="req8">las imágenes están en una carpeta aparte, <code>img/</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req9"><label class="form-check-label small" for="req9">distintos diseños de página (p. ej. una rejilla de tarjetas, dos columnas, un banner a todo el ancho)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req10"><label class="form-check-label small" for="req10">comentarios en el código para que se lea mejor</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req11"><label class="form-check-label small" for="req11">metaetiquetas <code>description</code>, <code>keywords</code> y <code>author</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req12"><label class="form-check-label small" for="req12">cada página revisada en <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a></label></div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <h3 class="h6">Metaetiquetas para la cabecera de cada página</h3>
+          <pre class="code-inspector" data-lang="html" data-copy>&lt;meta name="description" content="Una breve descripción de la página"&gt;
+&lt;meta name="keywords" content="palabras, clave, del, tema"&gt;
+&lt;meta name="author" content="Nombre Apellido"&gt;</pre>
+          <div class="alert alert-danger small mt-3 mb-2"><strong>No se permite:</strong> usar un CMS, generadores ni plataformas para crear sitios web (p. ej. WordPress, Wix). Todo el código lo escribes tú.</div>
+          <p class="small text-secondary mb-0">Cuida también el aspecto del sitio: los colores, las fuentes, los espacios y las imágenes deben combinar bien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="struktura">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Estructura de carpetas</h2>
+      <p class="small">Entregas un solo archivo <code>.zip</code>. Dentro hay una carpeta con el mismo nombre y en ella está todo el sitio. Usa minúsculas sin tildes, p. ej. <code>garcia_project.zip</code>.</p>
+      <div class="row g-4">
+        <div class="col-md-5">
+          <pre class="ftree" aria-label="apellido_project">📚 apellido_project.zip
+ └ 📁 apellido_project
+     └ 📁 css
+         └ 📄 style.css
+     └ 📁 js
+         └ 📄 app.js
+     └ 📁 img
+         └ 🖼️ imagenXY.jpeg
+     └ 📄 blog.html
+     └ 📄 contacto.html
+     └ 📄 galeria.html
+     └ 📄 index.html
+     └ 📄 nosotros.html</pre>
+        </div>
+        <div class="col-md-7">
+          <ul class="small mb-3">
+            <li class="mb-1">Es un ejemplo: pon a las subpáginas nombres según tu tema, pero <code>index.html</code> es obligatorio.</li>
+            <li class="mb-1">El formulario necesita también una página de agradecimiento (p. ej. <code>gracias.html</code>) a la que redirige después de enviarlo.</li>
+            <li class="mb-1">Si tienes Bootstrap descargado en el proyecto, sus archivos también van en <code>css/</code> y <code>js/</code>.</li>
+            <li class="mb-1">Nombra los archivos en minúsculas, sin espacios ni tildes. En un servidor <code>Foto.JPG</code> y <code>foto.jpg</code> son dos archivos distintos.</li>
+          </ul>
+          <h3 class="h6">Rutas relativas</h3>
+          <table class="table table-sm small path-table mb-0"><tbody>
+            <tr><td>página → página</td><td><code>href="contacto.html"</code></td></tr>
+            <tr><td>página → imagen</td><td><code>src="img/montes.jpg"</code></td></tr>
+            <tr><td>página → estilos</td><td><code>href="css/style.css"</code></td></tr>
+            <tr><td>CSS → imagen</td><td><code>url("../img/montes.jpg")</code></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="bodovanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Puntuación del proyecto</h2>
+      <p class="small">La puntuación máxima es de <strong>25 puntos</strong> y el mínimo, <strong>10 puntos</strong>. Marca lo que ya tiene tu proyecto para ver un total aproximado. Los puntos finales los da el profesor.</p>
+      <div class="score-top mb-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <strong>Aproximado: <span id="score-sum">0</span> / 25</strong>
+          <span id="score-status" class="small"></span>
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="score-reset">Borrar</button>
+        </div>
+        <div class="progress" role="presentation"><div class="progress-bar" id="score-bar" style="width:0%"></div><span class="min-mark" title="10"></span></div>
+      </div>
+      <div class="row g-3" id="score-grid">
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Distintos encabezados</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nadpisy-1" data-pts="1"><label class="form-check-label" for="s-nadpisy-1">distintos niveles de encabezado (h1, h2, h3…)</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#texty">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Formato</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-format-1" data-pts="1"><label class="form-check-label" for="s-format-1">formato del texto</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#texty">L1</a><a href="2-css-text.html#texty">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Navegación</h3><span class="score-pts"><span class="score-got">0</span> / 4 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-1" data-pts="1"><label class="form-check-label" for="s-nav-1">navegación con al menos 3 páginas (p. ej. Inicio, Nosotros, Blog, Galería, Contacto)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-2" data-pts="1"><label class="form-check-label" for="s-nav-2">menú hamburguesa en el móvil</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-3" data-pts="1"><label class="form-check-label" for="s-nav-3">logotipo en la navegación</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-4" data-pts="1"><label class="form-check-label" for="s-nav-4">navegación visible al hacer scroll</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="4-layout.html#pozicia">L4</a><a href="5-bootstrap.html#komponenty">L5</a><a href="js3.html#navigacia">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Pie de página</h3><span class="score-pts"><span class="score-got">0</span> / 2 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-1" data-pts="1"><label class="form-check-label" for="s-footer-1">varias columnas con información del sitio</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-2" data-pts="1"><label class="form-check-label" for="s-footer-2">copyright</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="4-layout.html#flexbox">L4</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Formulario</h3><span class="score-pts"><span class="score-got">0</span> / 5 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-1" data-pts="1"><label class="form-check-label" for="s-form-1">campos: nombre, correo, textarea, consentimiento para el tratamiento de datos personales, enviar</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-2" data-pts="1"><label class="form-check-label" for="s-form-2">comprobación de la dirección de correo</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-3" data-pts="1"><label class="form-check-label" for="s-form-3">consentimiento para el tratamiento de datos personales</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-4" data-pts="1"><label class="form-check-label" for="s-form-4">redirección a una página de agradecimiento</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-5" data-pts="1"><label class="form-check-label" for="s-form-5">validación</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#formulare">L1</a><a href="js2.html#inputy">JS 2</a><a href="js3.html#ulohy">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Imágenes</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-img-1" data-pts="1"><label class="form-check-label" for="s-img-1">imágenes de <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">fuentes gratuitas</a>, en una cantidad adecuada por página</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Botón que lleva a otra página</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-btn-1" data-pts="1"><label class="form-check-label" for="s-btn-1">una etiqueta <code>&lt;a&gt;</code> con estilo de botón</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Enlaces de correo y teléfono</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-contact-1" data-pts="1"><label class="form-check-label" for="s-contact-1"><code>mailto:</code> y <code>tel:</code></label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Lista</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-list-1" data-pts="1"><label class="form-check-label" for="s-list-1">una lista <code>ul</code> u <code>ol</code></label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#zoznamy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Tabla</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-table-1" data-pts="1"><label class="form-check-label" for="s-table-1">una tabla</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="1-html.html#tabulky">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Banner con texto</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-banner-1" data-pts="1"><label class="form-check-label" for="s-banner-1">un banner con texto</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="2-css-text.html#pozadie">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Carrusel (slideshow)</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-carousel-1" data-pts="1"><label class="form-check-label" for="s-carousel-1">un carrusel de imágenes</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="https://getbootstrap.com/docs/5.3/components/carousel/">Bootstrap</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Acordeón</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-accordion-1" data-pts="1"><label class="form-check-label" for="s-accordion-1">un acordeón</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="js3.html#akordeon">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Alerta</h3><span class="score-pts"><span class="score-got">0</span> / 1 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-alert-1" data-pts="1"><label class="form-check-label" for="s-alert-1">un aviso (alert)</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Puntos creativos</h3><span class="score-pts"><span class="score-got">0</span> / 3 p</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-1" data-pts="1"><label class="form-check-label" for="s-creative-1">elemento creativo 1</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-2" data-pts="1"><label class="form-check-label" for="s-creative-2">elemento creativo 2</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-3" data-pts="1"><label class="form-check-label" for="s-creative-3">elemento creativo 3</label></div>
+            <p class="tiny-label mt-2 mb-2">Por ejemplo, una galería lightbox, paginación, una ventana emergente, una barra de cookies o cualquier otra cosa que use JavaScript. Pon el comentario <code>&lt;!-- creative point --&gt;</code> delante de cada uno de estos elementos.</p>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Dónde lo vemos:</span><a href="js2.html">JS 2</a><a href="js3.html">JS 3</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kontrola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Revisa tu proyecto antes de entregarlo</h2>
+      <p class="small">Elige tu <code>.zip</code>. La revisión se hace solo en tu navegador y el archivo no se envía a ningún sitio. Comprueba el nombre y las carpetas, las rutas, las metaetiquetas, que el CSS y el JS estén aparte, e intenta encontrar los elementos que puntúan.</p>
+      <div class="row g-3 align-items-stretch mb-3">
+        <div class="col-md-8">
+          <label class="zip-drop h-100" id="zip-drop"><input type="file" id="zip-input" accept=".zip,application/zip" class="visually-hidden"><span class="d-block fs-2" aria-hidden="true">📦</span><span class="small">Arrastra aquí tu <strong>.zip</strong> o haz clic para elegir el archivo</span></label>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          <button type="button" class="btn btn-outline-secondary w-100" id="zip-demo">Probar con un proyecto de ejemplo</button>
+        </div>
+      </div>
+      <div id="zip-result" aria-live="polite"></div>
+      <p class="tiny-label mt-3 mb-0">La revisión es una ayuda, no una nota. El aspecto, el funcionamiento y la validez (<a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>) los compruebas tú; los puntos los da el profesor.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="hodnotenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Evaluación para estudiantes Erasmus</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-7">
+          <h3 class="h6">Requisitos para aprobar</h3>
+          <ul class="small mb-2"><li>entregar el proyecto final</li><li>aprobar el examen teórico de las clases con al menos un 60 %</li></ul>
+          <p class="small mb-0"><strong>Los estudiantes Erasmus no hacen los autotests, así que no forman parte de la nota.</strong></p>
+        </div>
+        <div class="col-lg-5">
+          <div class="alert alert-warning small mb-0">Se permiten como máximo <strong>2 faltas</strong> a los seminarios; si no, el estudiante obtiene automáticamente FX. Llegar más de 5 minutos tarde cuenta como falta.</div>
+        </div>
+      </div>
+      <div class="formula mb-4"><span class="frac"><span class="fnum">Proyecto final + Examen final</span><span class="fden">2</span></span><span>+</span><span>Media de las tareas</span><span>=</span><span class="fres">Nota final</span></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="band-card"><h3 class="h6">Media de las tareas</h3><table class="table table-sm small mb-0"><tbody><tr><td>100 – 92 %</td><td class="text-end fw-semibold">= 5 %</td></tr><tr><td>91 – 75 %</td><td class="text-end fw-semibold">= 4 %</td></tr><tr><td>74 – 60 %</td><td class="text-end fw-semibold">= 3 %</td></tr></tbody></table></div>
+        </div>
+        <div class="col-md-12 col-lg-9">
+          <div class="example-card"><h3 class="h6">Ejemplo</h3><table class="table table-sm small mb-0 bg-transparent"><tbody><tr><td class="bg-transparent">Examen</td><td class="text-end text-nowrap bg-transparent">65 %</td></tr><tr><td class="bg-transparent">Proyecto</td><td class="text-end text-nowrap bg-transparent">92 % (23 de 25 p)</td></tr><tr><td class="bg-transparent">(92 % + 65 %) / 2</td><td class="text-end text-nowrap bg-transparent">78,5 %</td></tr><tr><td class="bg-transparent">Media de las tareas del semestre 92 %</td><td class="text-end text-nowrap bg-transparent">+ 5 %</td></tr><tr><td class="bg-transparent fw-bold">78,5 % + 5 %</td><td class="text-end text-nowrap fw-bold bg-transparent">83,5 % → D</td></tr></tbody></table></div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4 col-lg-3">
+          <h3 class="h6">Escala de notas</h3>
+          <table class="table table-sm small" id="grade-scale"><thead><tr><th>Nota</th><th>Porcentaje</th></tr></thead><tbody><tr data-g="A"><td class="fw-bold">A</td><td>100 – 95 %</td></tr><tr data-g="B"><td class="fw-bold">B</td><td>94 – 90 %</td></tr><tr data-g="C"><td class="fw-bold">C</td><td>89 – 85 %</td></tr><tr data-g="D"><td class="fw-bold">D</td><td>84 – 80 %</td></tr><tr data-g="E"><td class="fw-bold">E</td><td>79 – 70 %</td></tr><tr data-g="FX"><td class="fw-bold">FX</td><td>69 – 0 %</td></tr></tbody></table>
+        </div>
+        <div class="col-md-8 col-lg-9">
+          <h3 class="h6">Calcula tu nota</h3>
+          <div class="calc-card" id="calc">
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <div class="calc-row"><label for="c-project">Proyecto final (puntos)</label><input type="range" class="form-range" min="0" max="25" step="0.5" value="23" data-calc="project" aria-label="Proyecto final (puntos)"><input type="number" class="form-control form-control-sm" id="c-project" min="0" max="25" step="0.5" value="23" data-calc="project"></div>
+                <div class="calc-row"><label for="c-test">Examen final (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="65" data-calc="test" aria-label="Examen final (%)"><input type="number" class="form-control form-control-sm" id="c-test" min="0" max="100" step="1" value="65" data-calc="test"></div>
+                <div class="calc-row"><label for="c-tasks">Media de las tareas (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="92" data-calc="tasks" aria-label="Media de las tareas (%)"><input type="number" class="form-control form-control-sm" id="c-tasks" min="0" max="100" step="1" value="92" data-calc="tasks"></div>
+              </div>
+              <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-3 mb-2"><span class="calc-grade" id="calc-grade">–</span><div><div class="tiny-label">Resultado</div><div class="fs-3 fw-bold" id="calc-total">–</div></div></div>
+                <ul id="calc-lines" class="mb-2"></ul>
+                <p id="calc-note" class="small mb-0"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="odovzdanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Entrega</h2>
+      <p class="small">Sube un solo archivo, <code>apellido_project.zip</code>, a la carpeta <strong>final project</strong> del Google Drive de la asignatura. El README de la carpeta del curso lo explica con detalle.</p>
+      <div class="row g-4">
+        <div class="col-lg-9">
+          <ol class="steps small mb-0"><li>Revisa cada página en <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>.</li><li>Comprime toda la carpeta <code>apellido_project</code> (no solo los archivos de dentro) y revisa el zip en la <a href="#kontrola">parte 4</a>.</li><li>Sube el <code>.zip</code> a la carpeta final project.</li></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Proyecto final · Lenguajes web · Validador: <a href="https://validator.w3.org/">validator.w3.org</a> · <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">Fuentes de imágenes gratuitas</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script>window.PROJECT_I18N = {"decimalComma": true, "reqCount": "Hecho {done} de {all}", "scoreLow": "por debajo del mínimo – faltan {missing} p", "scoreOk": "mínimo de 10 p alcanzado", "calcProject": "proyecto: {pts} de 25 p = {pct} %", "calcBase": "({p} % + {t} %) / 2 = {r} %", "calcAuto": "", "calcTasks": "tareas {v} % → + {b} %", "calcTestLow": "Examen por debajo del 60 % – la asignatura no está aprobada.", "calcProjectLow": "Proyecto por debajo de 10 puntos – la asignatura no está aprobada.", "calcOk": "Es solo una estimación. Por debajo del 60 % no se suma nada por las tareas.", "zipWord": "project", "zipExample": "garcia_project.zip", "groups": {"files": "Archivo y carpetas", "pages": "Páginas y archivos", "features": "Elementos que puntúan (estimación automática)"}, "zipNameOk": "El nombre {name} es correcto.", "zipNameBad": "El nombre {name} no sigue el patrón apellido_project.zip (minúsculas sin tildes, p. ej. {example}).", "rootOk": "El zip contiene una carpeta, {root}.", "rootName": "La carpeta del zip se llama {root}; debería llamarse igual que el zip ({base}).", "rootMissing": "Los archivos están directamente en el zip. Comprime toda la carpeta apellido_project, no solo su contenido.", "rootMany": "El zip contiene varias carpetas ({list}). Debe haber una sola carpeta con todo el sitio.", "indexOk": "index.html existe.", "indexMissing": "Falta la página principal index.html (exactamente este nombre, en minúsculas).", "pagesOk": "Subpáginas: {n} (se necesitan al menos 3).", "pagesFew": "Subpáginas: {n}, se necesitan al menos 3.", "cssOk": "Carpeta css/: {n} archivo(s).", "cssMissing": "Falta la carpeta css/ con un archivo .css.", "jsOk": "Carpeta js/: {n} archivo(s).", "jsMissing": "Falta la carpeta js/ con un archivo .js.", "imgOk": "Carpeta img/: {n} imagen(es).", "imgMissing": "Falta la carpeta img/ con imágenes.", "imgOutside": "Imágenes fuera de la carpeta img/:", "badNames": "Nombres con mayúsculas, espacios o tildes:", "bigImages": "Imágenes de más de 1 MB (redúcelas):", "noComments": "No he encontrado comentarios en el código.", "comments": "Comentarios en el código: {n}.", "noDoctype": "falta <!DOCTYPE html> al principio", "noLang": "falta el atributo lang en <html>", "noTitle": "falta <title>", "noViewport": "falta <meta name=\"viewport\"> (sin ella la página no es responsive en el móvil)", "metaMissing": "falta <meta name=\"{name}\">", "styleBlock": "CSS dentro del HTML (<style>: {n}×) – los estilos van en css/", "styleAttr": "atributo style=\"…\" en {n} elementos – mejor pasar los estilos a css/", "scriptInline": "JavaScript dentro del HTML ({n}×) – va en js/", "handlers": "atributos onclick y similares: {n}× – mejor usar addEventListener en js/", "noLocalCss": "no hay enlazado ningún archivo CSS propio", "refAbsolute": "ruta absoluta {ref} ({where}) – no funcionará en otro ordenador", "refRoot": "la ruta {ref} empieza con una barra ({where}) – usa una ruta relativa sin / al principio", "refCase": "{ref} ({where}): el archivo se llama {real} – las mayúsculas y minúsculas deben coincidir", "refMissing": "{ref} ({where}): el archivo no está en el proyecto", "navFew": "enlaces a otras páginas del proyecto: {n} (la navegación necesita al menos 3)", "pageOk": "{page}: sin problemas", "pageIssues": "{page}: errores {e}, avisos {w}", "features": {"headings": "distintos encabezados", "hamburger": "menú hamburguesa", "logo": "logotipo", "sticky": "navegación visible al hacer scroll (sticky/fixed)", "footerCopy": "pie de página con copyright", "form": "formulario con correo, textarea, consentimiento y botón", "thanks": "redirección a una página de agradecimiento", "images": "imágenes", "button": "enlace con estilo de botón", "mailtel": "enlaces mailto: y tel:", "list": "lista", "table": "tabla", "banner": "banner", "carousel": "carrusel (slideshow)", "accordion": "acordeón", "alert": "alerta", "creative": "comentarios <!-- creative point -->"}, "featureHint": "no encontrado – si tu proyecto lo tiene, no pasa nada", "featureNote": "Los busco por nombres de clases y etiquetas habituales (p. ej. carousel, accordion, alert). Si los tuyos se llaman de otra forma, puede que la revisión no los encuentre.", "warnings": "avisos", "errors": "errores", "checking": "Revisando…", "zipError": "No se ha podido abrir el archivo como .zip ({msg}).", "noJszip": "No se ha cargado la biblioteca para leer archivos .zip. Comprueba tu conexión a internet.", "demo": {"root": "garcia_project", "zipName": "garcia_project.zip", "lang": "es", "thanks": "gracias.html", "creative": "creative point", "navComment": "navegación", "cssComment": "estilos principales", "jsComment": "menú hamburguesa", "pages": [["index.html", "Inicio"], ["nosotros.html", "Nosotros"], ["galeria.html", "Galería"], ["contacto.html", "Contacto"]]}};</script>
+<script src="../assets/project.js"></script>
+</body>
+</html>

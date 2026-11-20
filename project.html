@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Záverečný projekt · Jazyky webu</title>
+  <meta name="description" content="Záverečný projekt z predmetu Jazyky webu: požiadavky, bodovanie, štruktúra priečinkov, kontrola projektu pred odovzdaním a výpočet známky.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/lab.css" rel="stylesheet">
+  <style>
+    body { --accent: #be123c; --accent-bg: #ffe4e6; }
+    .stat { background: #fff; border-radius: 1rem; padding: .9rem 1.1rem; box-shadow: 0 .25rem 1rem #1d2d5010; height: 100%; }
+    .stat b { display: block; font-size: 1.5rem; line-height: 1.15; color: var(--accent); }
+    .stat span { font-size: .85rem; color: #4b5563; }
+    .req-list .form-check { padding: .5rem .75rem .5rem 2.25rem; border-radius: .5rem; background: #fff; border: 1px solid #e3e7f0; margin-bottom: .4rem; }
+    .req-list .form-check-input:checked + .form-check-label { color: #6b7280; text-decoration: line-through; }
+    .ftree { font: .9rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #fff; border: 1px solid #e3e7f0; border-radius: .75rem; padding: 1rem 1.2rem; white-space: pre; overflow-x: auto; margin: 0; }
+    .ftree .dim { color: #9ca3af; }
+    .path-table td:first-child { white-space: nowrap; color: #4b5563; }
+    .score-top { position: sticky; top: .5rem; z-index: 5; background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: .7rem 1rem; box-shadow: 0 .25rem 1rem #1d2d5014; }
+    .score-top .progress { height: .6rem; position: relative; overflow: visible; }
+    .score-top .min-mark { position: absolute; left: 40%; top: -.25rem; bottom: -.25rem; width: 2px; background: #111827; }
+    .score-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; transition: border-color .15s, background .15s; }
+    .score-card.complete { border-color: #86efac; background: #f0fdf4; }
+    .score-card h3 { font-size: 1rem; margin: 0; }
+    .score-pts { font-size: .78rem; font-weight: 700; background: var(--accent-bg); color: var(--accent); border-radius: 1rem; padding: .15rem .55rem; white-space: nowrap; }
+    .score-card .form-check { font-size: .88rem; margin-bottom: .25rem; }
+    .score-links a { font-size: .75rem; text-decoration: none; border: 1px solid #e3e7f0; border-radius: .4rem; padding: .05rem .4rem; margin-right: .25rem; color: #374151; }
+    .zip-drop { display: block; border: 2px dashed #cbd5e1; border-radius: 1rem; padding: 1.6rem 1rem; text-align: center; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; }
+    .zip-drop:hover, .zip-drop.over { border-color: var(--accent); background: var(--accent-bg); }
+    .zip-drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .zip-list { list-style: none; padding: 0; margin: 0; }
+    .zip-list li { display: flex; gap: .6rem; padding: .45rem .7rem; border-radius: .5rem; margin-bottom: .3rem; font-size: .88rem; background: #fff; border: 1px solid #eef0f5; }
+    .zip-list .zl-icon { font-weight: 700; width: 1rem; flex-shrink: 0; text-align: center; }
+    .zl-ok .zl-icon { color: #16a34a; }
+    .zl-warn { background: #fffbeb !important; } .zl-warn .zl-icon { color: #d97706; }
+    .zl-err { background: #fef2f2 !important; } .zl-err .zl-icon { color: #dc2626; }
+    .zl-unknown { color: #4b5563; } .zl-unknown .zl-icon { color: #9ca3af; }
+    .zl-detail { white-space: pre-wrap; font-size: .8rem; color: #4b5563; margin-top: .2rem; overflow-wrap: anywhere; }
+    .formula { background: var(--accent); color: #fff; border-radius: 1rem; padding: 1.3rem 1rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem 1rem; font-weight: 600; text-align: center; }
+    .frac { display: inline-flex; flex-direction: column; align-items: center; }
+    .frac .fnum { border-bottom: 2px solid #fff; padding: 0 .4rem .25rem; }
+    .frac .fden { padding-top: .25rem; }
+    .formula .fres { font-size: 1.4rem; font-weight: 700; }
+    .band-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .example-card { background: #fff7ed; border: 1px solid #fed7aa; border-radius: .9rem; padding: 1rem; height: 100%; }
+    .calc-card { background: #fff; border: 1px solid #e3e7f0; border-radius: .9rem; padding: 1rem; }
+    .calc-row { display: grid; grid-template-columns: 1fr 5.5rem; gap: .4rem .75rem; align-items: center; margin-bottom: .6rem; }
+    .calc-row label { grid-column: 1 / -1; font-size: .85rem; font-weight: 600; margin: 0; }
+    .calc-grade { display: inline-flex; align-items: center; justify-content: center; min-width: 4.5rem; height: 4.5rem; border-radius: 1rem; font-size: 2.2rem; font-weight: 800; color: #fff; padding: 0 .6rem; }
+    .grade-a { background: #15803d; } .grade-b { background: #4d7c0f; } .grade-c { background: #a16207; }
+    .grade-d { background: #c2410c; } .grade-e { background: #b45309; } .grade-fx { background: #b91c1c; }
+    #calc-lines { font-size: .85rem; color: #374151; padding-left: 1.1rem; }
+    #grade-scale td, #grade-scale th { padding: .3rem .6rem; }
+    .completion li { margin-bottom: .35rem; }
+  </style>
+</head>
+<body>
+<div id="lab-nav"></div><script src="assets/nav.js"></script>
+
+<header class="container py-5" id="top">
+  <span class="badge lesson-badge mb-3">Záverečný projekt</span>
+  <h1 class="display-5 fw-bold">Záverečný projekt</h1>
+  <p class="lead col-lg-9">Vlastná webová stránka na ľubovoľnú tému: hlavná stránka a tri podstránky prepojené navigáciou. Nájdeš tu, čo musí projekt spĺňať, za čo dostaneš body, ako má vyzerať priečinok a ako sa počíta známka z predmetu. Pred odovzdaním si projekt môžeš skontrolovať priamo na tejto stránke.</p>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-outline-secondary" href="#poziadavky">1 · Požiadavky</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#struktura">2 · Štruktúra priečinkov</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#bodovanie">3 · Bodovanie</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#kontrola">4 · Kontrola projektu</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#hodnotenie">5 · Hodnotenie predmetu</a>
+    <a class="btn btn-sm btn-outline-secondary" href="#odovzdanie">6 · Odovzdanie</a>
+  </div>
+  <div class="row g-3 mt-3">
+    <div class="col-6 col-md-3"><div class="stat"><b>25 b</b><span>plný počet bodov</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>10 b</b><span>minimum z projektu</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>1 + 3</b><span>hlavná stránka a podstránky</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><b>téma</b><span>ľubovoľná</span></div></div>
+  </div>
+</header>
+
+<main class="container pb-5">
+
+  <section class="card section-card mb-4" id="poziadavky">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">1</span>Požiadavky na projekt</h2>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <p class="small mb-2">Odškrtávaj si, čo už máš hotové. Zoznam si tento prehliadač zapamätá. <span class="badge text-bg-light border" id="req-count"></span></p>
+          <div class="req-list" id="req-list">
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req1"><label class="form-check-label small" for="req1">1 hlavná stránka (<code>index.html</code>) a 3 podstránky (napr. <code>kontakt.html</code>) prepojené v navigácii</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req2"><label class="form-check-label small" for="req2">web stránka je responzívna (<a href="4-layout.html#media">media queries</a> alebo <a href="5-bootstrap.html#mriezka">mriežka Bootstrapu</a>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req3"><label class="form-check-label small" for="req3">čisté HTML/CSS/JS alebo HTML/CSS/JS + framework Bootstrap</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req4"><label class="form-check-label small" for="req4">cesty k súborom sú relatívne (<code>img/hory.jpg</code>, nie <code>C:\Users\…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req5"><label class="form-check-label small" for="req5">štýly aj JavaScript sú v samostatných súboroch (<code>css/…</code>, <code>js/…</code>)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req6"><label class="form-check-label small" for="req6">vhodná kombinácia farieb</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req7"><label class="form-check-label small" for="req7">vhodná <code>font-family</code> pre tému</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req8"><label class="form-check-label small" for="req8">obrázky sú v samostatnom priečinku <code>img/</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req9"><label class="form-check-label small" for="req9">rôzne layouty (napr. mriežka kariet, dva stĺpce, banner na celú šírku)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req10"><label class="form-check-label small" for="req10">komentáre v kóde pre lepšiu prehľadnosť</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req11"><label class="form-check-label small" for="req11">meta značky <code>description</code>, <code>keywords</code> a <code>author</code></label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="req12"><label class="form-check-label small" for="req12">validita každej stránky skontrolovaná na <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a></label></div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <h3 class="h6">Meta značky do hlavičky každej stránky</h3>
+          <pre class="code-inspector" data-lang="html" data-copy>&lt;meta name="description" content="Krátky popis stránky"&gt;
+&lt;meta name="keywords" content="kľúčové, slová, témy"&gt;
+&lt;meta name="author" content="Meno Priezvisko"&gt;</pre>
+          <div class="alert alert-danger small mt-3 mb-2"><strong>Nepovolené nástroje:</strong> CMS, generátory ani žiadne platformy na tvorbu webov (napr. WordPress, Wix). Celý kód píšeš sám.</div>
+          <p class="small text-secondary mb-0">Dbaj aj na vizuálnu stránku webu: farby, písmo, medzery a obrázky by mali spolu ladiť.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="struktura">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">2</span>Štruktúra priečinkov</h2>
+      <p class="small">Odovzdávaš jeden súbor <code>.zip</code>. Vnútri je jeden priečinok s rovnakým názvom a v ňom celý web. Názov píš malými písmenami bez diakritiky, napr. <code>novak_projekt.zip</code>.</p>
+      <div class="row g-4">
+        <div class="col-md-5">
+          <pre class="ftree" aria-label="priezvisko_projekt">📚 priezvisko_projekt.zip
+ └ 📁 priezvisko_projekt
+     └ 📁 css
+         └ 📄 style.css
+     └ 📁 js
+         └ 📄 app.js
+     └ 📁 img
+         └ 🖼️ obrazokXY.jpeg
+     └ 📄 blog.html
+     └ 📄 galeria.html
+     └ 📄 index.html
+     └ 📄 kontakt.html
+     └ 📄 o_nas.html</pre>
+        </div>
+        <div class="col-md-7">
+          <ul class="small mb-3">
+            <li class="mb-1">Je to ukážka: podstránky pomenuj podľa svojej témy, ale <code>index.html</code> je povinný.</li>
+            <li class="mb-1">Formulár potrebuje aj stránku s poďakovaním (napr. <code>dakujem.html</code>), na ktorú sa po odoslaní presmeruje.</li>
+            <li class="mb-1">Ak máš Bootstrap stiahnutý v projekte, jeho súbory patria tiež do <code>css/</code> a <code>js/</code>.</li>
+            <li class="mb-1">Súbory pomenuj malými písmenami bez medzier a diakritiky. Na serveri sú <code>Foto.JPG</code> a <code>foto.jpg</code> dva rôzne súbory.</li>
+          </ul>
+          <h3 class="h6">Relatívne cesty</h3>
+          <table class="table table-sm small path-table mb-0"><tbody>
+            <tr><td>stránka → stránka</td><td><code>href="kontakt.html"</code></td></tr>
+            <tr><td>stránka → obrázok</td><td><code>src="img/hory.jpg"</code></td></tr>
+            <tr><td>stránka → štýly</td><td><code>href="css/style.css"</code></td></tr>
+            <tr><td>CSS → obrázok</td><td><code>url("../img/hory.jpg")</code></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="bodovanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">3</span>Bodové hodnotenie projektu</h2>
+      <p class="small">Plný počet je <strong>25 bodov</strong>, minimum <strong>10 bodov</strong>. Odškrtni, čo už v projekte máš, a uvidíš orientačný súčet. Body nakoniec určí vyučujúci.</p>
+      <div class="score-top mb-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <strong>Orientačne: <span id="score-sum">0</span> / 25</strong>
+          <span id="score-status" class="small"></span>
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="score-reset">Vymazať</button>
+        </div>
+        <div class="progress" role="presentation"><div class="progress-bar" id="score-bar" style="width:0%"></div><span class="min-mark" title="10"></span></div>
+      </div>
+      <div class="row g-3" id="score-grid">
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Rôzne nadpisy</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nadpisy-1" data-pts="1"><label class="form-check-label" for="s-nadpisy-1">rôzne úrovne nadpisov (h1, h2, h3…)</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#texty">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Formátovanie</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-format-1" data-pts="1"><label class="form-check-label" for="s-format-1">formátovanie textu</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#texty">L1</a><a href="2-css-text.html#texty">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Navigácia</h3><span class="score-pts"><span class="score-got">0</span> / 4 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-1" data-pts="1"><label class="form-check-label" for="s-nav-1">navigácia s minimálne 3 stránkami (napr. Domov, O nás, Blog, Galéria, Kontakt)</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-2" data-pts="1"><label class="form-check-label" for="s-nav-2">na mobiloch hamburger navigácia</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-3" data-pts="1"><label class="form-check-label" for="s-nav-3">logo v navigácii</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-nav-4" data-pts="1"><label class="form-check-label" for="s-nav-4">navigácia viditeľná počas scrollovania</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="4-layout.html#pozicia">L4</a><a href="5-bootstrap.html#komponenty">L5</a><a href="js3.html#navigacia">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Footer</h3><span class="score-pts"><span class="score-got">0</span> / 2 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-1" data-pts="1"><label class="form-check-label" for="s-footer-1">niekoľko stĺpcov s informáciami o stránke</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-footer-2" data-pts="1"><label class="form-check-label" for="s-footer-2">copyright</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="4-layout.html#flexbox">L4</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Formulár</h3><span class="score-pts"><span class="score-got">0</span> / 5 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-1" data-pts="1"><label class="form-check-label" for="s-form-1">polia: meno, e-mail, textarea, súhlas so spracovaním osobných údajov, odoslať</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-2" data-pts="1"><label class="form-check-label" for="s-form-2">ošetrenie e-mailovej adresy</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-3" data-pts="1"><label class="form-check-label" for="s-form-3">súhlas so spracovaním osobných údajov</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-4" data-pts="1"><label class="form-check-label" for="s-form-4">presmerovanie (redirect) na thank you page</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-form-5" data-pts="1"><label class="form-check-label" for="s-form-5">validácia</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#formulare">L1</a><a href="js2.html#inputy">JS 2</a><a href="js3.html#ulohy">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Obrázky</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-img-1" data-pts="1"><label class="form-check-label" for="s-img-1">obrázky z <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">bezplatných zdrojov</a> vo vhodnom množstve na stránku</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Tlačidlo s preklikom na inú stránku</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-btn-1" data-pts="1"><label class="form-check-label" for="s-btn-1">značka <code>&lt;a&gt;</code> naštýlovaná ako tlačidlo</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Odkaz na e-mail a telefón</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-contact-1" data-pts="1"><label class="form-check-label" for="s-contact-1"><code>mailto:</code> a <code>tel:</code></label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#odkazy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Zoznam</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-list-1" data-pts="1"><label class="form-check-label" for="s-list-1">zoznam <code>ul</code> alebo <code>ol</code></label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#zoznamy">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Tabuľka</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-table-1" data-pts="1"><label class="form-check-label" for="s-table-1">tabuľka</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="1-html.html#tabulky">L1</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Banner s textom</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-banner-1" data-pts="1"><label class="form-check-label" for="s-banner-1">banner s textom</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="2-css-text.html#pozadie">L2</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Slideshow (carousel)</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-carousel-1" data-pts="1"><label class="form-check-label" for="s-carousel-1">slideshow s obrázkami</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="https://getbootstrap.com/docs/5.3/components/carousel/">Bootstrap</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Akordeón</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-accordion-1" data-pts="1"><label class="form-check-label" for="s-accordion-1">akordeón</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="js3.html#akordeon">JS 3</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Alert</h3><span class="score-pts"><span class="score-got">0</span> / 1 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-alert-1" data-pts="1"><label class="form-check-label" for="s-alert-1">upozornenie (alert)</label></div>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="5-bootstrap.html#komponenty">L5</a></div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+          <div class="score-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2"><h3>Kreatívne body</h3><span class="score-pts"><span class="score-got">0</span> / 3 b</span></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-1" data-pts="1"><label class="form-check-label" for="s-creative-1">1. kreatívny prvok</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-2" data-pts="1"><label class="form-check-label" for="s-creative-2">2. kreatívny prvok</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="s-creative-3" data-pts="1"><label class="form-check-label" for="s-creative-3">3. kreatívny prvok</label></div>
+            <p class="tiny-label mt-2 mb-2">Napríklad lightbox galéria, stránkovanie, popup, cookies lišta alebo čokoľvek, pri čom použiješ JavaScript. Pred každý takýto prvok daj komentár <code>&lt;!-- kreatívny bod --&gt;</code>.</p>
+            <div class="score-links mt-2"><span class="tiny-label me-1">Kde sa to učíme:</span><a href="js2.html">JS 2</a><a href="js3.html">JS 3</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="kontrola">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">4</span>Skontroluj si projekt pred odovzdaním</h2>
+      <p class="small">Vyber svoj <code>.zip</code>. Kontrola beží len v tvojom prehliadači, súbor sa nikam neposiela. Overí názov a priečinky, cesty k súborom, meta značky, oddelené CSS a JS a pokúsi sa nájsť prvky z bodovania.</p>
+      <div class="row g-3 align-items-stretch mb-3">
+        <div class="col-md-8">
+          <label class="zip-drop h-100" id="zip-drop"><input type="file" id="zip-input" accept=".zip,application/zip" class="visually-hidden"><span class="d-block fs-2" aria-hidden="true">📦</span><span class="small">Pretiahni sem <strong>.zip</strong> alebo klikni a vyber súbor</span></label>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          <button type="button" class="btn btn-outline-secondary w-100" id="zip-demo">Vyskúšať na ukážkovom projekte</button>
+        </div>
+      </div>
+      <div id="zip-result" aria-live="polite"></div>
+      <p class="tiny-label mt-3 mb-0">Kontrola je pomôcka, nie hodnotenie. Vzhľad, funkčnosť a validitu (<a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>) si over sám, body udelí vyučujúci.</p>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="hodnotenie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">5</span>Hodnotenie predmetu</h2>
+      <div class="row g-4 mb-3">
+        <div class="col-lg-7">
+          <h3 class="h6">Podmienky úspešného absolvovania cvičení</h3>
+          <ul class="small mb-2"><li>odovzdanie autotestov na každej hodine</li><li>odovzdanie záverečného projektu</li><li>zvládnutie teoretického testu z prednášok na úrovni aspoň 60 %</li></ul>
+        </div>
+        <div class="col-lg-5">
+          <div class="alert alert-warning small mb-0">Na cvičeniach sú povolené najviac <strong>2 absencie</strong>, inak má študent automaticky FX. Meškanie na cvičenie viac ako 5 minút sa zapisuje ako absencia.</div>
+        </div>
+      </div>
+      <div class="formula mb-4"><span class="frac"><span class="fnum">Záverečný projekt + Záverečný test</span><span class="fden">2</span></span><span>+</span><span>Percentil z autotestov</span><span>+</span><span>Priemer zo zadaní</span><span>=</span><span class="fres">Výsledné hodnotenie</span></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="band-card"><h3 class="h6">Percentil z autotestov</h3><table class="table table-sm small mb-0"><tbody><tr><td>100 – 92 %</td><td class="text-end fw-semibold">= 5 %</td></tr><tr><td>91 – 75 %</td><td class="text-end fw-semibold">= 4 %</td></tr><tr><td>74 – 60 %</td><td class="text-end fw-semibold">= 3 %</td></tr></tbody></table></div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="band-card"><h3 class="h6">Priemer zo zadaní</h3><table class="table table-sm small mb-0"><tbody><tr><td>100 – 92 %</td><td class="text-end fw-semibold">= 5 %</td></tr><tr><td>91 – 75 %</td><td class="text-end fw-semibold">= 4 %</td></tr><tr><td>74 – 60 %</td><td class="text-end fw-semibold">= 3 %</td></tr></tbody></table></div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+          <div class="example-card"><h3 class="h6">Príklad použitia</h3><table class="table table-sm small mb-0 bg-transparent"><tbody><tr><td class="bg-transparent">Test</td><td class="text-end text-nowrap bg-transparent">65 %</td></tr><tr><td class="bg-transparent">Projekt</td><td class="text-end text-nowrap bg-transparent">92 % (23 z 25 b)</td></tr><tr><td class="bg-transparent">(92 % + 65 %) / 2</td><td class="text-end text-nowrap bg-transparent">78,5 %</td></tr><tr><td class="bg-transparent">Percentil z autotestov 64 %</td><td class="text-end text-nowrap bg-transparent">+ 3 %</td></tr><tr><td class="bg-transparent">Priemer zo zadaní počas semestra 92 %</td><td class="text-end text-nowrap bg-transparent">+ 5 %</td></tr><tr><td class="bg-transparent fw-bold">78,5 % + 3 % + 5 %</td><td class="text-end text-nowrap fw-bold bg-transparent">86,5 % → C</td></tr></tbody></table></div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4 col-lg-3">
+          <h3 class="h6">Stupnica</h3>
+          <table class="table table-sm small" id="grade-scale"><thead><tr><th>Známka</th><th>Percentá</th></tr></thead><tbody><tr data-g="A"><td class="fw-bold">A</td><td>100 – 95 %</td></tr><tr data-g="B"><td class="fw-bold">B</td><td>94 – 90 %</td></tr><tr data-g="C"><td class="fw-bold">C</td><td>89 – 85 %</td></tr><tr data-g="D"><td class="fw-bold">D</td><td>84 – 80 %</td></tr><tr data-g="E"><td class="fw-bold">E</td><td>79 – 70 %</td></tr><tr data-g="FX"><td class="fw-bold">FX</td><td>69 – 0 %</td></tr></tbody></table>
+        </div>
+        <div class="col-md-8 col-lg-9">
+          <h3 class="h6">Vypočítaj si známku</h3>
+          <div class="calc-card" id="calc">
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <div class="calc-row"><label for="c-project">Záverečný projekt (body)</label><input type="range" class="form-range" min="0" max="25" step="0.5" value="23" data-calc="project" aria-label="Záverečný projekt (body)"><input type="number" class="form-control form-control-sm" id="c-project" min="0" max="25" step="0.5" value="23" data-calc="project"></div>
+                <div class="calc-row"><label for="c-test">Záverečný test (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="65" data-calc="test" aria-label="Záverečný test (%)"><input type="number" class="form-control form-control-sm" id="c-test" min="0" max="100" step="1" value="65" data-calc="test"></div>
+                <div class="calc-row"><label for="c-auto">Percentil z autotestov (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="64" data-calc="auto" aria-label="Percentil z autotestov (%)"><input type="number" class="form-control form-control-sm" id="c-auto" min="0" max="100" step="1" value="64" data-calc="auto"></div>
+                <div class="calc-row"><label for="c-tasks">Priemer zo zadaní (%)</label><input type="range" class="form-range" min="0" max="100" step="1" value="92" data-calc="tasks" aria-label="Priemer zo zadaní (%)"><input type="number" class="form-control form-control-sm" id="c-tasks" min="0" max="100" step="1" value="92" data-calc="tasks"></div>
+              </div>
+              <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-3 mb-2"><span class="calc-grade" id="calc-grade">–</span><div><div class="tiny-label">Výsledok</div><div class="fs-3 fw-bold" id="calc-total">–</div></div></div>
+                <ul id="calc-lines" class="mb-2"></ul>
+                <p id="calc-note" class="small mb-0"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card section-card mb-4" id="odovzdanie">
+    <div class="card-body p-4">
+      <h2 class="h4"><span class="section-number">6</span>Odovzdanie</h2>
+      <p class="small">Projekt odovzdáš v kurze na <strong>edu.ukf.sk</strong> ako jeden súbor <code>priezvisko_projekt.zip</code>.</p>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <ol class="steps small mb-0"><li>Skontroluj validitu každej stránky na <a href="https://validator.w3.org/#validate_by_upload">validator.w3.org</a>.</li><li>Zbaľ celý priečinok <code>priezvisko_projekt</code> (nie iba súbory v ňom) a skontroluj zip v <a href="#kontrola">časti 4</a>.</li><li>Nahraj <code>.zip</code> do zadania v kurze na edu.ukf.sk.</li></ol>
+        </div>
+        <div class="col-lg-5">
+          <h3 class="h6">Podmienky splnenia zadania v kurze</h3>
+          <ul class="small completion mb-0"><li><strong>Prezrieť obsah</strong> – otvoriť zadanie</li><li><strong>Vytvoriť zadanie na odovzdanie</strong> – nahrať svoj .zip</li><li><strong>Získať známku</strong> – projekt ohodnotí vyučujúci</li><li><strong>Získať minimálnu známku</strong> – aspoň 10 bodov</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="container pb-5 tiny-label">
+  Záverečný projekt · Jazyky webu · Validátor: <a href="https://validator.w3.org/">validator.w3.org</a> · <a href="https://edu.ukf.sk/mod/page/view.php?id=289646">Bezplatné zdroje obrázkov</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="assets/lab.js"></script>
+<script>window.PROJECT_I18N = {"decimalComma": true, "reqCount": "Hotovo {done} z {all}", "scoreLow": "pod minimom – chýba ešte {missing} b", "scoreOk": "minimum 10 b splnené", "calcProject": "projekt: {pts} b z 25 = {pct} %", "calcBase": "({p} % + {t} %) / 2 = {r} %", "calcAuto": "autotesty {v} % → + {b} %", "calcTasks": "zadania {v} % → + {b} %", "calcTestLow": "Test pod 60 % – predmet nie je splnený.", "calcProjectLow": "Projekt pod 10 bodov – predmet nie je splnený.", "calcOk": "Výsledok je orientačný. Pod 60 % sa za autotesty ani za zadania nepripočíta nič.", "zipWord": "projekt", "zipExample": "novak_projekt.zip", "groups": {"files": "Súbor a priečinky", "pages": "Stránky a súbory", "features": "Prvky z bodovania (automatický odhad)"}, "zipNameOk": "Názov {name} je v poriadku.", "zipNameBad": "Názov {name} nezodpovedá vzoru priezvisko_projekt.zip (malé písmená bez diakritiky, napr. {example}).", "rootOk": "V zipe je jeden priečinok {root}.", "rootName": "Priečinok v zipe sa volá {root}, mal by sa volať rovnako ako zip ({base}).", "rootMissing": "Súbory sú priamo v zipe. Zbaľ celý priečinok priezvisko_projekt, nie iba jeho obsah.", "rootMany": "V zipe je viac priečinkov ({list}). Má tam byť jediný priečinok s celým webom.", "indexOk": "index.html existuje.", "indexMissing": "Chýba hlavná stránka index.html (presne tento názov, malými písmenami).", "pagesOk": "Podstránky: {n} (treba aspoň 3).", "pagesFew": "Podstránky: {n}, treba aspoň 3.", "cssOk": "Priečinok css/: {n} súbor(y).", "cssMissing": "Chýba priečinok css/ so súborom .css.", "jsOk": "Priečinok js/: {n} súbor(y).", "jsMissing": "Chýba priečinok js/ so súborom .js.", "imgOk": "Priečinok img/: {n} obrázok(y).", "imgMissing": "Chýba priečinok img/ s obrázkami.", "imgOutside": "Obrázky mimo priečinka img/:", "badNames": "Názvy s veľkými písmenami, medzerami alebo diakritikou:", "bigImages": "Obrázky väčšie ako 1 MB (zmenši ich):", "noComments": "V kóde som nenašiel žiadne komentáre.", "comments": "Komentáre v kóde: {n}.", "noDoctype": "chýba <!DOCTYPE html> na začiatku", "noLang": "chýba atribút lang v <html>", "noTitle": "chýba <title>", "noViewport": "chýba <meta name=\"viewport\"> (bez neho stránka nie je responzívna na mobile)", "metaMissing": "chýba <meta name=\"{name}\">", "styleBlock": "CSS priamo v HTML (<style>: {n}×) – štýly patria do css/", "styleAttr": "atribút style=\"…\" pri {n} prvkoch – lepšie je dať štýly do css/", "scriptInline": "JavaScript priamo v HTML ({n}×) – patrí do js/", "handlers": "atribúty onclick a podobné: {n}× – lepšie je addEventListener v js/", "noLocalCss": "nie je pripojený žiadny vlastný súbor .css", "refAbsolute": "absolútna cesta {ref} ({where}) – na inom počítači nebude fungovať", "refRoot": "cesta {ref} začína lomkou ({where}) – použi relatívnu cestu bez / na začiatku", "refCase": "{ref} ({where}): súbor sa volá {real} – veľké a malé písmená sa musia zhodovať", "refMissing": "{ref} ({where}): súbor v projekte nie je", "navFew": "odkazy na iné stránky projektu: {n} (navigácia má mať aspoň 3)", "pageOk": "{page}: bez problémov", "pageIssues": "{page}: chyby {e}, upozornenia {w}", "features": {"headings": "rôzne nadpisy", "hamburger": "hamburger menu", "logo": "logo", "sticky": "navigácia viditeľná pri scrollovaní (sticky/fixed)", "footerCopy": "footer s copyrightom", "form": "formulár s e-mailom, textarea, súhlasom a tlačidlom", "thanks": "presmerovanie na stránku s poďakovaním", "images": "obrázky", "button": "odkaz naštýlovaný ako tlačidlo", "mailtel": "odkazy mailto: a tel:", "list": "zoznam", "table": "tabuľka", "banner": "banner", "carousel": "slideshow (carousel)", "accordion": "akordeón", "alert": "alert", "creative": "komentáre <!-- kreatívny bod -->"}, "featureHint": "nenašiel som – ak to v projekte máš, je to v poriadku", "featureNote": "Prvky hľadám podľa bežných názvov tried a značiek (napr. carousel, accordion, alert). Ak ich máš pomenované inak, kontrola ich nemusí nájsť.", "warnings": "upozornení", "errors": "chýb", "checking": "Kontrolujem…", "zipError": "Súbor sa nepodarilo otvoriť ako .zip ({msg}).", "noJszip": "Knižnicu na čítanie .zip sa nepodarilo načítať. Skontroluj pripojenie na internet.", "demo": {"root": "novak_projekt", "zipName": "novak_projekt.zip", "lang": "sk", "thanks": "dakujem.html", "creative": "kreatívny bod", "navComment": "navigácia", "cssComment": "hlavné štýly", "jsComment": "hamburger menu", "pages": [["index.html", "Domov"], ["o_nas.html", "O nás"], ["galeria.html", "Galéria"], ["kontakt.html", "Kontakt"]]}};</script>
+<script src="assets/project.js"></script>
+</body>
+</html>
